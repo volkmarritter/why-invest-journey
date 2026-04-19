@@ -854,11 +854,20 @@ canvas{max-width:100%}
       </div>
       <div class="quiz-card" data-q="income">
         <div class="qlabel">03 · Einkommen</div>
-        <h4>Brauchen Sie aus dem Portfolio laufende Erträge?</h4>
+        <h4>Ihre Einkommensstabilität in den nächsten zehn Jahren ist …</h4>
         <div class="opts">
-          <button class="opt" data-v="1">Ja, es soll Einkommen liefern.</button>
-          <button class="opt" data-v="2">Teils — etwas Puffer wäre gut.</button>
-          <button class="opt" data-v="3">Nein, reines Wachstum.</button>
+          <button class="opt" data-v="1">Sehr stabil. Gehalt oder Rente.</button>
+          <button class="opt" data-v="2">Überwiegend stabil, etwas Schwankung.</button>
+          <button class="opt" data-v="3">Unregelmässig. Unternehmer oder variabel.</button>
+        </div>
+      </div>
+      <div class="quiz-card" data-q="cashflow">
+        <div class="qlabel">04 · Liquidität</div>
+        <h4>Benötigen Sie regelmässige Entnahmen aus diesem Portfolio?</h4>
+        <div class="opts">
+          <button class="opt" data-v="1">Ja — ich bin auf Ausschüttungen angewiesen.</button>
+          <button class="opt" data-v="2">Gelegentlich, aber nicht zwingend.</button>
+          <button class="opt" data-v="3">Nein — reines Wachstum, nichts entnehmen.</button>
         </div>
       </div>
     </div>
@@ -1284,7 +1293,7 @@ Startkapital: ${document.getElementById('vInit').textContent} · Sparrate: ${doc
 /* =========================================================
    KAP 6 — Profil-Quiz
    ========================================================= */
-const quizAns={horizon:null,risk:null,income:null};
+const quizAns={horizon:null,risk:null,income:null,cashflow:null};
 const DE_PROFILES=[null,
   {profile:'Konservativ',profileId:'conservative',equity:30,equityRange:'20–40%',exclusions:'Immobilien, Krypto',desc:'Moderates Wachstum, begrenzte Schwankungen. Aktien 20–40%, Anleihen, Cash und Rohstoffe. Kein Immobilien- oder Krypto-Anteil.'},
   {profile:'Ausgewogen',profileId:'balanced',equity:50,equityRange:'40–60%',exclusions:'Immobilien, Krypto',desc:'Zeit genug, um Stürme auszusitzen. Aktien 40–60%, Anleihen, Cash und Rohstoffe. Kein Immobilien- oder Krypto-Anteil.'},
@@ -1303,8 +1312,10 @@ document.querySelectorAll('.quiz-card').forEach(card=>{
   });
 });
 function scoreProfile(){
-  if(quizAns.horizon===null||quizAns.risk===null||quizAns.income===null)return;
-  const raw=(quizAns.horizon*1.2)+(quizAns.risk*1.4)-((quizAns.income===1?1.2:quizAns.income===2?0.3:-0.2));
+  if(quizAns.horizon===null||quizAns.risk===null||quizAns.income===null||quizAns.cashflow===null)return;
+  const raw=(quizAns.horizon*1.2)+(quizAns.risk*1.4)
+    +((quizAns.income===1?0.5:quizAns.income===2?0:-0.5))
+    -((quizAns.cashflow===1?1.2:quizAns.cashflow===2?0.3:-0.2));
   const rank=raw<5?1:raw<7?2:raw<9?3:4;
   const s=DE_PROFILES[rank];
   document.getElementById('quizSummary').style.display='flex';
@@ -1312,7 +1323,7 @@ function scoreProfile(){
   document.getElementById('qDesc').textContent=s.desc;
   document.getElementById('qEquityRange').textContent=s.equityRange;
   document.getElementById('qExclusions').textContent=s.exclusions;
-  const params=new URLSearchParams({profile:s.profileId,equity:s.equity,horizon:quizAns.horizon,risk:quizAns.risk,income:quizAns.income,src:'why-journey',lang:'de'});
+  const params=new URLSearchParams({profile:s.profileId,equity:s.equity,horizon:quizAns.horizon,risk:quizAns.risk,income:quizAns.income,cashflow:quizAns.cashflow,src:'why-journey',lang:'de'});
   document.getElementById('qGo').href='https://bicon.li/prompt-builder/?'+params.toString();
   window.bicon.track('profile_scored',{profile:s.profile,equity:s.equity});
 }
