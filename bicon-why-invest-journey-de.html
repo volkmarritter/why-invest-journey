@@ -1514,7 +1514,8 @@ function scoreProfile(){
   e+=(quizAns.income===1?10:quizAns.income===2?0:-10);
   e+=(quizAns.cashflow===1?-15:quizAns.cashflow===2?0:10);
   e=Math.max(10,Math.min(95,e));
-  const rank=e<40?1:e<60?2:e<80?3:4;
+  const horizonCap={1:1,2:2,3:4,4:4};
+  const rank=Math.min(e<40?1:e<60?2:e<80?3:4,horizonCap[quizAns.horizon]);
   const s=DE_PROFILES[rank];
   document.getElementById('quizSummary').style.display='flex';
   document.getElementById('qProfile').textContent=s.profile;
