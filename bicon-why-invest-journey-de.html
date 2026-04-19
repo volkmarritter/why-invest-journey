@@ -1345,10 +1345,13 @@ document.querySelectorAll('.quiz-card').forEach(card=>{
 });
 function scoreProfile(){
   if(quizAns.horizon===null||quizAns.risk===null||quizAns.income===null||quizAns.cashflow===null)return;
-  const raw=(quizAns.horizon*1.2)+(quizAns.risk*1.4)
-    +((quizAns.income===1?0.5:quizAns.income===2?0:-0.5))
-    -((quizAns.cashflow===1?1.2:quizAns.cashflow===2?0.3:-0.2));
-  const rank=raw<5?1:raw<7?2:raw<9?3:4;
+  let e=50;
+  e+=[0,-25,0,20,35][quizAns.horizon]??0;
+  e+=[0,-25,0,5,20][quizAns.risk]??0;
+  e+=(quizAns.income===1?10:quizAns.income===2?0:-10);
+  e+=(quizAns.cashflow===1?-15:quizAns.cashflow===2?0:10);
+  e=Math.max(10,Math.min(95,e));
+  const rank=e<40?1:e<60?2:e<80?3:4;
   const s=DE_PROFILES[rank];
   document.getElementById('quizSummary').style.display='flex';
   document.getElementById('qProfile').textContent=s.profile;
