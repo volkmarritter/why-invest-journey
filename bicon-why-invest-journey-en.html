@@ -552,7 +552,7 @@ canvas{max-width:100%}
     <div class="callout forest reveal">
       <div class="clabel">Discipline, not prediction</div>
       <h4>The SAA's job is rebalancing — not forecasting.</h4>
-      <p>Markets move. A 60/30/10 portfolio (60% equities · 30% bonds · 10% satellites) left alone for five years can quietly drift to 78/15/7 — more risk than you signed up for. Once a year (or when drift exceeds a threshold), the portfolio is brought back to target weights: winners trimmed, laggards topped up. It feels counterintuitive — but it's automated "sell high, buy low". The Prompt Builder drafts a sophisticated rebalancing concept: triggers, frequency, and drift bands.</p>
+      <p>Markets move. A 60/30/10 portfolio (60% equities · 30% bonds · 10% satellites — assets like REITs and crypto that diversify differently) left alone for five years can quietly drift to 78/15/7 — more risk than you signed up for. Once a year (or when drift exceeds a threshold), the portfolio is brought back to target weights: winners trimmed, laggards topped up. It feels counterintuitive — but it's automated "sell high, buy low". The Prompt Builder drafts a sophisticated rebalancing concept: triggers, frequency, and drift bands.</p>
     </div>
 
     <div class="pullquote reveal">
@@ -680,6 +680,11 @@ canvas{max-width:100%}
         <div style="font-size:12px;color:var(--muted);margin-top:10px">
           Source: S&amp;P Dow Jones SPIVA, long-term averages (illustrative).
         </div>
+        <div class="callout plum reveal" style="margin-top:28px">
+          <div class="clabel">Survivorship bias</div>
+          <h4>Only the winners are still talking.</h4>
+          <p>Funds that blew up are quietly removed from the index. Past rankings are recalculated without the losers. The star managers you read about survived — they're not typical, they're the exceptions who lived to be quoted.</p>
+        </div>
       </div>
 
       <div>
@@ -747,7 +752,7 @@ canvas{max-width:100%}
     <div class="grid-2 reveal" style="margin-top:80px">
       <div class="card">
         <div class="stat" style="color:var(--coral)">7 of 10</div>
-        <div class="stat-sub">best trading days historically occur within <b>2 weeks</b> of the 10 worst days.</div>
+        <div class="stat-sub">best trading days historically occur within <b>2 weeks</b> of the 10 worst days. <span style="font-size:11px;opacity:.6">(Fidelity / Morningstar, historical analysis)</span></div>
       </div>
       <div class="card">
         <div class="stat" style="color:var(--plum)">–54%</div>
@@ -874,7 +879,7 @@ canvas{max-width:100%}
       </div>
     </div>
 
-    <p class="lead reveal">Answer the four questions below. When you continue, we'll pass your answers straight into the Prompt Builder so step 1 is already half-done.</p>
+    <p class="lead reveal">Answer the four questions below. When you continue, we'll pass your answers straight into the Prompt Builder so step 1 is already half-done. There are no wrong answers — just your situation.</p>
 
     <div class="quiz reveal">
       <div class="quiz-card" data-q="horizon">
@@ -921,6 +926,7 @@ canvas{max-width:100%}
         <div class="label">Your indicative profile</div>
         <h3 id="qfName">—</h3>
         <div class="pf" id="qfDesc">—</div>
+        <div id="qfWhy" style="margin-top:10px;font-size:14px;font-style:italic;opacity:.85">—</div>
         <div style="margin-top:8px;font-size:13px;color:var(--muted)">Equity range: <b id="qfEquityRange">—</b> · Exclusions: <span id="qfExclusions">—</span></div>
       </div>
       <a class="go" id="qfGo" href="https://bicon.li/prompt-builder/" target="_top">Continue to the Prompt Builder →</a>
@@ -1445,10 +1451,10 @@ recomputeCalc();
    ========================================================= */
 const quizState={horizon:null,risk:null,income:null,cashflow:null};
 const EN_PROFILES=[null,
-  {name:'Conservative',profile:'conservative',equity:30,equityRange:'20–40%',exclusions:'Listed Real Estate, Crypto Assets',desc:'Gentle growth, limited volatility. Equities 20–40%, bonds, cash and commodities. No real estate or crypto.'},
-  {name:'Balanced',profile:'balanced',equity:50,equityRange:'40–60%',exclusions:'Listed Real Estate, Crypto Assets',desc:'Time enough to weather storms. Equities 40–60%, bonds, cash and commodities. No real estate or crypto.'},
-  {name:'Growth',profile:'growth',equity:70,equityRange:'60–80%',exclusions:'Listed Real Estate',desc:'Long horizon, comfort with volatility. Equities 60–80%, bonds, cash, commodities and crypto.'},
-  {name:'Aggressive',profile:'aggressive',equity:90,equityRange:'80–100%',exclusions:'Bonds',desc:'Decades ahead, dips seen as opportunities. Equities 80–100%, cash, commodities, real estate and crypto.'}
+  {name:'Conservative',profile:'conservative',equity:30,equityRange:'20–40%',exclusions:'Listed Real Estate, Crypto Assets',desc:'Gentle growth, limited volatility. Equities 20–40%, bonds, cash and commodities. No real estate or crypto.',why:'Your horizon or withdrawal needs call for stability first — steady growth with limited drawdowns.'},
+  {name:'Balanced',profile:'balanced',equity:50,equityRange:'40–60%',exclusions:'Listed Real Estate, Crypto Assets',desc:'Time enough to weather storms. Equities 40–60%, bonds, cash and commodities. No real estate or crypto.',why:'A medium horizon with manageable risk — growth potential without overexposing to volatility.'},
+  {name:'Growth',profile:'growth',equity:70,equityRange:'60–80%',exclusions:'Listed Real Estate',desc:'Long horizon, comfort with volatility. Equities 60–80%, bonds, cash, commodities and crypto.',why:'A long horizon and comfort with market swings mean equities can do most of the heavy lifting.'},
+  {name:'Aggressive',profile:'aggressive',equity:90,equityRange:'80–100%',exclusions:'Bonds',desc:'Decades ahead, dips seen as opportunities. Equities 80–100%, cash, commodities, real estate and crypto.',why:'Maximum horizon, strong stomach, no cash needs — equities all the way, with full satellite exposure.'}
 ];
 document.querySelectorAll('.quiz-card').forEach(card=>{
   const q=card.dataset.q;
@@ -1480,6 +1486,7 @@ function maybeShowProfile(){
   const s=EN_PROFILES[rank];
   document.getElementById('qfName').textContent=s.name;
   document.getElementById('qfDesc').textContent=s.desc;
+  document.getElementById('qfWhy').textContent=s.why;
   document.getElementById('qfEquityRange').textContent=s.equityRange;
   document.getElementById('qfExclusions').textContent=s.exclusions;
   const incomeInt={stable:1,mixed:2,volatile:3};

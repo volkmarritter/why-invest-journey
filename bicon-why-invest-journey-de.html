@@ -545,7 +545,7 @@ canvas{max-width:100%}
     <div class="callout forest reveal">
       <div class="clabel">Disziplin, nicht Vorhersage</div>
       <h4>Die Arbeit einer SAA ist das Rebalancing — nicht das Prognostizieren.</h4>
-      <p>Märkte bewegen sich. Ein 60/30/10-Portfolio (60% Aktien · 30% Anleihen · 10% Satelliten), das fünf Jahre sich selbst überlassen wird, kann sich still auf 78/15/7 verschieben — mehr Risiko, als ursprünglich gewollt. Einmal pro Jahr (oder bei größeren Abweichungen) wird das Portfolio auf die Zielquoten zurückgeführt:
+      <p>Märkte bewegen sich. Ein 60/30/10-Portfolio (60% Aktien · 30% Anleihen · 10% Satelliten — Anlagen wie REITs und Krypto, die sich anders entwickeln), das fünf Jahre sich selbst überlassen wird, kann sich still auf 78/15/7 verschieben — mehr Risiko, als ursprünglich gewollt. Einmal pro Jahr (oder bei größeren Abweichungen) wird das Portfolio auf die Zielquoten zurückgeführt:
       Gewinner werden teilweise verkauft, Verlierer nachgekauft. Das wirkt gegen die Intuition — ist aber
       automatisiertes „hoch verkaufen, tief kaufen". Der Prompt Builder entwirft ein ausgereiftes Rebalancing-Konzept: Trigger, Frequenz und Bandbreiten.</p>
     </div>
@@ -679,6 +679,11 @@ canvas{max-width:100%}
         <div style="font-size:12px;color:var(--muted);margin-top:10px">
           Quelle: S&amp;P Dow Jones SPIVA, langfristige Durchschnitte (illustrativ).
         </div>
+        <div class="callout plum reveal" style="margin-top:28px">
+          <div class="clabel">Survivorship Bias</div>
+          <h4>Nur die Gewinner reden noch.</h4>
+          <p>Fonds, die gescheitert sind, werden still aus dem Index entfernt. Vergangene Rankings werden ohne die Verlierer neu berechnet. Die Starmanager, über die Sie lesen, haben überlebt — sie sind nicht typisch, sondern die Ausnahmen, die noch zitiert werden.</p>
+        </div>
       </div>
 
       <div>
@@ -746,7 +751,7 @@ canvas{max-width:100%}
     <div class="grid-2 reveal" style="margin-top:80px">
       <div class="card">
         <div class="stat" style="color:var(--coral)">7 von 10</div>
-        <div class="stat-sub">der besten Handelstage liegen historisch innerhalb von <b>2 Wochen</b> neben den 10 schlechtesten.</div>
+        <div class="stat-sub">der besten Handelstage liegen historisch innerhalb von <b>2 Wochen</b> neben den 10 schlechtesten. <span style="font-size:11px;opacity:.6">(Fidelity / Morningstar, historische Analyse)</span></div>
       </div>
       <div class="card">
         <div class="stat" style="color:var(--plum)">–54%</div>
@@ -884,7 +889,7 @@ canvas{max-width:100%}
       </div>
     </div>
 
-    <p class="lead reveal">Beantworten Sie die vier Fragen unten. Wenn Sie fortfahren, übergeben wir Ihre Antworten direkt an den Prompt Builder — Schritt 1 ist damit schon halb erledigt.</p>
+    <p class="lead reveal">Beantworten Sie die vier Fragen unten. Wenn Sie fortfahren, übergeben wir Ihre Antworten direkt an den Prompt Builder — Schritt 1 ist damit schon halb erledigt. Es gibt keine falschen Antworten — nur Ihre persönliche Situation.</p>
 
     <div class="quiz reveal">
       <div class="quiz-card" data-q="horizon">
@@ -932,6 +937,7 @@ canvas{max-width:100%}
         <div class="label">Ihr Profil (Entwurf)</div>
         <h3 id="qProfile">—</h3>
         <div class="pf" id="qDesc">—</div>
+        <div id="qWhy" style="margin-top:10px;font-size:14px;font-style:italic;opacity:.85">—</div>
         <div style="margin-top:8px;font-size:13px;color:var(--muted)">Aktienquote: <b id="qEquityRange">—</b> · Ausschlüsse: <span id="qExclusions">—</span></div>
       </div>
       <a id="qGo" class="go" href="https://bicon.li/prompt-builder/?src=why-journey&lang=de" target="_top">Zur App →</a>
@@ -1494,10 +1500,10 @@ Startkapital: ${document.getElementById('vInit').textContent} · Sparrate: ${doc
    ========================================================= */
 const quizAns={horizon:null,risk:null,income:null,cashflow:null};
 const DE_PROFILES=[null,
-  {profile:'Konservativ',profileId:'conservative',equity:30,equityRange:'20–40%',exclusions:'Immobilien, Krypto',desc:'Moderates Wachstum, begrenzte Schwankungen. Aktien 20–40%, Anleihen, Cash und Rohstoffe. Kein Immobilien- oder Krypto-Anteil.'},
-  {profile:'Ausgewogen',profileId:'balanced',equity:50,equityRange:'40–60%',exclusions:'Immobilien, Krypto',desc:'Zeit genug, um Stürme auszusitzen. Aktien 40–60%, Anleihen, Cash und Rohstoffe. Kein Immobilien- oder Krypto-Anteil.'},
-  {profile:'Wachstum',profileId:'growth',equity:70,equityRange:'60–80%',exclusions:'Immobilien',desc:'Langer Horizont, Bereitschaft zu Schwankungen. Aktien 60–80%, Anleihen, Cash, Rohstoffe und Krypto.'},
-  {profile:'Aggressiv',profileId:'aggressive',equity:90,equityRange:'80–100%',exclusions:'Anleihen',desc:'Jahrzehnte voraus, Rückschläge als Chance. Aktien 80–100%, Cash, Rohstoffe, Immobilien und Krypto.'}
+  {profile:'Konservativ',profileId:'conservative',equity:30,equityRange:'20–40%',exclusions:'Immobilien, Krypto',desc:'Moderates Wachstum, begrenzte Schwankungen. Aktien 20–40%, Anleihen, Cash und Rohstoffe. Kein Immobilien- oder Krypto-Anteil.',why:'Ihr Zeithorizont oder Ihr Auszahlungsbedarf sprechen für Stabilität — stetiges Wachstum mit begrenzten Schwankungen.'},
+  {profile:'Ausgewogen',profileId:'balanced',equity:50,equityRange:'40–60%',exclusions:'Immobilien, Krypto',desc:'Zeit genug, um Stürme auszusitzen. Aktien 40–60%, Anleihen, Cash und Rohstoffe. Kein Immobilien- oder Krypto-Anteil.',why:'Ein mittlerer Horizont mit vertretbarem Risiko — Wachstumspotenzial, ohne übermäßig der Volatilität ausgesetzt zu sein.'},
+  {profile:'Wachstum',profileId:'growth',equity:70,equityRange:'60–80%',exclusions:'Immobilien',desc:'Langer Horizont, Bereitschaft zu Schwankungen. Aktien 60–80%, Anleihen, Cash, Rohstoffe und Krypto.',why:'Ein langer Horizont und die Gelassenheit bei Marktschwankungen bedeuten: Aktien können die Hauptarbeit übernehmen.'},
+  {profile:'Aggressiv',profileId:'aggressive',equity:90,equityRange:'80–100%',exclusions:'Anleihen',desc:'Jahrzehnte voraus, Rückschläge als Chance. Aktien 80–100%, Cash, Rohstoffe, Immobilien und Krypto.',why:'Maximaler Horizont, starke Nerven, kein Auszahlungsbedarf — Aktien durch und durch, mit voller Satelliten-Beimischung.'}
 ];
 document.querySelectorAll('.quiz-card').forEach(card=>{
   const q=card.dataset.q;
@@ -1524,6 +1530,7 @@ function scoreProfile(){
   document.getElementById('quizSummary').style.display='flex';
   document.getElementById('qProfile').textContent=s.profile;
   document.getElementById('qDesc').textContent=s.desc;
+  document.getElementById('qWhy').textContent=s.why;
   document.getElementById('qEquityRange').textContent=s.equityRange;
   document.getElementById('qExclusions').textContent=s.exclusions;
   const params=new URLSearchParams({profile:s.profileId,equity:s.equity,horizon:quizAns.horizon,risk:rank,income:quizAns.income,cashflow:quizAns.cashflow,src:'why-journey',lang:'de'});
