@@ -87,8 +87,19 @@ https://bicon.li/prompt-builder/?profile=<slug>&equity=<int>&horizon=<1..4>&risk
 Profiles match the builder config (config.js). Each profile exposes an equity
 range and default exclusions in the result card.
 
-If you change quiz logic in one file, change it in the other, and keep the
-scoring thresholds in `scoreProfile()` / `maybeShowProfile()` identical.
+Both files use the same equity-point scoring system. Keep them identical:
+
+```
+e = 50 (base)
++ horizon:  1→−25  2→0  3→+20  4→+35
++ risk:     1→−25  2→0  3→+5   4→+20   (EN uses panic/hold/buy strings; DE uses 1–4 ints)
++ income:   stable/1→+10  mixed/2→0  volatile/3→−10
++ cashflow: yes/1→−15  sometimes/2→0  no/3→+10
+clamped 10–95 → rank: <40 conservative · <60 balanced · <80 growth · else aggressive
+```
+
+EN uses `maybeShowProfile()` with string values; DE uses `scoreProfile()` with int values.
+If you change weights or thresholds, update both functions.
 
 ## Analytics stub
 
