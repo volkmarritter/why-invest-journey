@@ -217,7 +217,7 @@ p.lead{font-size:21px;line-height:1.55;color:#3a332c;max-width:60ch}
 .alloc-center .lbl{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 .alloc-center .num{font-family:var(--serif);font-size:48px;font-weight:500;line-height:1;margin-top:4px}
 .alloc-center .drift{font-size:13px;color:var(--muted);margin-top:10px}
-.vol-badge{background:rgba(255,107,91,.12);border-radius:8px;padding:4px 14px;margin-top:10px;text-align:center}
+.vol-badge{background:rgba(255,107,91,.12);border-radius:8px;padding:6px 18px;margin-top:12px;text-align:center;display:inline-block}
 .vol-lbl{display:block;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--coral);font-weight:700}
 .vol-num{display:block;font-family:var(--serif);font-size:30px;color:var(--coral);line-height:1.1;margin-top:2px}
 
@@ -476,11 +476,11 @@ canvas{max-width:100%}
           <div class="alloc-center">
             <span class="lbl">Return p.a.</span>
             <span class="num" id="expRet">6.1%</span>
-            <div class="vol-badge">
-              <span class="vol-lbl">Volatility</span>
-              <span class="vol-num" id="volNum">~9%</span>
-            </div>
             <span class="drift" id="riskHint">Balanced</span>
+          </div>
+          <div class="vol-badge">
+            <span class="vol-lbl">Volatility</span>
+            <span class="vol-num" id="volNum">~9%</span>
           </div>
         </div>
       </div>
