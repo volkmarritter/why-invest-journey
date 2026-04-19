@@ -471,12 +471,14 @@ canvas{max-width:100%}
             <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5"><strong style="color:var(--mustard)">Satellites</strong> are return-diversifiers that move differently from equities and bonds — think <em>Listed Real Estate (REITs)</em> and <em>Crypto Assets</em>. The Prompt Builder uses exactly these two satellite classes.</p>
           </div>
         </div>
-        <div class="alloc-donut">
-          <canvas id="donut"></canvas>
-          <div class="alloc-center">
-            <span class="lbl">Return p.a.</span>
-            <span class="num" id="expRet">6.1%</span>
-            <span class="drift" id="riskHint">Balanced</span>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div class="alloc-donut">
+            <canvas id="donut"></canvas>
+            <div class="alloc-center">
+              <span class="lbl">Return p.a.</span>
+              <span class="num" id="expRet">6.1%</span>
+              <span class="drift" id="riskHint">Balanced</span>
+            </div>
           </div>
           <div class="vol-badge">
             <span class="vol-lbl">Volatility</span>
@@ -1012,12 +1014,12 @@ ids.forEach(id=>document.getElementById(id).addEventListener('input',updateAlloc
 updateAlloc();
 
 /* Risk-Return scatter */
-const rrLabelPlugin={id:'rrLabels',afterDraw(chart){const ctx=chart.ctx;const meta=chart.getDatasetMeta(0);const lbl=['Conservative','Balanced','Growth','Aggressive'];ctx.save();ctx.font='11px Inter,sans-serif';ctx.fillStyle='#7A6F62';meta.data.forEach((pt,i)=>{ctx.fillText(lbl[i],pt.x+9,pt.y+4);});ctx.restore();}};
+const rrLabelPlugin={id:'rrLabels',afterDraw(chart){const ctx=chart.ctx;const meta=chart.getDatasetMeta(0);const lbl=['Conservative','Balanced','Growth','Aggressive'];ctx.save();ctx.font='11px Inter,sans-serif';ctx.fillStyle='#7A6F62';meta.data.forEach((pt,i)=>{const w=ctx.measureText(lbl[i]).width;const nearRight=pt.x+w+14>chart.chartArea.right;ctx.fillText(lbl[i],nearRight?pt.x-w-6:pt.x+9,pt.y+4);});ctx.restore();}};
 const rrCtx=document.getElementById('rrChart').getContext('2d');
 var rrChart=new Chart(rrCtx,{
   type:'scatter',plugins:[rrLabelPlugin],
   data:{datasets:[
-    {data:[{x:5,y:3.5},{x:9,y:5.5},{x:13,y:6.5},{x:17,y:7.5}],pointBackgroundColor:'#2D5D3A',pointRadius:7,pointHoverRadius:9},
+    {data:[{x:5,y:3},{x:9,y:5},{x:14,y:7},{x:18,y:9}],pointBackgroundColor:'#2D5D3A',pointRadius:7,pointHoverRadius:9},
     {data:[{x:9,y:6.1}],pointBackgroundColor:'#FF6B5B',pointBorderColor:'#fff',pointBorderWidth:2,pointRadius:11,pointHoverRadius:13}
   ]},
   options:{
