@@ -78,7 +78,7 @@ https://bicon.li/prompt-builder/?profile=<slug>&equity=<int>&horizon=<1..4>&risk
 | profile  | conservative / balanced / growth / aggressive                                       |
 | equity   | 30 / 50 / 70 / 90                                                                   |
 | horizon  | 1 (≥3y) / 2 (≥5y) / 3 (≥10y) / 4 (next generation)                                 |
-| risk     | 1 (sell now) / 2 (nervous) / 3 (stay) / 4 (buy more)                               |
+| risk     | 1 (conservative) / 2 (balanced) / 3 (growth) / 4 (aggressive) — equals profile rank |
 | income   | 1 (stable) / 2 (mixed) / 3 (lumpy) — earned income stability                       |
 | cashflow | yes / sometimes / no (EN) · 1 / 2 / 3 (DE) — portfolio withdrawal need             |
 | src      | always `why-journey`                                                                |

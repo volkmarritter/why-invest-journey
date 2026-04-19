@@ -17,12 +17,12 @@ The test suite validates the Ch 6 quiz scoring logic in both `bicon-why-invest-j
 | Section | Combinations | Assertions |
 |---|---|---|
 | EN spot checks | 7 named cases | 28 |
-| EN exhaustive | 108 (4×3×3×3) | 756 + 54 horizon-cap checks |
+| EN exhaustive | 108 (4×3×3×3) | ~900 |
 | DE spot checks | 5 named cases | 15 |
-| DE exhaustive | 144 (4×4×3×3) | 720 + 36 horizon-cap checks |
-| EN↔DE parity | 108 mapped pairs | 216 |
+| DE exhaustive | 144 (4×4×3×3) | ~720 |
+| EN↔DE parity | 108 mapped pairs | 324 |
 
-Total: **~1619 assertions**.
+Total: **1825 assertions**.
 
 ### What each assertion checks
 
@@ -49,15 +49,15 @@ Total: **~1619 assertions**.
 
 ## Spot-check cases
 
-| Case | horizon | risk | income | cashflow | Expected profile |
-|---|---|---|---|---|---|
-| Original bug (screenshot) | 2 (5yr) | buy | volatile | no | Balanced *(was Growth before horizon cap)* |
-| Horizon-1 cap | 1 (3yr) | buy | stable | no | Conservative *(score=65, capped)* |
-| Horizon-2 cap | 2 (5yr) | hold | stable | no | Balanced *(score=75, capped)* |
-| Growth possible | 3 (10yr) | hold | mixed | sometimes | Growth |
-| Aggressive | 3 (10yr) | buy | volatile | no | Aggressive |
-| Floor clamp | 1 (3yr) | panic | volatile | yes | Conservative *(score clamped to 10)* |
-| Ceiling clamp | 4 (next-gen) | buy | stable | no | Aggressive *(score clamped to 95)* |
+| Case | horizon | risk | income | cashflow | Score | Expected profile | risk param |
+|---|---|---|---|---|---|---|---|
+| Original bug | 2 (5yr) | buy | volatile | no | 70 → capped | Balanced | 2 |
+| h=3 buy volatile yes | 3 (10yr) | buy | volatile | yes | 65 | Growth | 3 |
+| Ceiling clamp | 4 (next-gen) | buy | stable | no | 95 (clamped) | Aggressive | 4 |
+| Horizon-1 cap | 1 (3yr) | buy | stable | no | 65 → capped | Conservative | 1 |
+| Horizon-2 cap | 2 (5yr) | hold | stable | no | 75 → capped | Balanced | 2 |
+| Growth boundary | 3 (10yr) | hold | mixed | sometimes | 75 | Growth | 3 |
+| Floor clamp | 1 (3yr) | panic | volatile | yes | 10 (clamped) | Conservative | 1 |
 
 ## Scoring formula reference
 
