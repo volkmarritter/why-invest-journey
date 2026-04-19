@@ -216,10 +216,17 @@ p.lead{font-size:21px;line-height:1.55;color:#3a332c;max-width:60ch}
 .alloc-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .alloc-center .lbl{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 .alloc-center .num{font-family:var(--serif);font-size:48px;font-weight:500;line-height:1;margin-top:4px}
-.alloc-center .drift{font-size:13px;color:var(--muted);margin-top:10px}
-.vol-badge{background:rgba(255,107,91,.12);border-radius:8px;padding:6px 18px;margin-top:12px;text-align:center;display:inline-block}
-.vol-lbl{display:block;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--coral);font-weight:700}
-.vol-num{display:block;font-family:var(--serif);font-size:30px;color:var(--coral);line-height:1.1;margin-top:2px}
+.alloc-center .drift{font-family:var(--serif);font-size:22px;color:var(--ink);font-weight:500}
+.stats-row{display:flex;gap:10px;margin-top:14px;width:100%;max-width:360px}
+.stat-card{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px;position:relative}
+.stat-card .slbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:5px}
+.stat-card .sval{font-family:var(--serif);font-size:32px;line-height:1.1;margin-top:4px;color:var(--ink)}
+.stat-card .sval.coral{color:var(--coral)}
+.info-btn{background:none;border:1px solid var(--line);border-radius:50%;width:15px;height:15px;font-size:9px;cursor:pointer;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1;flex-shrink:0}
+.info-btn:hover{background:var(--line)}
+.tip-box{display:none;position:absolute;bottom:calc(100% + 8px);left:0;background:var(--ink);color:var(--cream);border-radius:8px;padding:12px 14px;font-size:11px;line-height:1.7;z-index:20;min-width:210px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.tip-box.show{display:block}
+.tip-box::after{content:'';position:absolute;top:100%;left:18px;border:5px solid transparent;border-top-color:var(--ink)}
 
 /* ============ CH2: ETF cost erosion ============ */
 .cost-toggle{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
@@ -475,14 +482,24 @@ canvas{max-width:100%}
           <div class="alloc-donut">
             <canvas id="donut"></canvas>
             <div class="alloc-center">
-              <span class="lbl">Return p.a.</span>
-              <span class="num" id="expRet">6.1%</span>
               <span class="drift" id="riskHint">Balanced</span>
             </div>
           </div>
-          <div class="vol-badge">
-            <span class="vol-lbl">Volatility</span>
-            <span class="vol-num" id="volNum">~9%</span>
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="slbl">Return p.a.
+                <button class="info-btn" aria-label="Assumptions">i</button>
+                <div class="tip-box">Long-run estimates per asset class:<br>· Equities &nbsp;7.5 % p.a.<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;2.5 % p.a.<br>· Satellites &nbsp;5.5 % p.a.<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 % p.a.<br><span style="opacity:.6;font-size:10px">Weighted avg. of your allocation.</span></div>
+              </div>
+              <div class="sval" id="expRet">6.1%</div>
+            </div>
+            <div class="stat-card">
+              <div class="slbl">Volatility
+                <button class="info-btn" aria-label="Assumptions">i</button>
+                <div class="tip-box">Annualised std. dev. per class:<br>· Equities &nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satellites &nbsp;12 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px">Simplified — correlations not modelled.</span></div>
+              </div>
+              <div class="sval coral" id="volNum">~9%</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1013,6 +1030,18 @@ function updateAlloc(){
 }
 ids.forEach(id=>document.getElementById(id).addEventListener('input',updateAlloc));
 updateAlloc();
+
+/* (i) tooltips */
+document.querySelectorAll('.info-btn').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const box=btn.nextElementSibling;
+    const wasOpen=box.classList.contains('show');
+    document.querySelectorAll('.tip-box.show').forEach(t=>t.classList.remove('show'));
+    if(!wasOpen)box.classList.add('show');
+  });
+});
+document.addEventListener('click',()=>document.querySelectorAll('.tip-box.show').forEach(t=>t.classList.remove('show')));
 
 /* Risk-Return scatter */
 const rrLabelPlugin={id:'rrLabels',afterDraw(chart){const ctx=chart.ctx;const meta=chart.getDatasetMeta(0);const lbl=['Conservative','Balanced','Growth','Aggressive'];ctx.save();ctx.font='11px Inter,sans-serif';ctx.fillStyle='#7A6F62';meta.data.forEach((pt,i)=>{const w=ctx.measureText(lbl[i]).width;const nearRight=pt.x+w+14>chart.chartArea.right;ctx.fillText(lbl[i],nearRight?pt.x-w-6:pt.x+9,pt.y+4);});ctx.restore();}};
