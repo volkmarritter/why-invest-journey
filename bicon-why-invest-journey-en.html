@@ -452,10 +452,10 @@ canvas{max-width:100%}
           <div class="alloc-sliders">
             <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:600">Drag to try an allocation</div>
             <div class="alloc-row">
-              <span class="dot" style="background:var(--coral)"></span>
-              <label>Equities</label>
-              <input type="range" min="0" max="100" value="70" id="sEq">
-              <span class="val" id="vEq">70%</span>
+              <span class="dot" style="background:var(--sky)"></span>
+              <label>Cash</label>
+              <input type="range" min="0" max="100" value="3" id="sCa">
+              <span class="val" id="vCa">3%</span>
             </div>
             <div class="alloc-row">
               <span class="dot" style="background:var(--forest)"></span>
@@ -464,16 +464,16 @@ canvas{max-width:100%}
               <span class="val" id="vBo">20%</span>
             </div>
             <div class="alloc-row">
+              <span class="dot" style="background:var(--coral)"></span>
+              <label>Equities</label>
+              <input type="range" min="0" max="100" value="70" id="sEq">
+              <span class="val" id="vEq">70%</span>
+            </div>
+            <div class="alloc-row">
               <span class="dot" style="background:var(--mustard)"></span>
               <label>Satellites</label>
               <input type="range" min="0" max="100" value="7" id="sAl">
               <span class="val" id="vAl">7%</span>
-            </div>
-            <div class="alloc-row">
-              <span class="dot" style="background:var(--sky)"></span>
-              <label>Cash</label>
-              <input type="range" min="0" max="100" value="3" id="sCa">
-              <span class="val" id="vCa">3%</span>
             </div>
             <div style="font-size:12px;color:var(--muted);margin-top:10px" id="allocTotal">Total: 100%</div>
             <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5"><strong style="color:var(--mustard)">Satellites</strong> are return-diversifiers that move differently from equities and bonds — think <em>Listed Real Estate (REITs)</em> and <em>Crypto Assets</em>. The Prompt Builder uses exactly these two satellite classes.</p>
@@ -1041,15 +1041,15 @@ window.addEventListener('scroll',()=>{
 /* =========================================================
    CH1 — Allocation Donut + Expected Return
    ========================================================= */
-const colors=['#FF6B5B','#2D5D3A','#E8B84A','#3E8EDE'];
+const colors=['#3E8EDE','#2D5D3A','#FF6B5B','#E8B84A'];
 const donutCtx=document.getElementById('donut').getContext('2d');
 const donut=new Chart(donutCtx,{
   type:'doughnut',
-  data:{labels:['Equities','Bonds','Satellites','Cash'],datasets:[{data:[70,20,7,3],backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
+  data:{labels:['Cash','Bonds','Equities','Satellites'],datasets:[{data:[3,20,70,7],backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
   options:{cutout:'68%',plugins:{legend:{display:false},tooltip:{enabled:true}},animation:{animateRotate:true,duration:700}}
 });
-const ids=['sEq','sBo','sAl','sCa'];
-const vids=['vEq','vBo','vAl','vCa'];
+const ids=['sCa','sBo','sEq','sAl'];
+const vids=['vCa','vBo','vEq','vAl'];
 let lastVals=ids.map(id=>+document.getElementById(id).value);
 function redistribute(idx,rawNew){
   const others=[0,1,2,3].filter(i=>i!==idx);
@@ -1076,15 +1076,15 @@ function updateAlloc(){
   document.getElementById('allocTotal').textContent='Total: 100%';
   donut.data.datasets[0].data=vals;donut.update();
   // simple expected return model (illustrative)
-  const expR=(vals[0]*0.075 + vals[1]*0.025 + vals[2]*0.055 + vals[3]*0.015)/100;
-  const vol =Math.sqrt((vals[0]/100)**2*0.18**2 + (vals[1]/100)**2*0.05**2 + (vals[2]/100)**2*0.12**2);
+  const expR=(vals[2]*0.075 + vals[1]*0.025 + vals[3]*0.055 + vals[0]*0.015)/100;
+  const vol =Math.sqrt((vals[2]/100)**2*0.18**2 + (vals[1]/100)**2*0.05**2 + (vals[3]/100)**2*0.12**2);
   document.getElementById('expRet').textContent=(expR*100).toFixed(1)+'%';
   document.getElementById('volNum').textContent='~'+(vol*100).toFixed(0)+'%';
   let profile='Balanced';
-  if(vals[0]>=80)profile='Aggressive';
-  else if(vals[0]>=60)profile='Growth';
-  else if(vals[0]>=40)profile='Balanced';
-  else if(vals[0]>=20)profile='Conservative';
+  if(vals[2]>=80)profile='Aggressive';
+  else if(vals[2]>=60)profile='Growth';
+  else if(vals[2]>=40)profile='Balanced';
+  else if(vals[2]>=20)profile='Conservative';
   else profile='Capital preservation';
   document.getElementById('riskHint').textContent=profile;
   if(typeof rrChart!=='undefined'){
