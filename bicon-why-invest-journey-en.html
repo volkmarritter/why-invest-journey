@@ -1478,7 +1478,7 @@ function maybeShowProfile(){
   document.getElementById('qfDesc').textContent=s.desc;
   document.getElementById('qfEquityRange').textContent=s.equityRange;
   document.getElementById('qfExclusions').textContent=s.exclusions;
-  const riskInt={panic:1,hold:3,buy:4};
+  const riskInt={panic:1,hold:2,buy:3};
   const incomeInt={stable:1,mixed:2,volatile:3};
   const params=new URLSearchParams({profile:s.profile,equity:s.equity,horizon:quizState.horizon,risk:riskInt[quizState.risk]??quizState.risk,income:incomeInt[quizState.income]??quizState.income,cashflow:quizState.cashflow,src:'why-journey',lang:'en'});
   document.getElementById('qfGo').href='https://bicon.li/prompt-builder/?'+params.toString();

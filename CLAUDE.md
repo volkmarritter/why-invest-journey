@@ -112,10 +112,10 @@ If you change weights or thresholds, update both functions **and** run `node tes
 | | 5 years or more | ≥5 Jahre | 0 | `horizon=2` |
 | | 10 years or more | ≥10 Jahre | +20 | `horizon=3` |
 | | Next generation | Nächste Generation | +35 | `horizon=4` |
-| **02 Risk** | …sell. I can't stomach it. | Verkaufen | −25 | `risk=1` |
-| | *(not in EN)* | Abwarten und hoffen | 0 | `risk=2` |
-| | …hold. It hurts, but I wait. | Abwarten | +5 | `risk=3` |
-| | …buy more. Sales are for shopping. | Nachkaufen | +20 | `risk=4` |
+| **02 Risk** | …sell. I can't stomach it. | Verkaufen | −25 | EN `risk=1` · DE `risk=1` |
+| | *(not in EN)* | Abwarten und hoffen | 0 | DE `risk=2` only |
+| | …hold. It hurts, but I wait. | Abwarten | +5 | EN `risk=2` · DE `risk=3` |
+| | …buy more. Sales are for shopping. | Nachkaufen | +20 | EN `risk=3` · DE `risk=4` |
 | **03 Income** | Rock solid. Salary or pension. | Sehr stabil | +10 | `income=1` |
 | | Mostly stable, some variability. | Überwiegend stabil | 0 | `income=2` |
 | | Lumpy. Business-owner or commission-based. | Unregelmäßig | −10 | `income=3` |

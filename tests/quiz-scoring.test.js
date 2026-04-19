@@ -47,7 +47,7 @@ const EN_PROFILES = [null,
   { name:'Aggressive',   profile:'aggressive',   equity:90 },
 ];
 
-const EN_RISK_INT   = { panic:1, hold:3, buy:4 };
+const EN_RISK_INT   = { panic:1, hold:2, buy:3 };
 const EN_INCOME_INT = { stable:1, mixed:2, volatile:3 };
 
 function enScore({ horizon, risk, income, cashflow }) {
@@ -90,19 +90,19 @@ console.log('=== EN — spot checks ===\n');
 
 const EN_SPOT_CHECKS = [
   // THE bug case: h=2 r=buy i=volatile c=no → score=70 BUT capped to Balanced by horizon
-  { inputs:{ horizon:2, risk:'buy',   income:'volatile', cashflow:'no'        }, score:70, profile:'balanced',     riskInt:4, incomeInt:3 },
+  { inputs:{ horizon:2, risk:'buy',   income:'volatile', cashflow:'no'        }, score:70, profile:'balanced',     riskInt:3, incomeInt:3 },
   // horizon cap: h=1 r=buy i=stable c=no → score=65 capped to Conservative
-  { inputs:{ horizon:1, risk:'buy',   income:'stable',   cashflow:'no'        }, score:65, profile:'conservative', riskInt:4, incomeInt:1 },
+  { inputs:{ horizon:1, risk:'buy',   income:'stable',   cashflow:'no'        }, score:65, profile:'conservative', riskInt:3, incomeInt:1 },
   // h=2 r=hold i=stable c=no → score=75 capped to Balanced
-  { inputs:{ horizon:2, risk:'hold',  income:'stable',   cashflow:'no'        }, score:75, profile:'balanced',     riskInt:3, incomeInt:1 },
+  { inputs:{ horizon:2, risk:'hold',  income:'stable',   cashflow:'no'        }, score:75, profile:'balanced',     riskInt:2, incomeInt:1 },
   // h=3 r=buy i=volatile c=no → score=90 → Aggressive (no cap at h=3)
-  { inputs:{ horizon:3, risk:'buy',   income:'volatile', cashflow:'no'        }, score:90, profile:'aggressive',   riskInt:4, incomeInt:3 },
+  { inputs:{ horizon:3, risk:'buy',   income:'volatile', cashflow:'no'        }, score:90, profile:'aggressive',   riskInt:3, incomeInt:3 },
   // h=3 r=hold i=mixed c=sometimes → score=75 → Growth
-  { inputs:{ horizon:3, risk:'hold',  income:'mixed',    cashflow:'sometimes' }, score:75, profile:'growth',       riskInt:3, incomeInt:2 },
+  { inputs:{ horizon:3, risk:'hold',  income:'mixed',    cashflow:'sometimes' }, score:75, profile:'growth',       riskInt:2, incomeInt:2 },
   // floor clamp: h=1 r=panic i=volatile c=yes → clamped to 10 → Conservative
   { inputs:{ horizon:1, risk:'panic', income:'volatile', cashflow:'yes'       }, score:10, profile:'conservative', riskInt:1, incomeInt:3 },
   // ceiling: h=4 r=buy i=stable c=no → clamped to 95 → Aggressive
-  { inputs:{ horizon:4, risk:'buy',   income:'stable',   cashflow:'no'        }, score:95, profile:'aggressive',   riskInt:4, incomeInt:1 },
+  { inputs:{ horizon:4, risk:'buy',   income:'stable',   cashflow:'no'        }, score:95, profile:'aggressive',   riskInt:3, incomeInt:1 },
 ];
 
 for (const { inputs, score, profile, riskInt, incomeInt } of EN_SPOT_CHECKS) {
@@ -123,7 +123,7 @@ for (const { inputs, score, profile, riskInt, incomeInt } of EN_SPOT_CHECKS) {
    ══════════════════════════════════════════════════════ */
 console.log('=== EN — all 108 combinations ===\n');
 
-const VALID_RISK_INTS    = new Set([1, 2, 3, 4]);
+const VALID_EN_RISK_INTS = new Set([1, 2, 3]); // EN 3-option quiz: panic→1, hold→2, buy→3
 const VALID_INCOME_INTS  = new Set([1, 2, 3]);
 const VALID_EN_CASHFLOWS = new Set(['yes', 'sometimes', 'no']);
 
@@ -142,7 +142,7 @@ for (const horizon of [1,2,3,4]) {
         assert(`${lbl}: score in [10,95]`,         s >= 10 && s <= 95,            `got ${s}`);
         assert(`${lbl}: profile slug valid`,        VALID_PROFILES.has(pf.profile),`got "${pf.profile}"`);
         assert(`${lbl}: equity valid`,              VALID_EQUITIES.has(pf.equity), `got ${pf.equity}`);
-        assert(`${lbl}: riskInt in {1,2,3,4}`,     VALID_RISK_INTS.has(ri),       `got ${ri}`);
+        assert(`${lbl}: riskInt in {1,2,3}`,      VALID_EN_RISK_INTS.has(ri),    `got ${ri}`);
         assert(`${lbl}: incomeInt in {1,2,3}`,     VALID_INCOME_INTS.has(ii),     `got ${ii}`);
         assert(`${lbl}: cashflow string valid`,     VALID_EN_CASHFLOWS.has(cashflow),`got "${cashflow}"`);
         // horizon cap assertions
