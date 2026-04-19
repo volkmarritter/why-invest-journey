@@ -217,6 +217,9 @@ p.lead{font-size:21px;line-height:1.55;color:#3a332c;max-width:60ch}
 .alloc-center .lbl{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 .alloc-center .num{font-family:var(--serif);font-size:48px;font-weight:500;line-height:1;margin-top:4px}
 .alloc-center .drift{font-size:13px;color:var(--muted);margin-top:10px}
+.vol-badge{background:rgba(255,107,91,.12);border-radius:8px;padding:4px 14px;margin-top:10px;text-align:center}
+.vol-lbl{display:block;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--coral);font-weight:700}
+.vol-num{display:block;font-family:var(--serif);font-size:30px;color:var(--coral);line-height:1.1;margin-top:2px}
 
 /* ============ CH2: ETF cost erosion ============ */
 .cost-toggle{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
@@ -470,12 +473,23 @@ canvas{max-width:100%}
         <div class="alloc-donut">
           <canvas id="donut"></canvas>
           <div class="alloc-center">
-            <span class="lbl">Expected Return p.a.</span>
+            <span class="lbl">Return p.a.</span>
             <span class="num" id="expRet">6.1%</span>
-            <span class="drift" id="riskHint">Risk: Balanced · Volatility ~9%</span>
+            <div class="vol-badge">
+              <span class="vol-lbl">Volatility</span>
+              <span class="vol-num" id="volNum">~9%</span>
+            </div>
+            <span class="drift" id="riskHint">Balanced</span>
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="narrow reveal" style="margin-top:40px">
+      <h4 style="font-size:17px;margin-bottom:8px">Risk and return always travel together.</h4>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Every allocation lives somewhere on this chart. The <span class="mark-coral">red dot</span> follows your sliders in real time. The green dots are the four reference profiles. You can't reach Growth-level returns without Growth-level risk — that's the deal.</p>
+      <canvas id="rrChart" height="200" style="max-width:560px;display:block;margin:0 auto"></canvas>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Illustrative. Based on long-run asset-class return and volatility estimates.</div>
     </div>
 
     <div class="callout forest reveal">
@@ -971,15 +985,43 @@ function updateAlloc(){
   const expR=(vals[0]*0.075 + vals[1]*0.025 + vals[2]*0.055 + vals[3]*0.015)/100;
   const vol =Math.sqrt((vals[0]/100)**2*0.18**2 + (vals[1]/100)**2*0.05**2 + (vals[2]/100)**2*0.12**2);
   document.getElementById('expRet').textContent=(expR*100).toFixed(1)+'%';
+  document.getElementById('volNum').textContent='~'+(vol*100).toFixed(0)+'%';
   let profile='Balanced';
   if(vals[0]>=80)profile='Aggressive';
   else if(vals[0]>=60)profile='Growth';
   else if(vals[0]>=40)profile='Balanced';
   else if(vals[0]>=20)profile='Conservative';
   else profile='Capital preservation';
-  document.getElementById('riskHint').textContent=`Risk: ${profile} · Volatility ~${(vol*100).toFixed(0)}%`;
+  document.getElementById('riskHint').textContent=profile;
+  if(typeof rrChart!=='undefined'){
+    rrChart.data.datasets[1].data[0]={x:+(vol*100).toFixed(1),y:+(expR*100).toFixed(1)};
+    rrChart.update('none');
+  }
 }
 ids.forEach(id=>document.getElementById(id).addEventListener('input',updateAlloc));
+updateAlloc();
+
+/* Risk-Return scatter */
+const rrLabelPlugin={id:'rrLabels',afterDraw(chart){const ctx=chart.ctx;const meta=chart.getDatasetMeta(0);const lbl=['Conservative','Balanced','Growth','Aggressive'];ctx.save();ctx.font='11px Inter,sans-serif';ctx.fillStyle='#7A6F62';meta.data.forEach((pt,i)=>{ctx.fillText(lbl[i],pt.x+9,pt.y+4);});ctx.restore();}};
+const rrCtx=document.getElementById('rrChart').getContext('2d');
+var rrChart=new Chart(rrCtx,{
+  type:'scatter',plugins:[rrLabelPlugin],
+  data:{datasets:[
+    {data:[{x:5,y:3.5},{x:9,y:5.5},{x:13,y:6.5},{x:17,y:7.5}],pointBackgroundColor:'#2D5D3A',pointRadius:7,pointHoverRadius:9},
+    {data:[{x:9,y:6.1}],pointBackgroundColor:'#FF6B5B',pointBorderColor:'#fff',pointBorderWidth:2,pointRadius:11,pointHoverRadius:13}
+  ]},
+  options:{
+    animation:false,
+    scales:{
+      x:{title:{display:true,text:'Volatility (risk) →',font:{size:11},color:'#7A6F62'},min:0,max:22,ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'rgba(0,0,0,.06)'}},
+      y:{title:{display:true,text:'Expected return p.a. →',font:{size:11},color:'#7A6F62'},min:0,max:10,ticks:{callback:v=>v+'%',font:{size:10}},grid:{color:'rgba(0,0,0,.06)'}}
+    },
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:ctx=>{const d=ctx.raw;return ctx.datasetIndex===1?`Your allocation: ${d.x}% vol · ${d.y}% return`:['Conservative','Balanced','Growth','Aggressive'][ctx.dataIndex]+`: ${d.x}% vol · ${d.y}% return`;}}}
+    }
+  }
+});
 updateAlloc();
 
 /* =========================================================
