@@ -1,81 +1,167 @@
-# Quiz scoring tests
+# Quiz scoring — test documentation
 
-## Run
+## How to run
 
 ```bash
 node tests/quiz-scoring.test.js
 ```
 
-No dependencies — plain Node.js.
+No dependencies — plain Node.js. Output: pass/fail summary with details on any failures.
 
-## What is tested
+---
 
-The test suite validates the Ch 6 quiz scoring logic in both `bicon-why-invest-journey-en.html` and `bicon-why-invest-journey-de.html` against the deep-link contract with the Prompt Builder app.
+## Background — why these tests exist
 
-### Coverage
+The Ch 6 quiz computes a risk profile from four questions and deep-links the result to the Prompt Builder app at `bicon.li/prompt-builder`. Three bugs were found and fixed during development:
 
-| Section | Combinations | Assertions |
+| # | Bug | Impact |
 |---|---|---|
-| EN spot checks | 7 named cases | 28 |
-| EN exhaustive | 108 (4×3×3×3) | ~900 |
-| DE spot checks | 5 named cases | 15 |
-| DE exhaustive | 144 (4×4×3×3) | ~720 |
-| EN↔DE parity | 108 mapped pairs | 324 |
+| 1 | EN quiz sent string values for `risk` (`buy`) and `income` (`volatile`) instead of integers | App didn't recognise the params; showed wrong profile |
+| 2 | Journey score could produce Growth with a 5-year horizon; app hard-caps Growth/Aggressive at ≥10y | Journey and app showed different profiles for same inputs |
+| 3 | `risk` URL param sent the raw quiz answer (e.g. `4` for "buy more"), which could contradict the computed profile (e.g. Balanced) | Internal inconsistency; app re-scored to wrong profile |
 
-Total: **1825 assertions**.
+The tests lock these three fixes in place and cover all 1825 assertion paths.
 
-### What each assertion checks
+---
 
-**Score validity**
-- Raw score is clamped to [10, 95] before ranking.
+## The quiz — inputs and scoring
 
-**Horizon cap** (mirrors the Prompt Builder app's hard constraint)
-- `horizon=1` (≥3y) → profile is always Conservative, regardless of score.
-- `horizon=2` (≥5y) → profile is at most Balanced, regardless of score.
-- `horizon=3/4` → no additional cap; score decides between Growth and Aggressive.
+The quiz has four questions. Each answer contributes a score delta:
 
-**Profile correctness**
-- Profile slug is one of `conservative / balanced / growth / aggressive`.
-- Equity value is one of `30 / 50 / 70 / 90`.
-- Profile name is consistent with the score bracket.
+| Question | Option | EN value | DE value | Score Δ |
+|---|---|---|---|---|
+| **01 Horizon** | ≥3 years | horizon=1 | horizon=1 | −25 |
+| | ≥5 years | horizon=2 | horizon=2 | 0 |
+| | ≥10 years | horizon=3 | horizon=3 | +20 |
+| | Next generation | horizon=4 | horizon=4 | +35 |
+| **02 Risk** | Sell immediately | panic | 1 | −25 |
+| | Nervous, but waiting | *(not in EN)* | 2 | 0 |
+| | Hold — plan is plan | hold | 3 | +5 |
+| | Buy more | buy | 4 | +20 |
+| **03 Income** | Rock solid / salary | stable | 1 | +10 |
+| | Mostly stable | mixed | 2 | 0 |
+| | Lumpy / commission | volatile | 3 | −10 |
+| **04 Cash flow** | Yes — rely on distributions | yes | 1 | −15 |
+| | Occasionally | sometimes | 2 | 0 |
+| | No — pure accumulation | no | 3 | +10 |
 
-**URL param contract**
-- `risk` URL param = final profile rank (1–4), not the raw quiz answer. This guarantees `profile`, `equity`, and `risk` are always internally consistent. EN and DE behave identically on this point.
-- EN: `income` is mapped to integer (`stable→1`, `mixed→2`, `volatile→3`). `cashflow` stays as strings (`yes/sometimes/no`).
-- DE: `risk`, `income`, and `cashflow` are all integers natively (data-v coerced with `+`).
-
-**EN↔DE parity**
-- For every EN input combination, the equivalent DE integer inputs produce the same raw score and the same final profile. Ensures both scoring functions stay in sync.
-
-## Spot-check cases
-
-| Case | horizon | risk | income | cashflow | Score | Expected profile | risk param |
-|---|---|---|---|---|---|---|---|
-| Original bug | 2 (5yr) | buy | volatile | no | 70 → capped | Balanced | 2 |
-| h=3 buy volatile yes | 3 (10yr) | buy | volatile | yes | 65 | Growth | 3 |
-| Ceiling clamp | 4 (next-gen) | buy | stable | no | 95 (clamped) | Aggressive | 4 |
-| Horizon-1 cap | 1 (3yr) | buy | stable | no | 65 → capped | Conservative | 1 |
-| Horizon-2 cap | 2 (5yr) | hold | stable | no | 75 → capped | Balanced | 2 |
-| Growth boundary | 3 (10yr) | hold | mixed | sometimes | 75 | Growth | 3 |
-| Floor clamp | 1 (3yr) | panic | volatile | yes | 10 (clamped) | Conservative | 1 |
-
-## Scoring formula reference
+### Scoring formula
 
 ```
-e = 50 (base)
-+ horizon:  1→−25  2→0  3→+20  4→+35
-+ risk:     1→−25  2→0  3→+5   4→+20
-+ income:   1→+10  2→0  3→−10
-+ cashflow: 1/yes→−15  2/sometimes→0  3/no→+10
+e = 50  (base)
++ horizon delta
++ risk delta
++ income delta
++ cashflow delta
 clamped to [10, 95]
-
-horizon cap: h=1→max rank 1  h=2→max rank 2  h=3/4→max rank 4
-rank: <40→1(Conservative)  <60→2(Balanced)  <80→3(Growth)  else→4(Aggressive)
 ```
 
-## When to update tests
+### Horizon cap (mirrors Prompt Builder app)
 
-- Any change to scoring weights or thresholds in `maybeShowProfile()` (EN) or `scoreProfile()` (DE).
-- Any new quiz option added.
-- Any change to the deep-link URL param contract.
-- Any change to the horizon cap.
+The app hard-caps profiles by investment horizon. After clamping, the rank is additionally constrained:
+
+| Horizon | Max profile |
+|---|---|
+| 1 (≥3y) | Conservative (rank 1) |
+| 2 (≥5y) | Balanced (rank 2) |
+| 3 (≥10y) | no cap |
+| 4 (next gen) | no cap |
+
+### Profile thresholds
+
+| Score | Rank | Profile | Equity range | `risk` param |
+|---|---|---|---|---|
+| < 40 | 1 | Conservative | 20–40% | 1 |
+| 40–59 | 2 | Balanced | 40–60% | 2 |
+| 60–79 | 3 | Growth | 60–80% | 3 |
+| ≥ 80 | 4 | Aggressive | 80–100% | 4 |
+
+> **Key invariant:** the `risk` URL param always equals the final profile rank — not the raw quiz answer. This keeps `profile`, `equity`, and `risk` internally consistent for the app.
+
+---
+
+## URL param contract
+
+```
+https://bicon.li/prompt-builder/?profile=<slug>&equity=<int>&horizon=<1..4>
+  &risk=<rank>&income=<1..3>&cashflow=<en-string|de-int>&src=why-journey&lang=<en|de>
+```
+
+| Param | EN | DE |
+|---|---|---|
+| `profile` | slug derived from rank | same |
+| `equity` | 30 / 50 / 70 / 90 | same |
+| `horizon` | integer 1–4 | same |
+| `risk` | = profile rank (1–4) | same |
+| `income` | mapped to int: stable→1, mixed→2, volatile→3 | integer from data-v |
+| `cashflow` | string: yes / sometimes / no | integer: 1 / 2 / 3 |
+| `src` | `why-journey` | same |
+| `lang` | `en` | `de` |
+
+---
+
+## Test structure
+
+The test file (`tests/quiz-scoring.test.js`) is self-contained plain JS with no framework. It mirrors the scoring logic from both HTML files and runs assertions against expected outputs.
+
+### Section 1 — EN spot checks (7 cases, 28 assertions)
+
+Named cases covering the three original bugs and boundary conditions:
+
+| Case | horizon | risk | income | cashflow | Raw score | Capped profile | `risk` param |
+|---|---|---|---|---|---|---|---|
+| Original bug | 2 | buy | volatile | no | 70 → capped | Balanced | 2 |
+| h=3 buy volatile yes | 3 | buy | volatile | yes | 65 | Growth | 3 |
+| Ceiling clamp | 4 | buy | stable | no | 95 | Aggressive | 4 |
+| Horizon-1 cap | 1 | buy | stable | no | 65 → capped | Conservative | 1 |
+| Horizon-2 cap | 2 | hold | stable | no | 75 → capped | Balanced | 2 |
+| Growth boundary | 3 | hold | mixed | sometimes | 75 | Growth | 3 |
+| Floor clamp | 1 | panic | volatile | yes | 10 | Conservative | 1 |
+
+### Section 2 — EN exhaustive (108 combinations, ~900 assertions)
+
+Runs all 4×3×3×3 input combinations. Per combination asserts:
+- Score clamped to [10, 95]
+- Profile slug is one of the four valid values
+- Equity is one of {30, 50, 70, 90}
+- `risk` param is a valid rank (1–4)
+- `income` param is an integer in {1, 2, 3}
+- `cashflow` string is one of `yes / sometimes / no`
+- Horizon cap: h=1 → rank must be 1; h=2 → rank must be ≤ 2
+
+### Section 3 — DE spot checks (5 cases, 15 assertions)
+
+Equivalent of the EN spot checks using DE integer inputs:
+
+| Case | horizon | risk | income | cashflow | Raw score | Capped profile |
+|---|---|---|---|---|---|---|
+| Original bug | 2 | 4 | 3 | 3 | 70 → capped | Balanced |
+| h=3 buy volatile yes | 3 | 4 | 3 | 1 | 65 | Growth |
+| Ceiling clamp | 4 | 4 | 1 | 3 | 95 | Aggressive |
+| Horizon-1 cap | 1 | 4 | 1 | 3 | 65 → capped | Conservative |
+| Floor clamp | 1 | 1 | 3 | 1 | 10 | Conservative |
+
+### Section 4 — DE exhaustive (144 combinations, ~720 assertions)
+
+Runs all 4×4×3×3 input combinations (DE has a 4th risk option — "nervous"). Same assertions as EN exhaustive, adapted for integer inputs.
+
+### Section 5 — EN↔DE parity (108 mapped pairs, 324 assertions)
+
+For every EN input combination, maps it to the equivalent DE integers and asserts:
+- Raw score is identical in both formulas
+- Final profile (after horizon cap) is identical
+- `risk` param (rank) is identical
+
+This section detects any drift between `maybeShowProfile()` (EN) and `scoreProfile()` (DE).
+
+---
+
+## When to update the tests
+
+| Change | What to update |
+|---|---|
+| Scoring weight or threshold | Update `enScore()` and/or `deScore()`, fix any failing spot checks |
+| Horizon cap values | Update `HORIZON_CAP`, fix horizon-cap assertions |
+| New quiz option (e.g. a 4th risk answer in EN) | Add to the input arrays, update spot checks |
+| URL param contract change | Update the assertions in exhaustive sections |
+| EN and DE scoring drift | The parity section will catch it automatically |
