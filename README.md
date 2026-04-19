@@ -35,10 +35,11 @@ The user scrolls through six chapters, each with at least one interactive elemen
 5. **Compounding** — live compound calculator with four sliders (start, monthly,
    years, rate), stacked area chart separating contributions from gains, and two
    plan-export buttons (**Save plan as image** → PNG, **Copy summary** → clipboard).
-6. **Your profile** — a 30-second three-question quiz (investment horizon,
-   crash reaction, income need) that produces one of four profiles
-   (Conservative → Aggressive) with equity range and default exclusions, and
-   a **deep-linked button to the Prompt Builder** pre-loaded with the answers.
+6. **Your profile** — a 30-second four-question quiz (investment horizon,
+   crash reaction, income stability, cash withdrawal need) that produces one
+   of four profiles (Conservative → Aggressive) with equity range and default
+   exclusions, and a **deep-linked button to the Prompt Builder** pre-loaded
+   with the answers.
 
 Finally, a **sources list** and a proper MiFID II / FIDLEG-style disclaimer.
 
@@ -70,7 +71,7 @@ When the user completes the profile quiz, the **"Open in Prompt Builder →"**
 button opens a URL shaped like:
 
 ```
-https://bicon.li/prompt-builder/?profile=balanced&equity=55&horizon=3&risk=3&income=3&src=why-journey&lang=en
+https://bicon.li/prompt-builder/?profile=balanced&equity=55&horizon=3&risk=3&income=3&cashflow=2&src=why-journey&lang=en
 ```
 
 Query params the builder should be prepared to read:
@@ -81,7 +82,8 @@ Query params the builder should be prepared to read:
 | `equity` | `30` \| `50` \| `70` \| `90` | Midpoint of profile equity range |
 | `horizon` | `1`…`4` | ≥3y / ≥5y / ≥10y / next generation |
 | `risk` | `1`…`4` | Crash reaction: sell / nervous / hold / buy more |
-| `income` | `1`…`3` | Income need: yes / some / pure growth |
+| `income` | `1`…`3` | Earned income stability: stable / mixed / lumpy |
+| `cashflow` | `yes` \| `sometimes` \| `no` (EN) · `1`…`3` (DE) | Portfolio withdrawal need |
 | `src` | `why-journey` | Attribution |
 | `lang` | `en` \| `de` | Locale |
 

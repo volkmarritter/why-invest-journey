@@ -41,7 +41,7 @@ Ch 2: ETFs            500-dot ownership grid + 10/20/30y cost chart + inflation 
 Ch 3: Stock picking   SPIVA bars + 10-ticker mini-game with INDEX_REF vs MSCI World
 Ch 4: Market timing   Missing-best-days chart + drawdown grid + Peter Lynch callout
 Ch 5: Compounding     4-slider calculator + stacked area chart + PNG/text export
-Ch 6: Your profile    3-question quiz (horizon ≥3/5/10y/next-gen · crash reaction · income need) → 4-profile result with equity range + exclusions → deep-link to Prompt Builder
+Ch 6: Your profile    4-question quiz (horizon ≥3/5/10y/next-gen · crash reaction · income stability · cash withdrawal need) → 4-profile result with equity range + exclusions → deep-link to Prompt Builder
 Sources               Numbered references list + MiFID II / FIDLEG disclaimer
 Final CTA             "To the app" / "Zur App" button
 ```
@@ -70,7 +70,7 @@ fine. Avoid jargon when a plain word works. Italics for emphasis, not bold.
 The quiz builds a URL like:
 
 ```
-https://bicon.li/prompt-builder/?profile=<slug>&equity=<int>&horizon=<1..4>&risk=<1..4>&income=<1..3>&src=why-journey&lang=<en|de>
+https://bicon.li/prompt-builder/?profile=<slug>&equity=<int>&horizon=<1..4>&risk=<1..4>&income=<1..3>&cashflow=<yes|sometimes|no>&src=why-journey&lang=<en|de>
 ```
 
 | Param    | Values                                                                              |
@@ -79,7 +79,8 @@ https://bicon.li/prompt-builder/?profile=<slug>&equity=<int>&horizon=<1..4>&risk
 | equity   | 30 / 50 / 70 / 90                                                                   |
 | horizon  | 1 (≥3y) / 2 (≥5y) / 3 (≥10y) / 4 (next generation)                                 |
 | risk     | 1 (sell now) / 2 (nervous) / 3 (stay) / 4 (buy more)                               |
-| income   | 1 (need income) / 2 (some) / 3 (pure growth)                                       |
+| income   | 1 (stable) / 2 (mixed) / 3 (lumpy) — earned income stability                       |
+| cashflow | yes / sometimes / no (EN) · 1 / 2 / 3 (DE) — portfolio withdrawal need             |
 | src      | always `why-journey`                                                                |
 | lang     | `en` or `de`                                                                        |
 
