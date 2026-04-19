@@ -1161,7 +1161,12 @@ updateAlloc();
       animation:false,
       plugins:{
         legend:{position:'top',labels:{filter:item=>!item.text.startsWith('_'),font:{family:'Inter',size:12},usePointStyle:true,pointStyleWidth:16}},
-        tooltip:{callbacks:{label:ctx=>{if(ctx.dataset.label.startsWith('_'))return null;return `${ctx.dataset.label}: ${ctx.raw ?? '—'}`;},filter:item=>!item.dataset.label.startsWith('_')}}
+        tooltip:{callbacks:{label:ctx=>{
+          if(ctx.raw===null||ctx.raw===undefined)return null;
+          const names={'_wBull':'World (optimistic)','_wBear':'World (conservative)','_bBull':'60–40 (optimistic)','_bBear':'60–40 (conservative)'};
+          const lbl=names[ctx.dataset.label]||ctx.dataset.label;
+          return `${lbl}: ${ctx.raw}`;
+        }}}
       },
       scales:{
         x:{ticks:{font:{family:'Inter',size:10},maxTicksLimit:10,maxRotation:0},grid:{color:'rgba(0,0,0,.05)'}},
