@@ -112,10 +112,10 @@ If you change weights or thresholds, update both functions **and** run `node tes
 | | 5 years or more | ≥5 Jahre | 0 | `horizon=2` |
 | | 10 years or more | ≥10 Jahre | +20 | `horizon=3` |
 | | Next generation | Nächste Generation | +35 | `horizon=4` |
-| **02 Risk** | …sell. I can't stomach it. | Verkaufen | −25 | EN `risk=1` · DE `risk=1` |
-| | *(not in EN)* | Abwarten und hoffen | 0 | DE `risk=2` only |
-| | …hold. It hurts, but I wait. | Abwarten | +5 | EN `risk=2` · DE `risk=3` |
-| | …buy more. Sales are for shopping. | Nachkaufen | +20 | EN `risk=3` · DE `risk=4` |
+| **02 Risk** | …sell. I can't stomach it. | Verkaufen | −25 | *(contributes to score)* |
+| | *(not in EN)* | Abwarten und hoffen | 0 | DE only |
+| | …hold. It hurts, but I wait. | Abwarten | +5 | *(contributes to score)* |
+| | …buy more. Sales are for shopping. | Nachkaufen | +20 | *(contributes to score)* |
 | **03 Income** | Rock solid. Salary or pension. | Sehr stabil | +10 | `income=1` |
 | | Mostly stable, some variability. | Überwiegend stabil | 0 | `income=2` |
 | | Lumpy. Business-owner or commission-based. | Unregelmäßig | −10 | `income=3` |
@@ -123,8 +123,8 @@ If you change weights or thresholds, update both functions **and** run `node tes
 | | Occasionally, but not essential. | Gelegentlich | 0 | `cashflow=sometimes` / `2` |
 | | No — pure accumulation. | Nein | +10 | `cashflow=no` / `3` |
 
-> EN `cashflow` passes strings (`yes/sometimes/no`); DE passes integers (`1/2/3`).
-> All other URL params are integers in both locales.
+> The `risk` URL param is **not** the raw quiz answer — it equals the final profile rank (1=Conservative, 2=Balanced, 3=Growth, 4=Aggressive), keeping it consistent with `profile` and `equity`. The raw quiz answer only affects the score calculation.
+> EN `cashflow` passes strings (`yes/sometimes/no`); DE passes integers (`1/2/3`). All other URL params are integers.
 
 ### Journey result vs Prompt Builder app — profile boundaries
 

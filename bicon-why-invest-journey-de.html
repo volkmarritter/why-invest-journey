@@ -1522,7 +1522,7 @@ function scoreProfile(){
   document.getElementById('qDesc').textContent=s.desc;
   document.getElementById('qEquityRange').textContent=s.equityRange;
   document.getElementById('qExclusions').textContent=s.exclusions;
-  const params=new URLSearchParams({profile:s.profileId,equity:s.equity,horizon:quizAns.horizon,risk:quizAns.risk,income:quizAns.income,cashflow:quizAns.cashflow,src:'why-journey',lang:'de'});
+  const params=new URLSearchParams({profile:s.profileId,equity:s.equity,horizon:quizAns.horizon,risk:rank,income:quizAns.income,cashflow:quizAns.cashflow,src:'why-journey',lang:'de'});
   document.getElementById('qGo').href='https://bicon.li/prompt-builder/?'+params.toString();
   window.bicon.track('profile_scored',{profile:s.profile,equity:s.equity});
 }

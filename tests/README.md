@@ -40,7 +40,8 @@ Total: **~1619 assertions**.
 - Profile name is consistent with the score bracket.
 
 **URL param contract**
-- EN: `risk` and `income` are mapped to integers before building the URL (`panic→1`, `hold→2`, `buy→3`; `stable→1`, `mixed→2`, `volatile→3`). EN has only 3 risk options so max risk param is 3 (never 4). `cashflow` stays as strings (`yes/sometimes/no`).
+- `risk` URL param = final profile rank (1–4), not the raw quiz answer. This guarantees `profile`, `equity`, and `risk` are always internally consistent. EN and DE behave identically on this point.
+- EN: `income` is mapped to integer (`stable→1`, `mixed→2`, `volatile→3`). `cashflow` stays as strings (`yes/sometimes/no`).
 - DE: `risk`, `income`, and `cashflow` are all integers natively (data-v coerced with `+`).
 
 **EN↔DE parity**

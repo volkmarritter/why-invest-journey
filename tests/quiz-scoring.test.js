@@ -2,12 +2,8 @@
  * Quiz scoring tests — EN (108 combos) + DE (144 combos)
  * Run with: node tests/quiz-scoring.test.js
  *
- * Validates per locale:
- *   1. Score is clamped to [10, 95]
- *   2. Horizon cap: h=1→max Conservative, h=2→max Balanced, h=3/4→no extra cap
- *   3. Profile rank maps correctly to slug/equity
- *   4. URL params use integer values for risk, income (and cashflow in DE)
- *   5. EN↔DE parity: same inputs → same profile
+ * Key invariant: the `risk` URL param always equals the final profile rank (1–4),
+ * so profile and risk are always internally consistent for the Prompt Builder app.
  */
 
 /* ══════════════════════════════════════════════════════
@@ -15,26 +11,19 @@
    ══════════════════════════════════════════════════════ */
 const VALID_PROFILES = new Set(['conservative', 'balanced', 'growth', 'aggressive']);
 const VALID_EQUITIES = new Set([30, 50, 70, 90]);
-
-const HORIZON_CAP = { 1:1, 2:2, 3:4, 4:4 }; // max rank by horizon
+const HORIZON_CAP    = { 1:1, 2:2, 3:4, 4:4 };
 
 function rankFromScore(e, horizon) {
   const raw = e < 40 ? 1 : e < 60 ? 2 : e < 80 ? 3 : 4;
   return Math.min(raw, HORIZON_CAP[horizon]);
 }
 
-/* ── test runner ── */
-let passed = 0;
-let failed = 0;
+let passed = 0, failed = 0;
 const failures = [];
 
 function assert(label, condition, detail = '') {
-  if (condition) {
-    passed++;
-  } else {
-    failed++;
-    failures.push(`  FAIL: ${label}${detail ? ' — ' + detail : ''}`);
-  }
+  if (condition) { passed++; }
+  else { failed++; failures.push(`  FAIL: ${label}${detail ? ' — ' + detail : ''}`); }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -46,8 +35,6 @@ const EN_PROFILES = [null,
   { name:'Growth',       profile:'growth',       equity:70 },
   { name:'Aggressive',   profile:'aggressive',   equity:90 },
 ];
-
-const EN_RISK_INT   = { panic:1, hold:2, buy:3 };
 const EN_INCOME_INT = { stable:1, mixed:2, volatile:3 };
 
 function enScore({ horizon, risk, income, cashflow }) {
@@ -84,38 +71,50 @@ function deScore({ horizon, risk, income, cashflow }) {
 }
 
 /* ══════════════════════════════════════════════════════
+   Helper: assert a full case
+   ══════════════════════════════════════════════════════ */
+function assertCase(label, score, horizon, expectedScore, expectedProfile, expectedRank) {
+  const rank = rankFromScore(score, horizon);
+  assert(`${label} score=${expectedScore}`,    score === expectedScore,              `got ${score}`);
+  assert(`${label} profile=${expectedProfile}`,
+    (expectedProfile === 'conservative' ? EN_PROFILES : EN_PROFILES)[rank].profile === expectedProfile,
+    `got rank=${rank}`);
+  assert(`${label} risk param=rank=${expectedRank}`, rank === expectedRank,         `got rank ${rank}`);
+}
+
+/* ══════════════════════════════════════════════════════
    EN spot checks
    ══════════════════════════════════════════════════════ */
 console.log('=== EN — spot checks ===\n');
 
-const EN_SPOT_CHECKS = [
-  // THE bug case: h=2 r=buy i=volatile c=no → score=70 BUT capped to Balanced by horizon
-  { inputs:{ horizon:2, risk:'buy',   income:'volatile', cashflow:'no'        }, score:70, profile:'balanced',     riskInt:3, incomeInt:3 },
-  // horizon cap: h=1 r=buy i=stable c=no → score=65 capped to Conservative
-  { inputs:{ horizon:1, risk:'buy',   income:'stable',   cashflow:'no'        }, score:65, profile:'conservative', riskInt:3, incomeInt:1 },
-  // h=2 r=hold i=stable c=no → score=75 capped to Balanced
-  { inputs:{ horizon:2, risk:'hold',  income:'stable',   cashflow:'no'        }, score:75, profile:'balanced',     riskInt:2, incomeInt:1 },
-  // h=3 r=buy i=volatile c=no → score=90 → Aggressive (no cap at h=3)
-  { inputs:{ horizon:3, risk:'buy',   income:'volatile', cashflow:'no'        }, score:90, profile:'aggressive',   riskInt:3, incomeInt:3 },
-  // h=3 r=hold i=mixed c=sometimes → score=75 → Growth
-  { inputs:{ horizon:3, risk:'hold',  income:'mixed',    cashflow:'sometimes' }, score:75, profile:'growth',       riskInt:2, incomeInt:2 },
-  // floor clamp: h=1 r=panic i=volatile c=yes → clamped to 10 → Conservative
-  { inputs:{ horizon:1, risk:'panic', income:'volatile', cashflow:'yes'       }, score:10, profile:'conservative', riskInt:1, incomeInt:3 },
-  // ceiling: h=4 r=buy i=stable c=no → clamped to 95 → Aggressive
-  { inputs:{ horizon:4, risk:'buy',   income:'stable',   cashflow:'no'        }, score:95, profile:'aggressive',   riskInt:3, incomeInt:1 },
+const EN_SPOT = [
+  // risk param = rank (profile), not raw quiz answer
+  // h=2 buy volatile no → score=70, capped to Balanced → risk=2
+  { inputs:{horizon:2,risk:'buy',  income:'volatile',cashflow:'no'       }, score:70, profile:'balanced',     rank:2 },
+  // h=3 buy volatile yes → score=65 → Growth → risk=3
+  { inputs:{horizon:3,risk:'buy',  income:'volatile',cashflow:'yes'      }, score:65, profile:'growth',       rank:3 },
+  // h=4 buy stable no → score=95 → Aggressive → risk=4
+  { inputs:{horizon:4,risk:'buy',  income:'stable',  cashflow:'no'       }, score:95, profile:'aggressive',   rank:4 },
+  // h=1 buy stable no → score=65, capped to Conservative → risk=1 (not 3)
+  { inputs:{horizon:1,risk:'buy',  income:'stable',  cashflow:'no'       }, score:65, profile:'conservative', rank:1 },
+  // h=2 hold stable no → score=75, capped to Balanced → risk=2
+  { inputs:{horizon:2,risk:'hold', income:'stable',  cashflow:'no'       }, score:75, profile:'balanced',     rank:2 },
+  // h=3 hold mixed sometimes → score=75 → Growth → risk=3
+  { inputs:{horizon:3,risk:'hold', income:'mixed',   cashflow:'sometimes'}, score:75, profile:'growth',       rank:3 },
+  // floor: h=1 panic volatile yes → score=10 → Conservative → risk=1
+  { inputs:{horizon:1,risk:'panic',income:'volatile',cashflow:'yes'      }, score:10, profile:'conservative', rank:1 },
 ];
 
-for (const { inputs, score, profile, riskInt, incomeInt } of EN_SPOT_CHECKS) {
-  const s  = enScore(inputs);
-  const r  = rankFromScore(s, inputs.horizon);
-  const pf = EN_PROFILES[r];
-  const ri = EN_RISK_INT[inputs.risk];
-  const ii = EN_INCOME_INT[inputs.income];
-  const label = JSON.stringify(inputs);
-  assert(`EN ${label} → score=${score}`,        s === score,            `got ${s}`);
-  assert(`EN ${label} → profile=${profile}`,    pf.profile === profile, `got ${pf.profile}`);
-  assert(`EN ${label} → riskInt=${riskInt}`,    ri === riskInt,         `got ${ri}`);
-  assert(`EN ${label} → incomeInt=${incomeInt}`,ii === incomeInt,       `got ${ii}`);
+for (const { inputs, score, profile, rank } of EN_SPOT) {
+  const s   = enScore(inputs);
+  const r   = rankFromScore(s, inputs.horizon);
+  const pf  = EN_PROFILES[r];
+  const ii  = EN_INCOME_INT[inputs.income];
+  const lbl = `EN ${JSON.stringify(inputs)} →`;
+  assert(`${lbl} score=${score}`,          s === score,            `got ${s}`);
+  assert(`${lbl} profile=${profile}`,      pf.profile === profile, `got ${pf.profile}`);
+  assert(`${lbl} risk param=rank=${rank}`, r === rank,             `got rank ${r}`);
+  assert(`${lbl} incomeInt in {1,2,3}`,   [1,2,3].includes(ii),   `got ${ii}`);
 }
 
 /* ══════════════════════════════════════════════════════
@@ -123,29 +122,28 @@ for (const { inputs, score, profile, riskInt, incomeInt } of EN_SPOT_CHECKS) {
    ══════════════════════════════════════════════════════ */
 console.log('=== EN — all 108 combinations ===\n');
 
-const VALID_EN_RISK_INTS = new Set([1, 2, 3]); // EN 3-option quiz: panic→1, hold→2, buy→3
 const VALID_INCOME_INTS  = new Set([1, 2, 3]);
 const VALID_EN_CASHFLOWS = new Set(['yes', 'sometimes', 'no']);
+const VALID_RANKS        = new Set([1, 2, 3, 4]);
 
 for (const horizon of [1,2,3,4]) {
   for (const risk of ['panic','hold','buy']) {
     for (const income of ['stable','mixed','volatile']) {
       for (const cashflow of ['yes','sometimes','no']) {
         const inputs = { horizon, risk, income, cashflow };
-        const s  = enScore(inputs);
-        const r  = rankFromScore(s, horizon);
-        const pf = EN_PROFILES[r];
-        const ri = EN_RISK_INT[risk];
-        const ii = EN_INCOME_INT[income];
+        const s   = enScore(inputs);
+        const r   = rankFromScore(s, horizon);
+        const pf  = EN_PROFILES[r];
+        const ii  = EN_INCOME_INT[income];
         const lbl = `EN h=${horizon} r=${risk} i=${income} c=${cashflow}`;
 
-        assert(`${lbl}: score in [10,95]`,         s >= 10 && s <= 95,            `got ${s}`);
-        assert(`${lbl}: profile slug valid`,        VALID_PROFILES.has(pf.profile),`got "${pf.profile}"`);
-        assert(`${lbl}: equity valid`,              VALID_EQUITIES.has(pf.equity), `got ${pf.equity}`);
-        assert(`${lbl}: riskInt in {1,2,3}`,      VALID_EN_RISK_INTS.has(ri),    `got ${ri}`);
-        assert(`${lbl}: incomeInt in {1,2,3}`,     VALID_INCOME_INTS.has(ii),     `got ${ii}`);
-        assert(`${lbl}: cashflow string valid`,     VALID_EN_CASHFLOWS.has(cashflow),`got "${cashflow}"`);
-        // horizon cap assertions
+        assert(`${lbl}: score in [10,95]`,       s >= 10 && s <= 95,              `got ${s}`);
+        assert(`${lbl}: profile slug valid`,      VALID_PROFILES.has(pf.profile),  `got "${pf.profile}"`);
+        assert(`${lbl}: equity valid`,            VALID_EQUITIES.has(pf.equity),   `got ${pf.equity}`);
+        assert(`${lbl}: risk param=rank`,         VALID_RANKS.has(r),              `got ${r}`);
+        assert(`${lbl}: risk==profile rank`,      r === rankFromScore(s, horizon), `mismatch`);
+        assert(`${lbl}: incomeInt in {1,2,3}`,   VALID_INCOME_INTS.has(ii),       `got ${ii}`);
+        assert(`${lbl}: cashflow string valid`,   VALID_EN_CASHFLOWS.has(cashflow),`got "${cashflow}"`);
         if (horizon === 1) assert(`${lbl}: h=1 → max Conservative`, r === 1, `got rank ${r}`);
         if (horizon === 2) assert(`${lbl}: h=2 → max Balanced`,      r <= 2, `got rank ${r}`);
       }
@@ -158,37 +156,33 @@ for (const horizon of [1,2,3,4]) {
    ══════════════════════════════════════════════════════ */
 console.log('=== DE — spot checks ===\n');
 
-const DE_SPOT_CHECKS = [
-  // bug case: h=2 r=4 i=3 c=3 → score=70 capped to Ausgewogen
-  { inputs:{ horizon:2, risk:4, income:3, cashflow:3 }, score:70, profile:'balanced'     },
-  // h=1 r=4 i=1 c=3 → score=65 capped to Konservativ
-  { inputs:{ horizon:1, risk:4, income:1, cashflow:3 }, score:65, profile:'conservative' },
-  // h=3 r=4 i=3 c=3 → score=90 → Aggressiv (no cap)
-  { inputs:{ horizon:3, risk:4, income:3, cashflow:3 }, score:90, profile:'aggressive'   },
-  // floor: h=1 r=1 i=3 c=1 → clamped 10 → Konservativ
-  { inputs:{ horizon:1, risk:1, income:3, cashflow:1 }, score:10, profile:'conservative' },
-  // ceiling: h=4 r=4 i=1 c=3 → clamped 95 → Aggressiv
-  { inputs:{ horizon:4, risk:4, income:1, cashflow:3 }, score:95, profile:'aggressive'   },
+const DE_SPOT = [
+  // h=2 r=4 i=3 c=3 → score=70, capped Ausgewogen → risk=2
+  { inputs:{horizon:2,risk:4,income:3,cashflow:3}, score:70, profile:'balanced',     rank:2 },
+  // h=3 r=4 i=3 c=1 → score=65 → Wachstum → risk=3
+  { inputs:{horizon:3,risk:4,income:3,cashflow:1}, score:65, profile:'growth',       rank:3 },
+  // h=4 r=4 i=1 c=3 → score=95 → Aggressiv → risk=4
+  { inputs:{horizon:4,risk:4,income:1,cashflow:3}, score:95, profile:'aggressive',   rank:4 },
+  // h=1 r=4 i=1 c=3 → score=65, capped Conservative → risk=1
+  { inputs:{horizon:1,risk:4,income:1,cashflow:3}, score:65, profile:'conservative', rank:1 },
+  // floor: h=1 r=1 i=3 c=1 → score=10 → Konservativ → risk=1
+  { inputs:{horizon:1,risk:1,income:3,cashflow:1}, score:10, profile:'conservative', rank:1 },
 ];
 
-for (const { inputs, score, profile } of DE_SPOT_CHECKS) {
+for (const { inputs, score, profile, rank } of DE_SPOT) {
   const s  = deScore(inputs);
   const r  = rankFromScore(s, inputs.horizon);
   const pf = DE_PROFILES[r];
-  const label = JSON.stringify(inputs);
-  assert(`DE ${label} → score=${score}`,     s === score,            `got ${s}`);
-  assert(`DE ${label} → profile=${profile}`, pf.profile === profile, `got ${pf.profile}`);
-  assert(`DE ${label} → risk is integer`,    Number.isInteger(inputs.risk),     `got ${typeof inputs.risk}`);
-  assert(`DE ${label} → income is integer`,  Number.isInteger(inputs.income),   `got ${typeof inputs.income}`);
-  assert(`DE ${label} → cashflow is integer`,Number.isInteger(inputs.cashflow), `got ${typeof inputs.cashflow}`);
+  const lbl = `DE ${JSON.stringify(inputs)} →`;
+  assert(`${lbl} score=${score}`,          s === score,            `got ${s}`);
+  assert(`${lbl} profile=${profile}`,      pf.profile === profile, `got ${pf.profile}`);
+  assert(`${lbl} risk param=rank=${rank}`, r === rank,             `got rank ${r}`);
 }
 
 /* ══════════════════════════════════════════════════════
    DE exhaustive — 4×4×3×3 = 144 combinations
    ══════════════════════════════════════════════════════ */
 console.log('=== DE — all 144 combinations ===\n');
-
-const VALID_DE_CASHFLOWS = new Set([1, 2, 3]);
 
 for (const horizon of [1,2,3,4]) {
   for (const risk of [1,2,3,4]) {
@@ -200,10 +194,10 @@ for (const horizon of [1,2,3,4]) {
         const pf = DE_PROFILES[r];
         const lbl = `DE h=${horizon} r=${risk} i=${income} c=${cashflow}`;
 
-        assert(`${lbl}: score in [10,95]`,     s >= 10 && s <= 95,             `got ${s}`);
-        assert(`${lbl}: profile slug valid`,   VALID_PROFILES.has(pf.profile), `got "${pf.profile}"`);
-        assert(`${lbl}: equity valid`,         VALID_EQUITIES.has(pf.equity),  `got ${pf.equity}`);
-        assert(`${lbl}: cashflow int valid`,   VALID_DE_CASHFLOWS.has(cashflow),`got ${cashflow}`);
+        assert(`${lbl}: score in [10,95]`,   s >= 10 && s <= 95,             `got ${s}`);
+        assert(`${lbl}: profile slug valid`,  VALID_PROFILES.has(pf.profile), `got "${pf.profile}"`);
+        assert(`${lbl}: equity valid`,        VALID_EQUITIES.has(pf.equity),  `got ${pf.equity}`);
+        assert(`${lbl}: risk param=rank`,     VALID_RANKS.has(r),             `got ${r}`);
         if (horizon === 1) assert(`${lbl}: h=1 → max Conservative`, r === 1, `got rank ${r}`);
         if (horizon === 2) assert(`${lbl}: h=2 → max Balanced`,      r <= 2, `got rank ${r}`);
       }
@@ -224,15 +218,16 @@ for (const horizon of [1,2,3,4]) {
   for (const risk of ['panic','hold','buy']) {
     for (const income of ['stable','mixed','volatile']) {
       for (const cashflow of ['yes','sometimes','no']) {
-        const enInputs = { horizon, risk, income, cashflow };
-        const deInputs = { horizon, risk:EN_RISK_TO_DE[risk], income:EN_INCOME_TO_DE[income], cashflow:EN_CF_TO_DE[cashflow] };
-        const enS  = enScore(enInputs);
-        const deS  = deScore(deInputs);
-        const enPf = EN_PROFILES[rankFromScore(enS, horizon)].profile;
-        const dePf = DE_PROFILES[rankFromScore(deS, horizon)].profile;
+        const enS  = enScore({ horizon, risk, income, cashflow });
+        const deS  = deScore({ horizon, risk:EN_RISK_TO_DE[risk], income:EN_INCOME_TO_DE[income], cashflow:EN_CF_TO_DE[cashflow] });
+        const enR  = rankFromScore(enS, horizon);
+        const deR  = rankFromScore(deS, horizon);
+        const enPf = EN_PROFILES[enR].profile;
+        const dePf = DE_PROFILES[deR].profile;
         const lbl  = `parity h=${horizon} r=${risk} i=${income} c=${cashflow}`;
-        assert(`${lbl}: same score`,   enS === deS,   `EN=${enS} DE=${deS}`);
-        assert(`${lbl}: same profile`, enPf === dePf, `EN=${enPf} DE=${dePf}`);
+        assert(`${lbl}: same score`,        enS === deS,   `EN=${enS} DE=${deS}`);
+        assert(`${lbl}: same profile`,      enPf === dePf, `EN=${enPf} DE=${dePf}`);
+        assert(`${lbl}: same risk param`,   enR === deR,   `EN=${enR} DE=${deR}`);
       }
     }
   }
@@ -242,10 +237,5 @@ for (const horizon of [1,2,3,4]) {
    Summary
    ══════════════════════════════════════════════════════ */
 console.log(`\nResults: ${passed} passed, ${failed} failed out of ${passed + failed} assertions`);
-if (failures.length) {
-  console.log('\nFailures:');
-  failures.forEach(f => console.log(f));
-  process.exit(1);
-} else {
-  console.log('\nAll tests passed.');
-}
+if (failures.length) { console.log('\nFailures:'); failures.forEach(f => console.log(f)); process.exit(1); }
+else { console.log('\nAll tests passed.'); }
