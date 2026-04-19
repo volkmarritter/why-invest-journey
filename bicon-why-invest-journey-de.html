@@ -1012,12 +1012,30 @@ const donut=new Chart(donutCtx,{
 });
 const ids=['sEq','sBo','sAl','sCa'];
 const vids=['vEq','vBo','vAl','vCa'];
+let lastVals=ids.map(id=>+document.getElementById(id).value);
+function redistribute(idx,rawNew){
+  const others=[0,1,2,3].filter(i=>i!==idx);
+  const othersSum=others.reduce((s,i)=>s+lastVals[i],0);
+  const newVal=Math.min(rawNew,lastVals[idx]+othersSum);
+  const delta=newVal-lastVals[idx];
+  if(delta===0)return;
+  const nv=[...lastVals];
+  nv[idx]=newVal;
+  if(othersSum===0){
+    const share=Math.round(-delta/others.length);
+    others.forEach(i=>{nv[i]=share;});
+  } else {
+    others.forEach(i=>{nv[i]=Math.max(0,Math.round(lastVals[i]-delta*(lastVals[i]/othersSum)));});
+  }
+  const s=nv.reduce((a,b)=>a+b,0);
+  if(s!==100){const lg=others.reduce((b,i)=>nv[i]>nv[b]?i:b,others[0]);nv[lg]=Math.max(0,nv[lg]+(100-s));}
+  ids.forEach((id,i)=>{document.getElementById(id).value=nv[i];});
+  lastVals=[...nv];
+}
 function updateAlloc(){
-  let vals=ids.map(id=>+document.getElementById(id).value);
-  const sum=vals.reduce((a,b)=>a+b,0)||1;
-  vals=vals.map(v=>+(v*100/sum).toFixed(1));
-  vids.forEach((id,i)=>document.getElementById(id).textContent=vals[i].toFixed(0)+'%');
-  document.getElementById('allocTotal').textContent='Summe: 100% · normiert';
+  const vals=ids.map(id=>+document.getElementById(id).value);
+  vids.forEach((id,i)=>document.getElementById(id).textContent=vals[i]+'%');
+  document.getElementById('allocTotal').textContent='Summe: 100%';
   donut.data.datasets[0].data=vals;donut.update();
   const expR=(vals[0]*0.075 + vals[1]*0.025 + vals[2]*0.055 + vals[3]*0.015)/100;
   const vol =Math.sqrt((vals[0]/100)**2*0.18**2 + (vals[1]/100)**2*0.05**2 + (vals[2]/100)**2*0.12**2);
@@ -1035,7 +1053,7 @@ function updateAlloc(){
     rrChart.update('none');
   }
 }
-ids.forEach(id=>document.getElementById(id).addEventListener('input',updateAlloc));
+ids.forEach((id,i)=>document.getElementById(id).addEventListener('input',()=>{redistribute(i,+document.getElementById(id).value);updateAlloc();}));
 updateAlloc();
 
 /* (i) Tooltips */
@@ -1072,6 +1090,7 @@ var rrChart=new Chart(rrCtx,{
       if(!els.length||els[0].datasetIndex!==0)return;
       const a=rrRefAllocs[els[0].index];
       ['sEq','sBo','sAl','sCa'].forEach((id,j)=>{document.getElementById(id).value=a[j];});
+      lastVals=[...a];
       updateAlloc();
     },
     onHover(evt,els){evt.native.target.style.cursor=els.length&&els[0].datasetIndex===0?'pointer':'default';},
