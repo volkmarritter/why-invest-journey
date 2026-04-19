@@ -95,11 +95,45 @@ e = 50 (base)
 + risk:     1→−25  2→0  3→+5   4→+20   (EN uses panic/hold/buy strings; DE uses 1–4 ints)
 + income:   stable/1→+10  mixed/2→0  volatile/3→−10
 + cashflow: yes/1→−15  sometimes/2→0  no/3→+10
-clamped 10–95 → rank: <40 conservative · <60 balanced · <80 growth · else aggressive
+clamped 10–95 → raw rank: <40 conservative · <60 balanced · <80 growth · else aggressive
+then horizon cap applied: h=1→max conservative · h=2→max balanced · h=3/4→no extra cap
 ```
 
+The horizon cap mirrors the Prompt Builder app's hard constraint (Growth/Aggressive require ≥10y).
+
 EN uses `maybeShowProfile()` with string values; DE uses `scoreProfile()` with int values.
-If you change weights or thresholds, update both functions.
+If you change weights or thresholds, update both functions **and** run `node tests/quiz-scoring.test.js`.
+
+### Quiz question → scoring → app profile mapping
+
+| Question | EN option | DE option | Score Δ | URL param (both) |
+|---|---|---|---|---|
+| **01 Horizon** | 3 years or more | ≥3 Jahre | −25 | `horizon=1` |
+| | 5 years or more | ≥5 Jahre | 0 | `horizon=2` |
+| | 10 years or more | ≥10 Jahre | +20 | `horizon=3` |
+| | Next generation | Nächste Generation | +35 | `horizon=4` |
+| **02 Risk** | …sell. I can't stomach it. | Verkaufen | −25 | `risk=1` |
+| | *(not in EN)* | Abwarten und hoffen | 0 | `risk=2` |
+| | …hold. It hurts, but I wait. | Abwarten | +5 | `risk=3` |
+| | …buy more. Sales are for shopping. | Nachkaufen | +20 | `risk=4` |
+| **03 Income** | Rock solid. Salary or pension. | Sehr stabil | +10 | `income=1` |
+| | Mostly stable, some variability. | Überwiegend stabil | 0 | `income=2` |
+| | Lumpy. Business-owner or commission-based. | Unregelmäßig | −10 | `income=3` |
+| **04 Cash flow** | Yes — I rely on distributions. | Ja | −15 | `cashflow=yes` / `1` |
+| | Occasionally, but not essential. | Gelegentlich | 0 | `cashflow=sometimes` / `2` |
+| | No — pure accumulation. | Nein | +10 | `cashflow=no` / `3` |
+
+> EN `cashflow` passes strings (`yes/sometimes/no`); DE passes integers (`1/2/3`).
+> All other URL params are integers in both locales.
+
+### Journey result vs Prompt Builder app — profile boundaries
+
+| Profile | Journey score range (after cap) | App min horizon | App risk appetite | Equity range |
+|---|---|---|---|---|
+| Conservative | < 40 · or horizon=1 regardless of score | ≥3 years | Low | 20–40% |
+| Balanced | 40–59 · or horizon=2 regardless of score | ≥5 years | Moderate | 40–60% |
+| Growth | 60–79 · requires horizon ≥3 | ≥10 years | High | 60–80% |
+| Aggressive | ≥80 · requires horizon ≥3 | ≥10 years | Very high | 80–100% |
 
 ## Analytics stub
 
