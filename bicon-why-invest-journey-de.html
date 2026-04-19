@@ -447,14 +447,14 @@ canvas{max-width:100%}
             <div class="alloc-row">
               <span class="dot" style="background:var(--coral)"></span>
               <label>Aktien</label>
-              <input type="range" min="0" max="100" value="60" id="sEq">
-              <span class="val" id="vEq">60%</span>
+              <input type="range" min="0" max="100" value="70" id="sEq">
+              <span class="val" id="vEq">70%</span>
             </div>
             <div class="alloc-row">
               <span class="dot" style="background:var(--forest)"></span>
               <label>Anleihen</label>
-              <input type="range" min="0" max="100" value="30" id="sBo">
-              <span class="val" id="vBo">30%</span>
+              <input type="range" min="0" max="100" value="20" id="sBo">
+              <span class="val" id="vBo">20%</span>
             </div>
             <div class="alloc-row">
               <span class="dot" style="background:var(--mustard)"></span>
@@ -1041,7 +1041,7 @@ const colors=['#FF6B5B','#2D5D3A','#E8B84A','#3E8EDE'];
 const donutCtx=document.getElementById('donut').getContext('2d');
 const donut=new Chart(donutCtx,{
   type:'doughnut',
-  data:{labels:['Aktien','Anleihen','Satelliten','Cash'],datasets:[{data:[60,30,7,3],backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
+  data:{labels:['Aktien','Anleihen','Satelliten','Cash'],datasets:[{data:[70,20,7,3],backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
   options:{cutout:'68%',plugins:{legend:{display:false},tooltip:{enabled:true}},animation:{animateRotate:true,duration:700}}
 });
 const ids=['sEq','sBo','sAl','sCa'];
