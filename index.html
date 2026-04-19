@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Why Invest — A Journey for Curious Investors</title>
+<meta name="description" content="An editorial, interactive journey explaining why the Bicon Portfolio Prompt Builder recommends what it recommends." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<script>
+(function(){
+  // Honour an explicit override, e.g. ?lang=de or ?lang=en
+  var qs = new URLSearchParams(window.location.search);
+  var override = qs.get('lang');
+  if(override === 'en'){ window.location.replace('./bicon-why-invest-journey-en.html'); return; }
+  if(override === 'de'){ window.location.replace('./bicon-why-invest-journey-de.html'); return; }
+  // Otherwise pick from the browser
+  var langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'en'];
+  var prefersDE = langs.some(function(l){ return (l||'').toLowerCase().indexOf('de') === 0; });
+  if(prefersDE){ window.location.replace('./bicon-why-invest-journey-de.html'); }
+  else{ window.location.replace('./bicon-why-invest-journey-en.html'); }
+})();
+</script>
+<style>
+  :root{ --ink:#141210; --cream:#F4EEE4; --paper:#FBF7F0; --coral:#FF6B5B; --mustard:#E8B84A; --plum:#6B3FA0; --muted:#7A6F62; --line:#d9cfbf; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;background:radial-gradient(ellipse at 20% 10%, rgba(255,107,91,.12), transparent 60%), radial-gradient(ellipse at 85% 75%, rgba(107,63,160,.10), transparent 55%), var(--paper);}
+  .card{max-width:640px;width:100%;text-align:center}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--coral);margin-bottom:16px}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:400;font-size:clamp(34px,5.5vw,56px);line-height:1.05;letter-spacing:-.02em;margin-bottom:16px}
+  h1 em{font-style:italic;color:var(--coral)}
+  p{color:#3a332c;font-size:17px;line-height:1.55;margin:0 auto 32px;max-width:52ch}
+  .btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  a.btn{display:inline-block;padding:14px 24px;border-radius:999px;text-decoration:none;font-weight:600;font-size:15px;transition:.2s}
+  a.btn.primary{background:var(--ink);color:var(--cream)}
+  a.btn.primary:hover{background:var(--coral)}
+  a.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+  a.btn.ghost:hover{background:var(--ink);color:var(--cream)}
+  .back{margin-top:36px;font-size:13px;color:var(--muted)}
+  .back a{color:var(--muted)}
+  noscript .ns{margin-bottom:20px;padding:14px 18px;border-radius:12px;background:rgba(232,184,74,.25);border:1px solid var(--mustard);font-size:14px;color:#5c4a17}
+</style>
+</head>
+<body>
+<div class="card">
+  <noscript><div class="ns">JavaScript is off — pick a language below.</div></noscript>
+  <div class="eyebrow">The Portfolio Prompt Builder</div>
+  <h1>Why invest like <em>this</em>?</h1>
+  <p>An editorial, five-minute journey explaining the reasoning behind the Bicon Portfolio Prompt Builder. Redirecting you to the language that matches your browser…</p>
+  <div class="btns">
+    <a class="btn primary" href="./bicon-why-invest-journey-en.html">Read in English →</a>
+    <a class="btn ghost" href="./bicon-why-invest-journey-de.html">Auf Deutsch lesen →</a>
+  </div>
+  <div class="back"><a href="https://bicon.li/prompt-builder/">← Back to the Prompt Builder</a></div>
+</div>
+</body>
+</html>

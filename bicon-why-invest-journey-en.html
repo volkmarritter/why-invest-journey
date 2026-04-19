@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Why Invest This Way — A Portfolio Prompt Builder Journey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* =========================================================
+   DESIGN TOKENS
+   ========================================================= */
+:root{
+  --ink:#141210;
+  --cream:#F4EEE4;
+  --paper:#FBF7F0;
+  --coral:#FF6B5B;
+  --mustard:#E8B84A;
+  --forest:#2D5D3A;
+  --plum:#6B3FA0;
+  --sky:#3E8EDE;
+  --muted:#7A6F62;
+  --line:#d9cfbf;
+  --serif:'Fraunces', Georgia, serif;
+  --sans:'Inter', system-ui, sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* =========================================================
+   PROGRESS BAR + NAV
+   ========================================================= */
+.progress{
+  position:fixed;top:0;left:0;height:4px;width:0%;
+  background:linear-gradient(90deg,var(--coral),var(--mustard),var(--plum));
+  z-index:100;transition:width .1s linear;
+}
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 32px;
+  background:rgba(251,247,240,.85);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav .brand{font-family:var(--serif);font-weight:700;font-size:20px;letter-spacing:-.02em}
+.nav .brand span{color:var(--coral)}
+.nav .chips{display:flex;gap:6px;flex-wrap:wrap}
+.nav .chip{
+  font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 10px;border-radius:999px;background:transparent;border:1px solid transparent;
+  color:var(--muted);cursor:pointer;transition:.2s;text-decoration:none;
+}
+.nav .chip:hover,.nav .chip.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.nav .cta{
+  font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;
+  background:var(--ink);color:var(--cream);text-decoration:none;transition:.2s;
+}
+.nav .cta:hover{background:var(--coral)}
+.nav .right{display:flex;align-items:center;gap:8px}
+.nav .cta.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.nav .cta.ghost:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+section{padding:120px 24px;position:relative}
+.wrap{max-width:1100px;margin:0 auto}
+.narrow{max-width:720px;margin:0 auto}
+.eyebrow{
+  display:inline-block;font-size:12px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--coral);margin-bottom:18px;
+}
+h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.05;letter-spacing:-.02em}
+h1{font-size:clamp(48px,8vw,120px);font-weight:400}
+h2{font-size:clamp(36px,5vw,68px);margin-bottom:20px}
+h3{font-size:clamp(22px,2.5vw,32px);margin-bottom:12px}
+p{font-size:17px;color:#2b2722;max-width:62ch}
+p.lead{font-size:21px;line-height:1.55;color:#3a332c;max-width:60ch}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{
+  min-height:100vh;padding:160px 24px 80px;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(255,107,91,.15), transparent 60%),
+    radial-gradient(ellipse at 85% 75%, rgba(107,63,160,.12), transparent 55%),
+    var(--paper);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.hero .kicker{font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:32px}
+.hero h1 .accent{font-style:italic;color:var(--coral)}
+.hero h1 .ul{
+  background:linear-gradient(transparent 65%, var(--mustard) 65%);
+  padding:0 4px;
+}
+.hero .sub{margin-top:40px;font-size:22px;max-width:640px;color:#3a332c;line-height:1.45}
+.hero .meta{
+  margin-top:60px;display:flex;gap:40px;flex-wrap:wrap;
+  font-size:13px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;
+}
+.hero .meta span b{color:var(--ink);font-weight:700;font-size:26px;font-family:var(--serif);display:block;letter-spacing:-.01em;text-transform:none}
+.scroll-hint{
+  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+  font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);
+  animation:bob 2s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
+
+/* floating blobs */
+.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.35;pointer-events:none;animation:float 14s ease-in-out infinite}
+.blob.b1{width:340px;height:340px;background:var(--coral);top:10%;right:-80px}
+.blob.b2{width:260px;height:260px;background:var(--mustard);bottom:8%;left:-60px;animation-delay:-6s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-30px) scale(1.08)}}
+
+/* =========================================================
+   CHAPTER HEADER
+   ========================================================= */
+.chapter-head{
+  display:flex;align-items:baseline;gap:24px;margin-bottom:50px;
+  border-top:2px solid var(--ink);padding-top:28px;
+}
+.chapter-num{
+  font-family:var(--serif);font-size:56px;font-weight:400;font-style:italic;
+  line-height:1;color:var(--coral);
+}
+.chapter-meta{flex:1}
+.chapter-meta .tag{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
+
+/* =========================================================
+   SECTION BACKGROUNDS
+   ========================================================= */
+.bg-cream{background:var(--cream)}
+.bg-ink{background:var(--ink);color:var(--cream)}
+.bg-ink h2,.bg-ink h3{color:var(--cream)}
+.bg-ink p{color:#d9cfbf}
+.bg-ink .eyebrow{color:var(--mustard)}
+.bg-ink .chapter-head{border-color:var(--mustard)}
+.bg-ink .chapter-num{color:var(--mustard)}
+
+/* =========================================================
+   REUSABLE COMPONENTS
+   ========================================================= */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+@media(max-width:860px){.grid-2{grid-template-columns:1fr;gap:40px}}
+.card{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:20px;padding:32px;
+}
+.bg-ink .card{background:#1f1b17;border-color:#3a332c}
+.stat{font-family:var(--serif);font-size:72px;font-weight:400;line-height:1;letter-spacing:-.03em}
+.stat-sub{font-size:14px;color:var(--muted);margin-top:8px}
+
+.pullquote{
+  font-family:var(--serif);font-size:clamp(28px,3.6vw,46px);
+  line-height:1.2;font-style:italic;font-weight:400;
+  border-left:4px solid var(--coral);padding-left:28px;margin:60px 0;
+  max-width:820px;
+}
+.pullquote cite{display:block;font-family:var(--sans);font-style:normal;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:20px;font-weight:600}
+
+/* buttons */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;
+  background:var(--ink);color:var(--cream);text-decoration:none;
+  font-weight:600;font-size:15px;transition:.2s;cursor:pointer;border:none;
+}
+.btn:hover{background:var(--coral);transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--cream)}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease, transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ============ CH1: Allocation slider ============ */
+.alloc{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;align-items:center;margin-top:30px}
+@media(max-width:860px){.alloc{grid-template-columns:1fr}}
+.alloc-sliders{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:28px}
+.alloc-row{display:flex;align-items:center;gap:14px;margin:12px 0}
+.alloc-row .dot{width:14px;height:14px;border-radius:4px;flex:none}
+.alloc-row label{font-weight:600;min-width:90px;font-size:14px}
+.alloc-row input[type=range]{flex:1;accent-color:var(--coral)}
+.alloc-row .val{font-family:var(--serif);font-size:22px;min-width:56px;text-align:right}
+.alloc-donut{position:relative;aspect-ratio:1;max-width:360px;margin:0 auto}
+.alloc-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.alloc-center .lbl{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.alloc-center .num{font-family:var(--serif);font-size:48px;font-weight:500;line-height:1;margin-top:4px}
+.alloc-center .drift{font-size:13px;color:var(--muted);margin-top:10px}
+
+/* ============ CH2: ETF cost erosion ============ */
+.cost-toggle{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.cost-toggle button{
+  padding:10px 18px;border-radius:999px;border:2px solid var(--line);background:transparent;
+  font-weight:600;font-size:13px;cursor:pointer;transition:.2s;color:inherit;
+}
+.cost-toggle button.active{background:var(--coral);border-color:var(--coral);color:#fff}
+.bg-ink .cost-toggle button{border-color:#3a332c;color:var(--cream)}
+.dot-grid{display:grid;grid-template-columns:repeat(25,1fr);gap:3px;max-width:520px}
+.dot-grid .d{aspect-ratio:1;border-radius:50%;background:#d9cfbf;opacity:.6;transition:.3s}
+.dot-grid .d.on{background:var(--coral);opacity:1;transform:scale(1.15)}
+
+/* ============ CH3: Stock picking game ============ */
+.picker{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:30px 0}
+@media(max-width:600px){.picker{grid-template-columns:repeat(3,1fr)}}
+.pick-tile{
+  aspect-ratio:1;border-radius:14px;background:var(--paper);
+  border:2px solid var(--line);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;transition:.2s;
+  font-weight:700;font-size:13px;text-align:center;padding:8px;
+  color:var(--ink);
+}
+.pick-tile:hover{border-color:var(--coral);transform:translateY(-2px)}
+.pick-tile.picked{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.pick-tile.revealed.winner{background:var(--forest);color:#fff;border-color:var(--forest)}
+.pick-tile.revealed.loser{background:#e8e0d1;color:var(--muted);border-color:transparent}
+.pick-tile .ticker{font-family:var(--serif);font-size:22px;display:block;margin-bottom:4px;font-weight:400}
+.pick-result{min-height:30px;font-family:var(--serif);font-style:italic;font-size:22px;margin-top:10px}
+
+.spiva-bars{display:flex;flex-direction:column;gap:14px;margin-top:20px}
+.spiva-row{display:grid;grid-template-columns:120px 1fr 70px;gap:14px;align-items:center;font-size:14px}
+.spiva-bar{height:28px;background:#f1e8d8;border-radius:6px;overflow:hidden;position:relative}
+.bg-ink .spiva-bar{background:#2a251f}
+.spiva-fill{height:100%;background:linear-gradient(90deg,var(--coral),var(--mustard));border-radius:6px;width:0%;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+
+/* ============ CH4: Missing best days ============ */
+.mbd{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+@media(max-width:860px){.mbd{grid-template-columns:1fr}}
+.mbd-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.mbd-controls button{
+  padding:10px 16px;border-radius:12px;border:2px solid var(--line);
+  background:transparent;font-weight:600;cursor:pointer;font-size:13px;color:inherit;transition:.2s;
+}
+.mbd-controls button.active{background:var(--plum);border-color:var(--plum);color:#fff}
+.bg-ink .mbd-controls button{border-color:#3a332c;color:var(--cream)}
+
+/* ============ CH5: Compound calculator ============ */
+.calc{display:grid;grid-template-columns:1fr 1.4fr;gap:40px;align-items:start}
+@media(max-width:860px){.calc{grid-template-columns:1fr}}
+.calc-inputs{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:28px}
+.calc-field{margin:18px 0}
+.calc-field label{display:block;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600}
+.calc-field .row{display:flex;align-items:center;gap:14px}
+.calc-field input[type=range]{flex:1;accent-color:var(--forest)}
+.calc-field .value{font-family:var(--serif);font-size:26px;min-width:130px;text-align:right}
+.calc-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px}
+@media(max-width:600px){.calc-summary{grid-template-columns:1fr}}
+.calc-summary .box{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px}
+.calc-summary .box .lbl{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.calc-summary .box .big{font-family:var(--serif);font-size:32px;font-weight:500;margin-top:6px;line-height:1}
+.calc-summary .box.hl{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.calc-summary .box.hl .big{color:var(--mustard)}
+
+/* ============ FINAL CTA ============ */
+.final{
+  background:linear-gradient(135deg,var(--ink) 0%, #2d1f17 50%, #4a1f1a 100%);
+  color:var(--cream);text-align:center;padding:160px 24px;position:relative;overflow:hidden;
+}
+.final h2{color:var(--cream);max-width:920px;margin:0 auto 28px}
+.final h2 em{color:var(--mustard);font-style:italic}
+.final .btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+.final .btn.primary{background:var(--coral)}
+.final .btn.primary:hover{background:var(--mustard);color:var(--ink)}
+.final .btn.ghost{background:transparent;border:2px solid var(--cream);color:var(--cream)}
+.final .btn.ghost:hover{background:var(--cream);color:var(--ink)}
+
+footer{padding:40px 24px;text-align:center;font-size:13px;color:var(--muted);background:var(--ink)}
+footer a{color:var(--mustard);text-decoration:none}
+
+/* highlight utility */
+.mark-coral{background:linear-gradient(transparent 62%, rgba(255,107,91,.35) 62%);padding:0 4px}
+.mark-mustard{background:linear-gradient(transparent 62%, rgba(232,184,74,.5) 62%);padding:0 4px}
+.mark-plum{background:linear-gradient(transparent 62%, rgba(107,63,160,.25) 62%);padding:0 4px}
+
+canvas{max-width:100%}
+.chart-wrap{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:24px;position:relative}
+.bg-ink .chart-wrap{background:#1f1b17;border-color:#3a332c}
+.chart-wrap .caption{font-size:12px;color:var(--muted);margin-top:12px;letter-spacing:.04em}
+
+/* ========= ENHANCEMENTS v2 ========= */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .blob{animation:none!important}
+  .scroll-hint{animation:none!important}
+}
+.hero .readtime{
+  display:inline-flex;align-items:center;gap:6px;margin-left:10px;
+  padding:4px 10px;border-radius:999px;background:rgba(20,18,16,.08);
+  font-size:11px;letter-spacing:.12em;color:var(--ink);font-weight:700;vertical-align:middle;
+}
+.callout{
+  background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--coral);
+  border-radius:14px;padding:22px 24px;margin-top:28px;
+}
+.bg-ink .callout{background:#1f1b17;border-color:#3a332c;border-left-color:var(--mustard)}
+.callout .clabel{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--coral);font-weight:700;margin-bottom:8px}
+.bg-ink .callout .clabel{color:var(--mustard)}
+.callout h4{font-family:var(--serif);font-size:22px;font-weight:500;margin-bottom:6px;line-height:1.2}
+.callout p{font-size:15px;max-width:none}
+.callout.plum{border-left-color:var(--plum)} .callout.plum .clabel{color:var(--plum)}
+.callout.forest{border-left-color:var(--forest)} .callout.forest .clabel{color:var(--forest)}
+.callout.mustard{border-left-color:var(--mustard)} .callout.mustard .clabel{color:#a07c12}
+.bg-ink .callout.mustard .clabel{color:var(--mustard)}
+.dd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+@media(max-width:600px){.dd-grid{grid-template-columns:1fr}}
+.dd-grid .dd{background:rgba(255,255,255,.04);border:1px solid #3a332c;border-radius:12px;padding:16px}
+.dd-grid .dd .when{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;font-weight:700}
+.dd-grid .dd .fall{font-family:var(--serif);font-size:30px;color:var(--coral);margin-top:6px;line-height:1}
+.dd-grid .dd .back{font-size:12px;color:#d9cfbf;margin-top:6px}
+.plan-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.quiz{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:30px}
+@media(max-width:860px){.quiz{grid-template-columns:1fr}}
+.quiz-card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px}
+.quiz-card .qlabel{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--coral);font-weight:700;margin-bottom:8px}
+.quiz-card h4{font-family:var(--serif);font-size:20px;font-weight:500;line-height:1.25;margin-bottom:14px}
+.quiz-card .opts{display:flex;flex-direction:column;gap:8px}
+.quiz-card .opt{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;font-weight:500;cursor:pointer;transition:.15s;background:transparent;text-align:left;color:inherit}
+.quiz-card .opt:hover{border-color:var(--coral)}
+.quiz-card .opt.sel{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.quiz-summary{background:linear-gradient(135deg,var(--ink),#2d1f17);color:var(--cream);border-radius:20px;padding:32px;margin-top:30px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.quiz-summary .label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mustard);font-weight:700}
+.quiz-summary h3{font-family:var(--serif);font-size:28px;font-weight:500;margin-top:6px;color:var(--cream)}
+.quiz-summary .pf{font-size:15px;color:#d9cfbf;max-width:520px;margin-top:6px}
+.quiz-summary .go{background:var(--coral);color:#fff;padding:14px 24px;border-radius:999px;font-weight:700;text-decoration:none;transition:.2s;font-size:15px;white-space:nowrap}
+.quiz-summary .go:hover{background:var(--mustard);color:var(--ink)}
+.refs{background:var(--cream);padding:80px 24px;border-top:1px solid var(--line)}
+.refs h3{font-family:var(--serif);font-size:28px;font-weight:500;margin-bottom:18px}
+.refs ol{padding-left:22px;font-size:14px;color:#3a332c;max-width:820px}
+.refs ol li{margin:6px 0}
+.refs .disc{margin-top:30px;padding:20px;border:1px dashed var(--line);border-radius:14px;font-size:12.5px;line-height:1.55;color:var(--muted);max-width:920px}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="nav">
+  <div class="chips">
+    <a class="chip" href="#ch1">1 · Allocation</a>
+    <a class="chip" href="#ch2">2 · ETFs</a>
+    <a class="chip" href="#ch3">3 · Stock Picking</a>
+    <a class="chip" href="#ch4">4 · Timing</a>
+    <a class="chip" href="#ch5">5 · Compounding</a>
+    <a class="chip" href="#ch6">6 · Your profile</a>
+  </div>
+  <div class="right">
+    <a class="cta" href="https://bicon.li/prompt-builder/">← Back to app</a>
+  </div>
+</nav>
+
+<!-- ======================================================
+     HERO
+     ====================================================== -->
+<section class="hero">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="wrap">
+    <div class="kicker">The Portfolio Prompt Builder · A Journey for the Curious Investor<span class="readtime">⏱ 5 min read</span></div>
+    <h1>
+      Everyone wants to <span class="accent">beat the market.</span><br>
+      Almost <span class="ul">nobody does</span>.
+    </h1>
+    <p class="sub">
+      So before you pick a stock, time a trade, or trust a guru —
+      let's walk through five ideas that quietly do most of the heavy lifting for the world's best-run portfolios.
+      Scroll on.
+    </p>
+    <div class="meta">
+      <span><b>~90%</b>of return variability comes from asset allocation*</span>
+      <span><b>85%</b>of active managers lose to the index over 10y</span>
+      <span><b>5 min</b>to understand why the Prompt Builder works</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Scroll ↓ Begin the journey</div>
+</section>
+
+<!-- ======================================================
+     CHAPTER 1 — ASSET ALLOCATION
+     ====================================================== -->
+<section id="ch1" class="bg-cream">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">01</div>
+      <div class="chapter-meta">
+        <span class="tag">Strategic Asset Allocation</span>
+        <h2>First, decide <em>what kind of investor you are</em>.</h2>
+      </div>
+    </div>
+
+    <div class="grid-2 reveal">
+      <div>
+        <p class="lead">
+          Before you pick a single fund, a single stock, or a single line of code — you have to decide
+          <span class="mark-coral">how much risk you're willing to sleep with</span>.
+          That choice — the split between stocks, bonds, real estate, cash — is called the
+          <b>Strategic Asset Allocation (SAA)</b>.
+        </p>
+        <p style="margin-top:18px">
+          It sounds boring. It is the single most important decision you will ever make as an investor.
+          In the landmark Brinson study, researchers found that roughly <b>90% of the variability in portfolio returns</b>
+          comes not from which stocks you buy, or when — but from this one top-level split.
+        </p>
+        <p style="margin-top:18px">
+          Think of it like designing a house. You pick the blueprint before you pick the doorknobs.
+          The Portfolio Prompt Builder's first question — your risk profile — is exactly this blueprint step.
+        </p>
+      </div>
+
+      <div class="alloc">
+        <div>
+          <div class="alloc-sliders">
+            <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:600">Drag to try an allocation</div>
+            <div class="alloc-row">
+              <span class="dot" style="background:var(--coral)"></span>
+              <label>Equities</label>
+              <input type="range" min="0" max="100" value="60" id="sEq">
+              <span class="val" id="vEq">60%</span>
+            </div>
+            <div class="alloc-row">
+              <span class="dot" style="background:var(--forest)"></span>
+              <label>Bonds</label>
+              <input type="range" min="0" max="100" value="30" id="sBo">
+              <span class="val" id="vBo">30%</span>
+            </div>
+            <div class="alloc-row">
+              <span class="dot" style="background:var(--mustard)"></span>
+              <label>Alt. / RE</label>
+              <input type="range" min="0" max="100" value="7" id="sAl">
+              <span class="val" id="vAl">7%</span>
+            </div>
+            <div class="alloc-row">
+              <span class="dot" style="background:var(--sky)"></span>
+              <label>Cash</label>
+              <input type="range" min="0" max="100" value="3" id="sCa">
+              <span class="val" id="vCa">3%</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-top:10px" id="allocTotal">Total: 100%</div>
+          </div>
+        </div>
+        <div class="alloc-donut">
+          <canvas id="donut"></canvas>
+          <div class="alloc-center">
+            <span class="lbl">Expected Return p.a.</span>
+            <span class="num" id="expRet">6.1%</span>
+            <span class="drift" id="riskHint">Risk: Balanced · Volatility ~9%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout forest reveal">
+      <div class="clabel">Keeping the blueprint honest — rebalancing</div>
+      <h4>Set it. Then, once a year, nudge it back.</h4>
+      <p>Markets move. A 60/30/10 portfolio left alone for five years might quietly become 78/15/7 — now you're running more risk than you signed up for. Rebalancing (selling a little of what ran, buying what lagged) brings the ship back on course. The Prompt Builder does this for you automatically — no spreadsheet required.</p>
+    </div>
+
+    <div class="pullquote reveal">
+      "In the long run, your asset mix determines almost everything.
+      The rest is noise that feels like skill."
+      <cite>— Paraphrasing 40 years of academic finance</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     CHAPTER 2 — WHY ETFs
+     ====================================================== -->
+<section id="ch2">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">02</div>
+      <div class="chapter-meta">
+        <span class="tag">Implementation</span>
+        <h2>Then, use the <em>cheapest, widest, simplest tool</em>: the ETF.</h2>
+      </div>
+    </div>
+
+    <div class="grid-2 reveal">
+      <div>
+        <p class="lead">
+          Once you know <i>what</i> to own, you need a way to <i>actually own it</i>. ETFs — Exchange Traded Funds —
+          are the <span class="mark-mustard">Swiss army knife</span> of modern investing.
+          One trade buys you hundreds or thousands of companies at a cost that used to be science fiction.
+        </p>
+        <p style="margin-top:18px">
+          An average actively managed fund in Europe still charges around <b>1.4–1.8%</b> per year.
+          A broad index ETF? Often <b>0.07–0.20%</b>. That difference doesn't sound like much.
+          Over a 30-year investing life, it quietly eats a third of your wealth.
+        </p>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px">500 companies, one click</div>
+        <div class="dot-grid" id="dotGrid"></div>
+        <p style="font-size:13px;color:var(--muted);margin-top:14px">
+          One ETF unit = partial ownership in all of them. Liquidity, transparency, diversification — bundled.
+        </p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:80px" class="reveal">The silent tax of fees — over 30 years.</h3>
+    <div class="cost-toggle reveal">
+      <button class="active" data-years="30">30 years</button>
+      <button data-years="20">20 years</button>
+      <button data-years="10">10 years</button>
+    </div>
+    <div class="chart-wrap reveal" style="max-width:1000px">
+      <canvas id="costChart" height="110"></canvas>
+      <div class="caption">€100,000 invested, 6% gross return p.a. High-fee: 1.5% TER · Low-fee ETF: 0.15% TER. Illustrative.</div>
+    </div>
+
+    <div class="callout mustard reveal" style="margin-top:60px">
+      <div class="clabel">The silent competitor — inflation</div>
+      <h4>Cash isn't "safe". It just loses slowly.</h4>
+      <p>€100,000 in a savings account earning 0.5% while inflation runs 2.5% loses roughly <b>−2% in real terms every year</b>. Over 30 years, that's almost <b>half</b> your purchasing power, quietly. A diversified portfolio doesn't just grow your wealth — it defends it from the most under-appreciated tax of all.</p>
+    </div>
+
+    <div class="callout plum reveal">
+      <div class="clabel">Home bias — the familiar trap</div>
+      <h4>Three Swiss blue chips ≠ diversification.</h4>
+      <p>Most European investors hold 50–70% of their equities in their own country. That feels safe. It's the opposite: you're betting on one economy, one currency, one tax regime. A global index ETF solves this in a single line.</p>
+    </div>
+
+    <div class="pullquote reveal" style="border-left-color:var(--mustard)">
+      "In investing, you get what you <i>don't</i> pay for."
+      <cite>— John C. Bogle, founder of Vanguard</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     CHAPTER 3 — WHY NOT STOCK PICKING
+     ====================================================== -->
+<section id="ch3" class="bg-ink">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">03</div>
+      <div class="chapter-meta">
+        <span class="tag">The Hero's Trap</span>
+        <h2>Stock picking feels <em>smart</em>. The data says otherwise.</h2>
+      </div>
+    </div>
+
+    <div class="grid-2 reveal">
+      <div>
+        <p class="lead" style="color:#e8ddc9">
+          Everyone has a friend who picked Apple in 2009. Nobody has a friend who admits they picked Wirecard in 2019,
+          Nokia in 2007, or GE in 2000. Survivorship bias is <span class="mark-plum">the most expensive trick</span> the
+          human brain plays on its portfolio.
+        </p>
+        <p style="margin-top:18px;color:#d9cfbf">
+          Global markets list about 50,000 companies. Over any 10-year window, a tiny minority
+          deliver most of the return. Miss those few, and you underperform a boring index fund —
+          which, by definition, owns them <i>all</i>.
+        </p>
+        <p style="margin-top:18px;color:#d9cfbf">
+          That's why the SPIVA scorecards, published every year for 20+ years, keep repeating the same finding:
+        </p>
+        <div class="spiva-bars" id="spivaBars">
+          <div class="spiva-row">
+            <span>1 year</span><div class="spiva-bar"><div class="spiva-fill" data-pct="62"></div></div><span style="text-align:right;font-weight:600">62%</span>
+          </div>
+          <div class="spiva-row">
+            <span>5 years</span><div class="spiva-bar"><div class="spiva-fill" data-pct="78"></div></div><span style="text-align:right;font-weight:600">78%</span>
+          </div>
+          <div class="spiva-row">
+            <span>10 years</span><div class="spiva-bar"><div class="spiva-fill" data-pct="85"></div></div><span style="text-align:right;font-weight:600">85%</span>
+          </div>
+          <div class="spiva-row">
+            <span>20 years</span><div class="spiva-bar"><div class="spiva-fill" data-pct="92"></div></div><span style="text-align:right;font-weight:600">92%</span>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:14px">
+          % of actively managed large-cap funds that <b>underperform</b> their benchmark.<br>
+          Source: S&amp;P Dow Jones SPIVA, long-term averages (illustrative).
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--mustard);font-weight:700;margin-bottom:8px">Mini-game</div>
+          <h3 style="font-size:26px">Pick the next 10-year winner.</h3>
+          <p style="color:#d9cfbf;font-size:15px;margin-top:6px">Choose one ticker. We reveal what happened.</p>
+          <div class="picker" id="picker">
+            <div class="pick-tile" data-id="0"><span class="ticker">AAPL</span>Tech Giant</div>
+            <div class="pick-tile" data-id="1"><span class="ticker">WDI</span>Payments Star</div>
+            <div class="pick-tile" data-id="2"><span class="ticker">GME</span>Viral Stock</div>
+            <div class="pick-tile" data-id="3"><span class="ticker">NFLX</span>Streamer</div>
+            <div class="pick-tile" data-id="4"><span class="ticker">NOK</span>Once-Champion</div>
+            <div class="pick-tile" data-id="5"><span class="ticker">TSLA</span>Rockets &amp; Cars</div>
+            <div class="pick-tile" data-id="6"><span class="ticker">GE</span>Old Reliable</div>
+            <div class="pick-tile" data-id="7"><span class="ticker">MSFT</span>Software</div>
+            <div class="pick-tile" data-id="8"><span class="ticker">ENR</span>Energy Hype</div>
+            <div class="pick-tile" data-id="9"><span class="ticker">?</span>The Next One</div>
+          </div>
+          <div class="pick-result" id="pickResult">Pick one. No pressure. It's only your retirement.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pullquote reveal" style="border-left-color:var(--mustard);color:#e8ddc9">
+      "Don't look for the needle in the haystack. Just buy the haystack."
+      <cite>— John C. Bogle</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     CHAPTER 4 — MARKET TIMING
+     ====================================================== -->
+<section id="ch4">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">04</div>
+      <div class="chapter-meta">
+        <span class="tag">The Crystal Ball</span>
+        <h2>Nobody rings a bell <em>at the bottom</em>. Or the top.</h2>
+      </div>
+    </div>
+
+    <div class="narrow reveal">
+      <p class="lead">
+        "I'll just wait until things calm down." It's the most expensive sentence in personal finance.
+        Markets do their best work on a handful of explosive, unpredictable days —
+        and those days usually come <span class="mark-plum">right next to the scary ones</span>.
+      </p>
+    </div>
+
+    <h3 style="margin-top:60px" class="reveal">What happens if you miss the best days?</h3>
+    <div class="mbd-controls reveal">
+      <button class="active" data-miss="0">Stayed fully invested</button>
+      <button data-miss="10">Missed 10 best days</button>
+      <button data-miss="20">Missed 20 best days</button>
+      <button data-miss="30">Missed 30 best days</button>
+    </div>
+    <div class="chart-wrap reveal" style="max-width:1000px">
+      <canvas id="timingChart" height="110"></canvas>
+      <div class="caption">€10,000 in a global equity index, 20 years. "Missed days" = being in cash on the N best-performing trading days. Illustrative.</div>
+    </div>
+
+    <div class="grid-2 reveal" style="margin-top:80px">
+      <div class="card">
+        <div class="stat" style="color:var(--coral)">7 of 10</div>
+        <div class="stat-sub">best trading days historically occur within <b>2 weeks</b> of the 10 worst days.</div>
+      </div>
+      <div class="card">
+        <div class="stat" style="color:var(--plum)">–54%</div>
+        <div class="stat-sub">the typical cut in final wealth from missing just the 10 best days in 20 years.</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:80px;color:var(--ink)" class="reveal">What could go wrong? Plenty. And that's… fine.</h3>
+    <p class="narrow reveal" style="color:#3a332c">Every serious investor has lived through these. The index fell sharply and recovered every single time. Your job isn't to avoid these — it's to plan for them so you don't sell at the bottom.</p>
+    <div class="dd-grid reveal" style="background:var(--ink);padding:22px;border-radius:18px">
+      <div class="dd"><div class="when">2000–2002 Dot-com</div><div class="fall">−49%</div><div class="back">Recovered by 2007</div></div>
+      <div class="dd"><div class="when">2008 Financial crisis</div><div class="fall">−54%</div><div class="back">Recovered by 2013</div></div>
+      <div class="dd"><div class="when">2020 Covid shock</div><div class="fall">−34%</div><div class="back">Recovered in 5 months</div></div>
+    </div>
+
+    <div class="callout reveal" style="margin-top:36px">
+      <div class="clabel">The investor's best friend — forgetting</div>
+      <h4>The best-performing accounts belong to people who forgot they had them.</h4>
+      <p>A (widely-cited, possibly apocryphal) internal Fidelity study found that the top-performing accounts were the ones whose owners had died — or forgotten about them. They literally couldn't panic-sell. Boring sits quietly and outperforms clever.</p>
+    </div>
+
+    <div class="pullquote reveal" style="border-left-color:var(--plum)">
+      "Time <i>in</i> the market beats timing the market."
+      <cite>— An investing cliché, because it keeps being true</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     CHAPTER 5 — COMPOUNDING
+     ====================================================== -->
+<section id="ch5" class="bg-cream">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">05</div>
+      <div class="chapter-meta">
+        <span class="tag">How Wealth Really Grows</span>
+        <h2>Boring on Monday. Magic by <em>year thirty</em>.</h2>
+      </div>
+    </div>
+
+    <div class="narrow reveal">
+      <p class="lead">
+        The secret is not excitement. It's <span class="mark-coral">time × patience × a sensible portfolio</span>.
+        Move the sliders, and watch the snowball roll.
+      </p>
+    </div>
+
+    <div class="calc" style="margin-top:60px">
+      <div class="calc-inputs reveal">
+        <div class="calc-field">
+          <label>Initial capital</label>
+          <div class="row">
+            <input type="range" id="cInit" min="0" max="500000" step="5000" value="50000">
+            <span class="value" id="vInit">€50,000</span>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label>Monthly contribution</label>
+          <div class="row">
+            <input type="range" id="cMonth" min="0" max="5000" step="50" value="500">
+            <span class="value" id="vMonth">€500</span>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label>Years invested</label>
+          <div class="row">
+            <input type="range" id="cYears" min="5" max="40" step="1" value="25">
+            <span class="value" id="vYears">25 yrs</span>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label>Expected return p.a.</label>
+          <div class="row">
+            <input type="range" id="cRet" min="2" max="10" step="0.5" value="6">
+            <span class="value" id="vRet">6.0%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <div class="chart-wrap">
+          <canvas id="compChart" height="120"></canvas>
+          <div class="caption">Green = your contributions. Coral = compounding doing the work for you.</div>
+        </div>
+        <div class="calc-summary">
+          <div class="box">
+            <div class="lbl">You contributed</div>
+            <div class="big" id="sContrib">€—</div>
+          </div>
+          <div class="box">
+            <div class="lbl">Compound gains</div>
+            <div class="big" id="sGains" style="color:var(--coral)">€—</div>
+          </div>
+          <div class="box hl">
+            <div class="lbl">Final portfolio</div>
+            <div class="big" id="sFinal">€—</div>
+          </div>
+        </div>
+        <div class="plan-actions">
+          <button class="btn" id="btnSavePlan">📎 Save my plan as image</button>
+          <button class="btn ghost" id="btnCopyPlan">Copy summary</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pullquote reveal">
+      "Compound interest is the eighth wonder of the world.
+      He who understands it, earns it. He who doesn't, pays it."
+      <cite>— Attributed (maybe) to Albert Einstein. Definitely true.</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     CHAPTER 6 — YOUR PROFILE (QUIZ → DEEP LINK)
+     ====================================================== -->
+<section id="ch6">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">06</div>
+      <div class="chapter-meta">
+        <span class="tag">Your turn</span>
+        <h2>Three quick questions. <em>We'll warm up the Prompt Builder for you.</em></h2>
+      </div>
+    </div>
+
+    <p class="lead reveal">Answer the three questions below. When you continue, we'll pass your answers straight into the Prompt Builder so step 1 is already half-done.</p>
+
+    <div class="quiz reveal">
+      <div class="quiz-card" data-q="horizon">
+        <div class="qlabel">Question 1 of 3</div>
+        <h4>When will you most likely need this money?</h4>
+        <div class="opts">
+          <button class="opt" data-v="short">Within 5 years</button>
+          <button class="opt" data-v="mid">5–15 years</button>
+          <button class="opt" data-v="long">15+ years</button>
+          <button class="opt" data-v="legacy">It's for the next generation</button>
+        </div>
+      </div>
+      <div class="quiz-card" data-q="risk">
+        <div class="qlabel">Question 2 of 3</div>
+        <h4>A crash takes your portfolio down 30% in 6 weeks. You…</h4>
+        <div class="opts">
+          <button class="opt" data-v="panic">…sell. I can't stomach it.</button>
+          <button class="opt" data-v="hold">…hold. It hurts, but I wait.</button>
+          <button class="opt" data-v="buy">…buy more. Sales are for shopping.</button>
+        </div>
+      </div>
+      <div class="quiz-card" data-q="income">
+        <div class="qlabel">Question 3 of 3</div>
+        <h4>Your income stability over the next decade is…</h4>
+        <div class="opts">
+          <button class="opt" data-v="stable">Rock solid. Salary or pension.</button>
+          <button class="opt" data-v="mixed">Mostly stable, some variability.</button>
+          <button class="opt" data-v="volatile">Lumpy. Business-owner or commission-based.</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-summary reveal" id="quizSummary" style="display:none">
+      <div>
+        <div class="label">Your indicative profile</div>
+        <h3 id="qfName">—</h3>
+        <div class="pf" id="qfDesc">—</div>
+      </div>
+      <a class="go" id="qfGo" href="https://bicon.li/prompt-builder/">Continue to the Prompt Builder →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     FINAL CTA
+     ====================================================== -->
+<section id="final" class="final">
+  <div class="blob b1" style="background:var(--coral);opacity:.25"></div>
+  <div class="blob b2" style="background:var(--plum);opacity:.25"></div>
+  <div class="wrap" style="position:relative;z-index:2">
+    <div class="eyebrow" style="color:var(--mustard)">You made it to the end of the journey.</div>
+    <h2>
+      The Portfolio Prompt Builder doesn't ask you to <em>beat</em> the market.<br>
+      It helps you <em>own</em> it — intelligently.
+    </h2>
+    <p style="color:#d9cfbf;max-width:680px;margin:24px auto 0;font-size:18px">
+      Tell it your goals, your horizon, your tolerance for turbulence — and it builds an ETF-based
+      Strategic Asset Allocation that compounds quietly in the background, while you go live your life.
+    </p>
+    <div class="btns">
+      <a class="btn primary" href="https://bicon.li/prompt-builder/">← Back to app</a>
+    </div>
+  </div>
+</section>
+
+<section class="refs">
+  <div class="wrap">
+    <h3>Sources &amp; further reading</h3>
+    <ol>
+      <li>Brinson, Hood &amp; Beebower (1986, 1991); Ibbotson &amp; Kaplan (2000) — variability of portfolio returns explained by asset allocation policy.</li>
+      <li>S&amp;P Dow Jones SPIVA Europe Scorecard — annual reports on active-vs-index performance over 1y / 5y / 10y / 20y windows.</li>
+      <li>Bogle, J. C. (2007), <i>The Little Book of Common Sense Investing</i>, Wiley.</li>
+      <li>Fidelity / Morningstar analyses on missing-the-best-days and behaviour gap (historical, illustrative).</li>
+      <li>MSCI World / ACWI long-term return and drawdown data.</li>
+      <li>OECD and national statistical offices — long-term CPI / inflation series for the inflation callout.</li>
+    </ol>
+    <div class="disc">
+      <b>Important information.</b> This page is provided for educational and informational purposes only and does not constitute investment advice, an offer or a recommendation to buy or sell any financial instrument, nor a personal recommendation under MiFID II (EU) / FIDLEG (CH) / applicable Liechtenstein law. All figures and charts are illustrative, based on simplified assumptions, and do not represent the performance of any specific portfolio. Past performance is not a reliable indicator of future results. Investments in securities (including ETFs) involve risks, including possible loss of principal. Costs, taxation and currency effects may significantly reduce returns. Before making any investment decision, consider your personal circumstances and, where appropriate, consult a qualified adviser regulated in your jurisdiction.
+    </div>
+  </div>
+</section>
+
+<footer>
+  Concept prototype · Bicon · Data illustrative, for educational purposes only. Not investment advice.
+  &nbsp;·&nbsp;
+  <a href="https://bicon.li/">bicon.li</a>
+</footer>
+
+<script>
+/* =========================================================
+   ANALYTICS STUB — replace with GA4 / Plausible / Matomo call
+   ========================================================= */
+window.bicon=window.bicon||{
+  track:(event,props)=>{
+    try{
+      const payload={event,props:props||{},ts:Date.now(),page:'why-journey-en'};
+      // ---- wire into your analytics below ----
+      // gtag('event', event, props);
+      // plausible(event, {props});
+      // window.dataLayer&&dataLayer.push(payload);
+      if(console&&console.debug)console.debug('[bicon]',payload);
+    }catch(_){}
+  }
+};
+bicon.track('journey_view');
+// scroll-depth milestones
+let sdHit={};
+window.addEventListener('scroll',()=>{
+  const p=Math.round((window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100);
+  [25,50,75,100].forEach(m=>{if(!sdHit[m]&&p>=m){sdHit[m]=1;bicon.track('scroll_depth',{pct:m});}});
+},{passive:true});
+// chapter-in-view
+const chObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)bicon.track('chapter_view',{id:e.target.id});}),{threshold:.5});
+['ch1','ch2','ch3','ch4','ch5','ch6'].forEach(id=>{const el=document.getElementById(id);if(el)chObs.observe(el);});
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+const progEl=document.getElementById('progress');
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const p=h.scrollTop/(h.scrollHeight-h.clientHeight);
+  progEl.style.width=(p*100)+'%';
+});
+
+/* =========================================================
+   REVEAL ON SCROLL
+   ========================================================= */
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+  });
+},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* =========================================================
+   NAV ACTIVE CHIP
+   ========================================================= */
+const chips=[...document.querySelectorAll('.nav .chip')];
+const sections=['ch1','ch2','ch3','ch4','ch5','ch6'].map(id=>document.getElementById(id));
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY+150;
+  let active=-1;
+  sections.forEach((s,i)=>{if(s && s.offsetTop<=y)active=i});
+  chips.forEach((c,i)=>c.classList.toggle('active',i===active));
+});
+
+/* =========================================================
+   CH1 — Allocation Donut + Expected Return
+   ========================================================= */
+const colors=['#FF6B5B','#2D5D3A','#E8B84A','#3E8EDE'];
+const donutCtx=document.getElementById('donut').getContext('2d');
+const donut=new Chart(donutCtx,{
+  type:'doughnut',
+  data:{labels:['Equities','Bonds','Alt/RE','Cash'],datasets:[{data:[60,30,7,3],backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
+  options:{cutout:'68%',plugins:{legend:{display:false},tooltip:{enabled:true}},animation:{animateRotate:true,duration:700}}
+});
+const ids=['sEq','sBo','sAl','sCa'];
+const vids=['vEq','vBo','vAl','vCa'];
+function updateAlloc(){
+  let vals=ids.map(id=>+document.getElementById(id).value);
+  const sum=vals.reduce((a,b)=>a+b,0)||1;
+  vals=vals.map(v=>+(v*100/sum).toFixed(1));
+  vids.forEach((id,i)=>document.getElementById(id).textContent=vals[i].toFixed(0)+'%');
+  document.getElementById('allocTotal').textContent='Total: 100% · normalized';
+  donut.data.datasets[0].data=vals;donut.update();
+  // simple expected return model (illustrative)
+  const expR=(vals[0]*0.075 + vals[1]*0.025 + vals[2]*0.055 + vals[3]*0.015)/100;
+  const vol =Math.sqrt((vals[0]/100)**2*0.18**2 + (vals[1]/100)**2*0.05**2 + (vals[2]/100)**2*0.12**2);
+  document.getElementById('expRet').textContent=(expR*100).toFixed(1)+'%';
+  let profile='Balanced';
+  if(vals[0]>=80)profile='Aggressive';
+  else if(vals[0]>=60)profile='Growth';
+  else if(vals[0]>=40)profile='Balanced';
+  else if(vals[0]>=20)profile='Conservative';
+  else profile='Capital preservation';
+  document.getElementById('riskHint').textContent=`Risk: ${profile} · Volatility ~${(vol*100).toFixed(0)}%`;
+}
+ids.forEach(id=>document.getElementById(id).addEventListener('input',updateAlloc));
+updateAlloc();
+
+/* =========================================================
+   CH2 — Dot grid (500 dots appear progressively)
+   ========================================================= */
+const grid=document.getElementById('dotGrid');
+for(let i=0;i<500;i++){const d=document.createElement('div');d.className='d';grid.appendChild(d);}
+const dots=[...grid.children];
+const gridObs=new IntersectionObserver((ents)=>{
+  ents.forEach(e=>{
+    if(e.isIntersecting){
+      dots.forEach((d,i)=>setTimeout(()=>d.classList.add('on'),i*3));
+      gridObs.disconnect();
+    }
+  });
+},{threshold:.3});
+gridObs.observe(grid);
+
+/* =========================================================
+   CH2 — Cost erosion chart
+   ========================================================= */
+function computeCost(years){
+  const labels=[], low=[], high=[];
+  const start=100000, gross=0.06;
+  for(let y=0;y<=years;y++){
+    labels.push('Y'+y);
+    low.push(Math.round(start*Math.pow(1+gross-0.0015,y)));
+    high.push(Math.round(start*Math.pow(1+gross-0.015,y)));
+  }
+  return {labels,low,high};
+}
+const costCtx=document.getElementById('costChart').getContext('2d');
+const costData=computeCost(30);
+const costChart=new Chart(costCtx,{
+  type:'line',
+  data:{labels:costData.labels,datasets:[
+    {label:'Low-fee ETF (0.15% TER)',data:costData.low,borderColor:'#FF6B5B',backgroundColor:'rgba(255,107,91,.1)',borderWidth:3,fill:true,tension:.25,pointRadius:0},
+    {label:'High-fee active fund (1.5% TER)',data:costData.high,borderColor:'#6B3FA0',backgroundColor:'rgba(107,63,160,.08)',borderWidth:3,fill:true,tension:.25,pointRadius:0,borderDash:[6,6]}
+  ]},
+  options:{
+    plugins:{legend:{position:'top',labels:{font:{family:'Inter',weight:'600'}}}},
+    scales:{
+      y:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k',font:{family:'Inter'}},grid:{color:'rgba(0,0,0,.05)'}},
+      x:{ticks:{font:{family:'Inter'},maxTicksLimit:8},grid:{display:false}}
+    }
+  }
+});
+document.querySelectorAll('.cost-toggle button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.cost-toggle button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const yrs=+b.dataset.years;const d=computeCost(yrs);
+    costChart.data.labels=d.labels;
+    costChart.data.datasets[0].data=d.low;
+    costChart.data.datasets[1].data=d.high;
+    costChart.update();
+  });
+});
+
+/* =========================================================
+   CH3 — SPIVA bars animate on view
+   ========================================================= */
+const spivaObs=new IntersectionObserver((ents)=>{
+  ents.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.spiva-fill').forEach(f=>{f.style.width=f.dataset.pct+'%';});
+      spivaObs.disconnect();
+    }
+  });
+},{threshold:.3});
+spivaObs.observe(document.getElementById('spivaBars'));
+
+/* =========================================================
+   CH3 — Stock picker game
+   ========================================================= */
+const outcomes={
+  0:{w:true,  txt:"AAPL — you nailed it. Roughly +900% in a decade. Now do that again… on purpose."},
+  1:{w:false, txt:"WDI (Wirecard) — insolvent in June 2020. €100k → €0. This is survivorship bias in reverse."},
+  2:{w:false, txt:"GME — euphoric spike, then back down. Fun story. Flat-to-negative total return over 10y."},
+  3:{w:true,  txt:"NFLX — winner. But also −76% drawdown in 2022 along the way. Could you hold?"},
+  4:{w:false, txt:"NOK — once the world's #1 phone maker. A decade later: a cautionary slide deck."},
+  5:{w:true,  txt:"TSLA — spectacular. Also 40%+ drawdowns multiple times. Hindsight is a flattering mirror."},
+  6:{w:false, txt:"GE — the bluest blue chip of the 1990s. Trailed the index for 20+ years."},
+  7:{w:true,  txt:"MSFT — steady winner. Quietly. You could have also just bought the index and owned it anyway."},
+  8:{w:false, txt:"ENR (Enron-alike) — accounting scandals happen. Diversification is free insurance."},
+  9:{w:null,  txt:"The next one… nobody knows. That's the whole problem."},
+};
+const INDEX_REF="The MSCI World index returned roughly +170% in the same decade — boring, diversified, reliable.";
+document.getElementById('picker').addEventListener('click',(e)=>{
+  const tile=e.target.closest('.pick-tile');if(!tile)return;
+  document.querySelectorAll('.pick-tile').forEach(t=>{
+    t.classList.remove('picked');t.classList.add('revealed');
+    const id=+t.dataset.id;const o=outcomes[id];
+    if(o.w===true)t.classList.add('winner');
+    else if(o.w===false)t.classList.add('loser');
+  });
+  tile.classList.add('picked');
+  const o=outcomes[+tile.dataset.id];
+  document.getElementById('pickResult').innerHTML=o.txt+'<br><span style="font-size:14px;color:#e8b84a;font-style:normal;letter-spacing:.04em">'+INDEX_REF+'</span>';
+  if(window.bicon)bicon.track('stock_pick',{ticker:tile.querySelector('.ticker').textContent,outcome:o.w});
+});
+
+/* =========================================================
+   CH4 — Missing best days chart
+   ========================================================= */
+function timingData(missed){
+  const years=20, base=0.08;
+  // each missed "best day" costs roughly 0.35% of compound return
+  const drag=missed*0.0035;
+  const arr=[10000];
+  for(let y=1;y<=years;y++){
+    arr.push(Math.round(arr[y-1]*(1+base-drag)));
+  }
+  return arr;
+}
+const timingCtx=document.getElementById('timingChart').getContext('2d');
+const timingChart=new Chart(timingCtx,{
+  type:'line',
+  data:{
+    labels:Array.from({length:21},(_,i)=>'Y'+i),
+    datasets:[{
+      label:'Portfolio value',
+      data:timingData(0),
+      borderColor:'#6B3FA0',
+      backgroundColor:(ctx)=>{
+        const g=ctx.chart.ctx.createLinearGradient(0,0,0,300);
+        g.addColorStop(0,'rgba(107,63,160,.35)');g.addColorStop(1,'rgba(107,63,160,0)');return g;
+      },
+      borderWidth:3,fill:true,tension:.3,pointRadius:0
+    }]
+  },
+  options:{
+    plugins:{legend:{display:false}},
+    scales:{
+      y:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k',font:{family:'Inter'}},grid:{color:'rgba(0,0,0,.05)'}},
+      x:{ticks:{font:{family:'Inter'}},grid:{display:false}}
+    }
+  }
+});
+document.querySelectorAll('.mbd-controls button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.mbd-controls button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    timingChart.data.datasets[0].data=timingData(+b.dataset.miss);
+    timingChart.update();
+  });
+});
+
+/* =========================================================
+   CH5 — Compounding calculator
+   ========================================================= */
+const fmt=n=>'€'+Math.round(n).toLocaleString('en-US');
+const compCtx=document.getElementById('compChart').getContext('2d');
+const compChart=new Chart(compCtx,{
+  type:'line',
+  data:{labels:[],datasets:[
+    {label:'Contributions',data:[],borderColor:'#2D5D3A',backgroundColor:'rgba(45,93,58,.25)',borderWidth:2,fill:true,tension:.25,pointRadius:0,stack:'s'},
+    {label:'Compounding',data:[],borderColor:'#FF6B5B',backgroundColor:'rgba(255,107,91,.4)',borderWidth:2,fill:true,tension:.25,pointRadius:0,stack:'s'}
+  ]},
+  options:{
+    plugins:{legend:{position:'top',labels:{font:{family:'Inter',weight:'600'}}}},
+    scales:{
+      y:{stacked:true,ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k',font:{family:'Inter'}},grid:{color:'rgba(0,0,0,.05)'}},
+      x:{ticks:{font:{family:'Inter'}},grid:{display:false}}
+    }
+  }
+});
+function recomputeCalc(){
+  const init=+document.getElementById('cInit').value;
+  const mon =+document.getElementById('cMonth').value;
+  const yrs =+document.getElementById('cYears').value;
+  const ret =+document.getElementById('cRet').value/100;
+  document.getElementById('vInit').textContent=fmt(init);
+  document.getElementById('vMonth').textContent=fmt(mon);
+  document.getElementById('vYears').textContent=yrs+' yrs';
+  document.getElementById('vRet').textContent=(ret*100).toFixed(1)+'%';
+  const labels=[],contrib=[],gains=[];
+  let bal=init, contribSum=init;
+  for(let y=0;y<=yrs;y++){
+    if(y>0){
+      for(let m=0;m<12;m++){
+        bal = bal*(1+ret/12) + mon;
+        contribSum += mon;
+      }
+    }
+    labels.push('Y'+y);
+    contrib.push(Math.round(contribSum));
+    gains.push(Math.round(bal-contribSum));
+  }
+  compChart.data.labels=labels;
+  compChart.data.datasets[0].data=contrib;
+  compChart.data.datasets[1].data=gains;
+  compChart.update();
+  document.getElementById('sContrib').textContent=fmt(contrib.at(-1));
+  document.getElementById('sGains').textContent=fmt(gains.at(-1));
+  document.getElementById('sFinal').textContent=fmt(contrib.at(-1)+gains.at(-1));
+}
+['cInit','cMonth','cYears','cRet'].forEach(id=>document.getElementById(id).addEventListener('input',recomputeCalc));
+recomputeCalc();
+
+/* =========================================================
+   CH6 — Profile quiz with deep-link
+   ========================================================= */
+const quizState={horizon:null,risk:null,income:null};
+document.querySelectorAll('.quiz-card').forEach(card=>{
+  const q=card.dataset.q;
+  card.querySelectorAll('.opt').forEach(b=>{
+    b.addEventListener('click',()=>{
+      card.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      quizState[q]=b.dataset.v;
+      maybeShowProfile();
+      if(window.bicon)bicon.track('quiz_answer',{q,v:b.dataset.v});
+    });
+  });
+});
+function scoreProfile(){
+  let e=50;
+  if(quizState.horizon==='short')e-=35;
+  else if(quizState.horizon==='mid')e+=0;
+  else if(quizState.horizon==='long')e+=25;
+  else if(quizState.horizon==='legacy')e+=35;
+  if(quizState.risk==='panic')e-=25;
+  else if(quizState.risk==='hold')e+=5;
+  else if(quizState.risk==='buy')e+=20;
+  if(quizState.income==='stable')e+=10;
+  else if(quizState.income==='mixed')e+=0;
+  else if(quizState.income==='volatile')e-=10;
+  e=Math.max(10,Math.min(95,e));
+  let profile,name,desc;
+  if(e<25){name='Capital Preservation';profile='preservation';desc='Short horizon, low tolerance — wealth stability first. Indicative allocation: ~20% equities, 65% bonds, 15% cash.';}
+  else if(e<45){name='Conservative';profile='conservative';desc='Gentle growth, limited volatility. Indicative allocation: ~40% equities, 55% bonds, 5% alt/cash.';}
+  else if(e<65){name='Balanced';profile='balanced';desc='Time enough to weather storms, diversified engine. Indicative allocation: ~60% equities, 30% bonds, 10% alt.';}
+  else if(e<82){name='Growth';profile='growth';desc='Long horizon, comfort with volatility. Indicative allocation: ~75% equities, 15% bonds, 10% alt.';}
+  else{name='Aggressive Growth';profile='aggressive';desc='Decades ahead, dips seen as opportunities. Indicative allocation: ~90% equities, 5% alt, 5% cash.';}
+  return {equity:e,profile,name,desc};
+}
+function maybeShowProfile(){
+  if(!quizState.horizon||!quizState.risk||!quizState.income)return;
+  const s=scoreProfile();
+  document.getElementById('qfName').textContent=s.name;
+  document.getElementById('qfDesc').textContent=s.desc;
+  const params=new URLSearchParams({profile:s.profile,equity:s.equity,horizon:quizState.horizon,risk:quizState.risk,income:quizState.income,src:'why-journey',lang:'en'});
+  document.getElementById('qfGo').href='https://bicon.li/prompt-builder/?'+params.toString();
+  document.getElementById('quizSummary').style.display='';
+  document.getElementById('quizSummary').scrollIntoView({behavior:'smooth',block:'center'});
+  if(window.bicon)bicon.track('quiz_complete',{profile:s.profile,equity:s.equity});
+}
+
+/* =========================================================
+   PNG export & copy summary
+   ========================================================= */
+document.getElementById('btnSavePlan').addEventListener('click',()=>{
+  const src=document.getElementById('compChart');
+  const W=1200,H=760;
+  const c=document.createElement('canvas');c.width=W;c.height=H;
+  const g=c.getContext('2d');
+  g.fillStyle='#F4EEE4';g.fillRect(0,0,W,H);
+  g.fillStyle='#141210';g.font='700 28px Inter, sans-serif';
+  g.fillText('My Compounding Plan',40,60);
+  g.fillStyle='#7A6F62';g.font='500 14px Inter, sans-serif';
+  g.fillText('Portfolio Prompt Builder · bicon.li',40,90);
+  // stats
+  const init=document.getElementById('vInit').textContent;
+  const mon=document.getElementById('vMonth').textContent;
+  const yrs=document.getElementById('vYears').textContent;
+  const ret=document.getElementById('vRet').textContent;
+  const fin=document.getElementById('sFinal').textContent;
+  const ctb=document.getElementById('sContrib').textContent;
+  const gns=document.getElementById('sGains').textContent;
+  g.drawImage(src,40,130,W-80,460);
+  g.fillStyle='#141210';g.font='600 14px Inter';
+  const lines=[['Start: '+init,'Monthly: '+mon,'Years: '+yrs,'Return: '+ret],
+               ['Contributed: '+ctb,'Compound gains: '+gns,'Final: '+fin,'']];
+  lines.forEach((row,ri)=>row.forEach((t,ci)=>g.fillText(t,40+ci*290,630+ri*28)));
+  g.fillStyle='#7A6F62';g.font='400 11px Inter';
+  g.fillText('Illustrative. Not investment advice.',40,H-24);
+  const a=document.createElement('a');a.download='my-compounding-plan.png';a.href=c.toDataURL('image/png');a.click();
+  if(window.bicon)bicon.track('plan_save_png');
+});
+document.getElementById('btnCopyPlan').addEventListener('click',async()=>{
+  const txt=`My Compounding Plan\nStart: ${document.getElementById('vInit').textContent}\nMonthly: ${document.getElementById('vMonth').textContent}\nYears: ${document.getElementById('vYears').textContent}\nReturn p.a.: ${document.getElementById('vRet').textContent}\nContributed: ${document.getElementById('sContrib').textContent}\nCompound gains: ${document.getElementById('sGains').textContent}\nFinal: ${document.getElementById('sFinal').textContent}\n— Portfolio Prompt Builder · bicon.li`;
+  try{await navigator.clipboard.writeText(txt);const b=document.getElementById('btnCopyPlan');const o=b.textContent;b.textContent='Copied ✓';setTimeout(()=>b.textContent=o,1400);}catch(e){}
+  if(window.bicon)bicon.track('plan_copy');
+});
+</script>
+</body>
+</html>

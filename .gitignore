@@ -1,0 +1,26 @@
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor backups
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Temporary / sync artefacts (Dropbox, etc.)
+*.tmp
+*.tmp.*
+.dropbox
+.dropbox.cache/
+
+# Build / deps (none currently, but guard rail)
+node_modules/
+dist/
+build/
+
+# Local scratch
+/scratch/

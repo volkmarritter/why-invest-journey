@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Warum so investieren — Eine Reise mit dem Portfolio Prompt Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* =========================================================
+   DESIGN TOKENS
+   ========================================================= */
+:root{
+  --ink:#141210;
+  --cream:#F4EEE4;
+  --paper:#FBF7F0;
+  --coral:#FF6B5B;
+  --mustard:#E8B84A;
+  --forest:#2D5D3A;
+  --plum:#6B3FA0;
+  --sky:#3E8EDE;
+  --muted:#7A6F62;
+  --line:#d9cfbf;
+  --serif:'Fraunces', Georgia, serif;
+  --sans:'Inter', system-ui, sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* =========================================================
+   PROGRESS BAR + NAV
+   ========================================================= */
+.progress{
+  position:fixed;top:0;left:0;height:4px;width:0%;
+  background:linear-gradient(90deg,var(--coral),var(--mustard),var(--plum));
+  z-index:100;transition:width .1s linear;
+}
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 32px;
+  background:rgba(251,247,240,.85);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav .brand{font-family:var(--serif);font-weight:700;font-size:20px;letter-spacing:-.02em}
+.nav .brand span{color:var(--coral)}
+.nav .chips{display:flex;gap:6px;flex-wrap:wrap}
+.nav .chip{
+  font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 10px;border-radius:999px;background:transparent;border:1px solid transparent;
+  color:var(--muted);cursor:pointer;transition:.2s;text-decoration:none;
+}
+.nav .chip:hover,.nav .chip.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.nav .cta{
+  font-size:13px;font-weight:600;padding:8px 16px;border-radius:999px;
+  background:var(--ink);color:var(--cream);text-decoration:none;transition:.2s;
+}
+.nav .cta:hover{background:var(--coral)}
+.nav .right{display:flex;align-items:center;gap:8px}
+.nav .cta.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.nav .cta.ghost:hover{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+
+/* =========================================================
+   LAYOUT
+   ========================================================= */
+section{padding:120px 24px;position:relative}
+.wrap{max-width:1100px;margin:0 auto}
+.narrow{max-width:720px;margin:0 auto}
+.eyebrow{
+  display:inline-block;font-size:12px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--coral);margin-bottom:18px;
+}
+h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.05;letter-spacing:-.02em}
+h1{font-size:clamp(48px,8vw,120px);font-weight:400}
+h2{font-size:clamp(36px,5vw,68px);margin-bottom:20px}
+h3{font-size:clamp(22px,2.5vw,32px);margin-bottom:12px}
+p{font-size:17px;color:#2b2722;max-width:62ch}
+p.lead{font-size:21px;line-height:1.55;color:#3a332c;max-width:60ch}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{
+  min-height:100vh;padding:160px 24px 80px;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(255,107,91,.15), transparent 60%),
+    radial-gradient(ellipse at 85% 75%, rgba(107,63,160,.12), transparent 55%),
+    var(--paper);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.hero .kicker{font-size:13px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-bottom:32px}
+.hero h1 .accent{font-style:italic;color:var(--coral)}
+.hero h1 .ul{
+  background:linear-gradient(transparent 65%, var(--mustard) 65%);
+  padding:0 4px;
+}
+.hero .sub{margin-top:40px;font-size:22px;max-width:640px;color:#3a332c;line-height:1.45}
+.hero .meta{
+  margin-top:60px;display:flex;gap:40px;flex-wrap:wrap;
+  font-size:13px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;
+}
+.hero .meta span b{color:var(--ink);font-weight:700;font-size:26px;font-family:var(--serif);display:block;letter-spacing:-.01em;text-transform:none}
+.scroll-hint{
+  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+  font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);
+  animation:bob 2s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
+
+/* floating blobs */
+.blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.35;pointer-events:none;animation:float 14s ease-in-out infinite}
+.blob.b1{width:340px;height:340px;background:var(--coral);top:10%;right:-80px}
+.blob.b2{width:260px;height:260px;background:var(--mustard);bottom:8%;left:-60px;animation-delay:-6s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-30px) scale(1.08)}}
+
+/* =========================================================
+   CHAPTER HEADER
+   ========================================================= */
+.chapter-head{
+  display:flex;align-items:baseline;gap:24px;margin-bottom:50px;
+  border-top:2px solid var(--ink);padding-top:28px;
+}
+.chapter-num{
+  font-family:var(--serif);font-size:56px;font-weight:400;font-style:italic;
+  line-height:1;color:var(--coral);
+}
+.chapter-meta{flex:1}
+.chapter-meta .tag{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
+
+/* =========================================================
+   SECTION BACKGROUNDS
+   ========================================================= */
+.bg-cream{background:var(--cream)}
+.bg-ink{background:var(--ink);color:var(--cream)}
+.bg-ink h2,.bg-ink h3{color:var(--cream)}
+.bg-ink p{color:#d9cfbf}
+.bg-ink .eyebrow{color:var(--mustard)}
+.bg-ink .chapter-head{border-color:var(--mustard)}
+.bg-ink .chapter-num{color:var(--mustard)}
+
+/* =========================================================
+   REUSABLE COMPONENTS
+   ========================================================= */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+@media(max-width:860px){.grid-2{grid-template-columns:1fr;gap:40px}}
+.card{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:20px;padding:32px;
+}
+.bg-ink .card{background:#1f1b17;border-color:#3a332c}
+.stat{font-family:var(--serif);font-size:72px;font-weight:400;line-height:1;letter-spacing:-.03em}
+.stat-sub{font-size:14px;color:var(--muted);margin-top:8px}
+
+.pullquote{
+  font-family:var(--serif);font-size:clamp(28px,3.6vw,46px);
+  line-height:1.2;font-style:italic;font-weight:400;
+  border-left:4px solid var(--coral);padding-left:28px;margin:60px 0;
+  max-width:820px;
+}
+.pullquote cite{display:block;font-family:var(--sans);font-style:normal;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:20px;font-weight:600}
+
+/* buttons */
+.btn{
+  display:inline-block;padding:14px 26px;border-radius:999px;
+  background:var(--ink);color:var(--cream);text-decoration:none;
+  font-weight:600;font-size:15px;transition:.2s;cursor:pointer;border:none;
+}
+.btn:hover{background:var(--coral);transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--cream)}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease, transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ============ KAP 1: Allocation slider ============ */
+.alloc{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;align-items:center;margin-top:30px}
+@media(max-width:860px){.alloc{grid-template-columns:1fr}}
+.alloc-sliders{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:28px}
+.alloc-row{display:flex;align-items:center;gap:14px;margin:12px 0}
+.alloc-row .dot{width:14px;height:14px;border-radius:4px;flex:none}
+.alloc-row label{font-weight:600;min-width:90px;font-size:14px}
+.alloc-row input[type=range]{flex:1;accent-color:var(--coral)}
+.alloc-row .val{font-family:var(--serif);font-size:22px;min-width:56px;text-align:right}
+.alloc-donut{position:relative;aspect-ratio:1;max-width:360px;margin:0 auto}
+.alloc-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.alloc-center .lbl{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.alloc-center .num{font-family:var(--serif);font-size:48px;font-weight:500;line-height:1;margin-top:4px}
+.alloc-center .drift{font-size:13px;color:var(--muted);margin-top:10px}
+
+/* ============ KAP 2: ETF cost erosion ============ */
+.cost-toggle{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.cost-toggle button{
+  padding:10px 18px;border-radius:999px;border:2px solid var(--line);background:transparent;
+  font-weight:600;font-size:13px;cursor:pointer;transition:.2s;color:inherit;
+}
+.cost-toggle button.active{background:var(--coral);border-color:var(--coral);color:#fff}
+.bg-ink .cost-toggle button{border-color:#3a332c;color:var(--cream)}
+.dot-grid{display:grid;grid-template-columns:repeat(25,1fr);gap:3px;max-width:520px}
+.dot-grid .d{aspect-ratio:1;border-radius:50%;background:#d9cfbf;opacity:.6;transition:.3s}
+.dot-grid .d.on{background:var(--coral);opacity:1;transform:scale(1.15)}
+
+/* ============ KAP 3: Stock picking game ============ */
+.picker{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:30px 0}
+@media(max-width:600px){.picker{grid-template-columns:repeat(3,1fr)}}
+.pick-tile{
+  aspect-ratio:1;border-radius:14px;background:var(--paper);
+  border:2px solid var(--line);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;transition:.2s;
+  font-weight:700;font-size:13px;text-align:center;padding:8px;
+  color:var(--ink);
+}
+.pick-tile:hover{border-color:var(--coral);transform:translateY(-2px)}
+.pick-tile.picked{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.pick-tile.revealed.winner{background:var(--forest);color:#fff;border-color:var(--forest)}
+.pick-tile.revealed.loser{background:#e8e0d1;color:var(--muted);border-color:transparent}
+.pick-tile .ticker{font-family:var(--serif);font-size:22px;display:block;margin-bottom:4px;font-weight:400}
+.pick-result{min-height:30px;font-family:var(--serif);font-style:italic;font-size:22px;margin-top:10px}
+
+.spiva-bars{display:flex;flex-direction:column;gap:14px;margin-top:20px}
+.spiva-row{display:grid;grid-template-columns:120px 1fr 70px;gap:14px;align-items:center;font-size:14px}
+.spiva-bar{height:28px;background:#f1e8d8;border-radius:6px;overflow:hidden;position:relative}
+.bg-ink .spiva-bar{background:#2a251f}
+.spiva-fill{height:100%;background:linear-gradient(90deg,var(--coral),var(--mustard));border-radius:6px;width:0%;transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+
+/* ============ KAP 4: Missing best days ============ */
+.mbd{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+@media(max-width:860px){.mbd{grid-template-columns:1fr}}
+.mbd-controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.mbd-controls button{
+  padding:10px 16px;border-radius:12px;border:2px solid var(--line);
+  background:transparent;font-weight:600;cursor:pointer;font-size:13px;color:inherit;transition:.2s;
+}
+.mbd-controls button.active{background:var(--plum);border-color:var(--plum);color:#fff}
+.bg-ink .mbd-controls button{border-color:#3a332c;color:var(--cream)}
+
+/* ============ KAP 5: Compound calculator ============ */
+.calc{display:grid;grid-template-columns:1fr 1.4fr;gap:40px;align-items:start}
+@media(max-width:860px){.calc{grid-template-columns:1fr}}
+.calc-inputs{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:28px}
+.calc-field{margin:18px 0}
+.calc-field label{display:block;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600}
+.calc-field .row{display:flex;align-items:center;gap:14px}
+.calc-field input[type=range]{flex:1;accent-color:var(--forest)}
+.calc-field .value{font-family:var(--serif);font-size:26px;min-width:130px;text-align:right}
+.calc-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:20px}
+@media(max-width:600px){.calc-summary{grid-template-columns:1fr}}
+.calc-summary .box{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px}
+.calc-summary .box .lbl{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.calc-summary .box .big{font-family:var(--serif);font-size:32px;font-weight:500;margin-top:6px;line-height:1}
+.calc-summary .box.hl{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.calc-summary .box.hl .big{color:var(--mustard)}
+
+/* ============ FINAL CTA ============ */
+.final{
+  background:linear-gradient(135deg,var(--ink) 0%, #2d1f17 50%, #4a1f1a 100%);
+  color:var(--cream);text-align:center;padding:160px 24px;position:relative;overflow:hidden;
+}
+.final h2{color:var(--cream);max-width:920px;margin:0 auto 28px}
+.final h2 em{color:var(--mustard);font-style:italic}
+.final .btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+.final .btn.primary{background:var(--coral)}
+.final .btn.primary:hover{background:var(--mustard);color:var(--ink)}
+.final .btn.ghost{background:transparent;border:2px solid var(--cream);color:var(--cream)}
+.final .btn.ghost:hover{background:var(--cream);color:var(--ink)}
+
+footer{padding:40px 24px;text-align:center;font-size:13px;color:var(--muted);background:var(--ink)}
+footer a{color:var(--mustard);text-decoration:none}
+
+/* highlight utility */
+.mark-coral{background:linear-gradient(transparent 62%, rgba(255,107,91,.35) 62%);padding:0 4px}
+.mark-mustard{background:linear-gradient(transparent 62%, rgba(232,184,74,.5) 62%);padding:0 4px}
+.mark-plum{background:linear-gradient(transparent 62%, rgba(107,63,160,.25) 62%);padding:0 4px}
+
+canvas{max-width:100%}
+.chart-wrap{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:24px;position:relative}
+.bg-ink .chart-wrap{background:#1f1b17;border-color:#3a332c}
+.chart-wrap .caption{font-size:12px;color:var(--muted);margin-top:12px;letter-spacing:.04em}
+
+/* ========= ENHANCEMENTS v2 ========= */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .blob{animation:none!important}
+  .scroll-hint{animation:none!important}
+}
+.hero .readtime{display:inline-flex;align-items:center;gap:6px;margin-left:10px;padding:4px 10px;border-radius:999px;background:rgba(20,18,16,.08);font-size:11px;letter-spacing:.12em;color:var(--ink);font-weight:700;vertical-align:middle}
+.callout{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--coral);border-radius:14px;padding:22px 24px;margin-top:28px}
+.bg-ink .callout{background:#1f1b17;border-color:#3a332c;border-left-color:var(--mustard)}
+.callout .clabel{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--coral);font-weight:700;margin-bottom:8px}
+.bg-ink .callout .clabel{color:var(--mustard)}
+.callout h4{font-family:var(--serif);font-size:22px;font-weight:500;margin-bottom:6px;line-height:1.2}
+.callout p{font-size:15px;max-width:none}
+.callout.plum{border-left-color:var(--plum)} .callout.plum .clabel{color:var(--plum)}
+.callout.forest{border-left-color:var(--forest)} .callout.forest .clabel{color:var(--forest)}
+.callout.mustard{border-left-color:var(--mustard)} .callout.mustard .clabel{color:#a07c12}
+.bg-ink .callout.mustard .clabel{color:var(--mustard)}
+.dd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+@media(max-width:600px){.dd-grid{grid-template-columns:1fr}}
+.dd-grid .dd{background:rgba(255,255,255,.04);border:1px solid #3a332c;border-radius:12px;padding:16px}
+.dd-grid .dd .when{font-size:11px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;font-weight:700}
+.dd-grid .dd .fall{font-family:var(--serif);font-size:30px;color:var(--coral);margin-top:6px;line-height:1}
+.dd-grid .dd .back{font-size:12px;color:#d9cfbf;margin-top:6px}
+.plan-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.quiz{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:30px}
+@media(max-width:860px){.quiz{grid-template-columns:1fr}}
+.quiz-card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px}
+.quiz-card .qlabel{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--coral);font-weight:700;margin-bottom:8px}
+.quiz-card h4{font-family:var(--serif);font-size:20px;font-weight:500;line-height:1.25;margin-bottom:14px}
+.quiz-card .opts{display:flex;flex-direction:column;gap:8px}
+.quiz-card .opt{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;font-weight:500;cursor:pointer;transition:.15s;background:transparent;text-align:left;color:inherit}
+.quiz-card .opt:hover{border-color:var(--coral)}
+.quiz-card .opt.sel{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.quiz-summary{background:linear-gradient(135deg,var(--ink),#2d1f17);color:var(--cream);border-radius:20px;padding:32px;margin-top:30px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.quiz-summary .label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--mustard);font-weight:700}
+.quiz-summary h3{font-family:var(--serif);font-size:28px;font-weight:500;margin-top:6px;color:var(--cream)}
+.quiz-summary .pf{font-size:15px;color:#d9cfbf;max-width:520px;margin-top:6px}
+.quiz-summary .go{background:var(--coral);color:#fff;padding:14px 24px;border-radius:999px;font-weight:700;text-decoration:none;transition:.2s;font-size:15px;white-space:nowrap}
+.quiz-summary .go:hover{background:var(--mustard);color:var(--ink)}
+.refs{background:var(--cream);padding:80px 24px;border-top:1px solid var(--line)}
+.refs h3{font-family:var(--serif);font-size:28px;font-weight:500;margin-bottom:18px}
+.refs ol{padding-left:22px;font-size:14px;color:#3a332c;max-width:820px}
+.refs ol li{margin:6px 0}
+.refs .disc{margin-top:30px;padding:20px;border:1px dashed var(--line);border-radius:14px;font-size:12.5px;line-height:1.55;color:var(--muted);max-width:920px}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="nav">
+  <div class="chips">
+    <a class="chip" href="#ch1">1 · Allokation</a>
+    <a class="chip" href="#ch2">2 · ETFs</a>
+    <a class="chip" href="#ch3">3 · Stock Picking</a>
+    <a class="chip" href="#ch4">4 · Timing</a>
+    <a class="chip" href="#ch5">5 · Zinseszins</a>
+    <a class="chip" href="#ch6">6 · Ihr Profil</a>
+  </div>
+  <div class="right">
+    <a class="cta" href="https://bicon.li/prompt-builder/">← Zurück zur App</a>
+  </div>
+</nav>
+
+<!-- ======================================================
+     HERO
+     ====================================================== -->
+<section class="hero">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="wrap">
+    <div class="kicker">Der Portfolio Prompt Builder · Eine Reise für den neugierigen Anleger <span class="readtime">⏱ 5 Min. Lesezeit</span></div>
+    <h1>
+      Alle wollen <span class="accent">den Markt schlagen.</span><br>
+      Fast <span class="ul">niemand schafft es</span>.
+    </h1>
+    <p class="sub">
+      Bevor Sie also eine Aktie auswählen, den perfekten Einstieg suchen oder einem Guru vertrauen —
+      fünf Ideen, die in den besten Portfolios der Welt leise die eigentliche Arbeit leisten.
+      Einfach weiterscrollen.
+    </p>
+    <div class="meta">
+      <span><b>~90%</b>der Renditeschwankung kommen aus der Asset Allocation*</span>
+      <span><b>85%</b>der aktiven Fonds verlieren gegen den Index über 10 J.</span>
+      <span><b>5 Min.</b>um zu verstehen, warum der Prompt Builder funktioniert</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Scrollen ↓ Die Reise beginnt</div>
+</section>
+
+<!-- ======================================================
+     KAPITEL 1 — ASSET ALLOCATION
+     ====================================================== -->
+<section id="ch1" class="bg-cream">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">01</div>
+      <div class="chapter-meta">
+        <span class="tag">Strategische Asset Allocation</span>
+        <h2>Zuerst entscheiden: <em>Welcher Anlegertyp sind Sie?</em></h2>
+      </div>
+    </div>
+
+    <div class="grid-2 reveal">
+      <div>
+        <p class="lead">
+          Bevor Sie einen einzigen Fonds oder eine einzige Aktie kaufen, müssen Sie eines entscheiden:
+          <span class="mark-coral">wie viel Risiko Sie nachts ruhig schlafen lässt</span>.
+          Diese Entscheidung — die Aufteilung zwischen Aktien, Anleihen, Immobilien und Cash — heißt
+          <b>Strategische Asset Allocation (SAA)</b>.
+        </p>
+        <p style="margin-top:18px">
+          Klingt langweilig. Ist aber die mit Abstand wichtigste Entscheidung, die Sie als Anleger je treffen werden.
+          Die legendäre Brinson-Studie zeigte: Rund <b>90% der Schwankung von Portfoliorenditen</b> kommen nicht
+          daher, welche Aktien Sie kaufen oder wann — sondern aus genau dieser obersten Aufteilung.
+        </p>
+        <p style="margin-top:18px">
+          Stellen Sie sich den Hausbau vor. Den Bauplan wählen Sie, bevor Sie sich für Türklinken entscheiden.
+          Die erste Frage des Portfolio Prompt Builder — Ihr Risikoprofil — ist genau dieser Bauplan-Schritt.
+        </p>
+      </div>
+
+      <div class="alloc">
+        <div>
+          <div class="alloc-sliders">
+            <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:600">Regler bewegen, Allokation ausprobieren</div>
+            <div class="alloc-row">
+              <span class="dot" style="background:var(--coral)"></span>
+              <label>Aktien</label>
+              <input type="range" min="0" max="100" value="60" id="sEq">
+              <span class="val" id="vEq">60%</span>
+            </div>
+            <div class="alloc-row">
+              <span class="dot" style="background:var(--forest)"></span>
+              <label>Anleihen</label>
+              <input type="range" min="0" max="100" value="30" id="sBo">
+              <span class="val" id="vBo">30%</span>
+            </div>
+            <div class="alloc-row">
+              <span class="dot" style="background:var(--mustard)"></span>
+              <label>Alt./Immo.</label>
+              <input type="range" min="0" max="100" value="7" id="sAl">
+              <span class="val" id="vAl">7%</span>
+            </div>
+            <div class="alloc-row">
+              <span class="dot" style="background:var(--sky)"></span>
+              <label>Cash</label>
+              <input type="range" min="0" max="100" value="3" id="sCa">
+              <span class="val" id="vCa">3%</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-top:10px" id="allocTotal">Summe: 100%</div>
+          </div>
+        </div>
+        <div class="alloc-donut">
+          <canvas id="donut"></canvas>
+          <div class="alloc-center">
+            <span class="lbl">Erwartete Rendite p.a.</span>
+            <span class="num" id="expRet">6,1%</span>
+            <span class="drift" id="riskHint">Risiko: Ausgewogen · Volatilität ~9%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout forest reveal">
+      <div class="clabel">Disziplin, nicht Vorhersage</div>
+      <h4>Die Arbeit einer SAA ist das Rebalancing — nicht das Prognostizieren.</h4>
+      <p>Einmal pro Jahr (oder bei größeren Abweichungen) wird das Portfolio auf die Zielquoten zurückgeführt:
+      Gewinner werden teilweise verkauft, Verlierer nachgekauft. Das wirkt gegen die Intuition — ist aber
+      automatisiertes „hoch verkaufen, tief kaufen". Der Prompt Builder sorgt dafür, dass dieser Takt nicht verloren geht.</p>
+    </div>
+
+    <div class="pullquote reveal">
+      „Langfristig bestimmt Ihr Asset-Mix fast alles.
+      Der Rest ist Rauschen, das sich wie Können anfühlt."
+      <cite>— Sinngemäß: 40 Jahre Finanzforschung</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     KAPITEL 2 — WARUM ETFs
+     ====================================================== -->
+<section id="ch2">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">02</div>
+      <div class="chapter-meta">
+        <span class="tag">Umsetzung</span>
+        <h2>Dann: das <em>günstigste, breiteste und einfachste</em> Werkzeug. Der ETF.</h2>
+      </div>
+    </div>
+
+    <div class="grid-2 reveal">
+      <div>
+        <p class="lead">
+          Wenn Sie wissen, <i>was</i> Sie besitzen wollen, brauchen Sie einen Weg, es tatsächlich zu besitzen.
+          ETFs — Exchange Traded Funds — sind das <span class="mark-mustard">Schweizer Taschenmesser</span>
+          des modernen Investierens. Ein Kauf, Hunderte oder Tausende Unternehmen im Depot — zu Kosten,
+          die früher wie Science-Fiction klangen.
+        </p>
+        <p style="margin-top:18px">
+          Ein durchschnittlicher aktiv verwalteter Fonds in Europa kostet noch immer <b>1,4–1,8%</b> pro Jahr.
+          Ein breiter Index-ETF? Oft nur <b>0,07–0,20%</b>. Der Unterschied klingt klein.
+          Über 30 Anlegerjahre frisst er leise ein Drittel Ihres Vermögens.
+        </p>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px">500 Unternehmen, ein Klick</div>
+        <div class="dot-grid" id="dotGrid"></div>
+        <p style="font-size:13px;color:var(--muted);margin-top:14px">
+          Ein ETF-Anteil = Miteigentum an allen. Liquidität, Transparenz, Diversifikation — alles in einem.
+        </p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:80px" class="reveal">Die stille Gebührensteuer — über 30 Jahre.</h3>
+    <div class="cost-toggle reveal">
+      <button class="active" data-years="30">30 Jahre</button>
+      <button data-years="20">20 Jahre</button>
+      <button data-years="10">10 Jahre</button>
+    </div>
+    <div class="chart-wrap reveal" style="max-width:1000px">
+      <canvas id="costChart" height="110"></canvas>
+      <div class="caption">€100.000 investiert, 6% Bruttorendite p.a. Hohe Kosten: 1,5% TER · Günstiger ETF: 0,15% TER. Illustrativ.</div>
+    </div>
+
+    <div class="callout mustard reveal">
+      <div class="clabel">Der unsichtbare Gegner</div>
+      <h4>Inflation frisst mit — jeden Tag.</h4>
+      <p>Bei 2,5% Inflation p.a. halbiert sich die Kaufkraft von Bargeld in rund 28 Jahren.
+      Ein global diversifiziertes Aktien-ETF-Portfolio war historisch einer der verlässlichsten
+      Wege, diesen Schwund nicht nur zu kompensieren, sondern real zu schlagen.</p>
+    </div>
+
+    <div class="callout plum reveal">
+      <div class="clabel">Home Bias</div>
+      <h4>Ihr Heimatmarkt ist ~3% der Welt. Ihr Depot sollte das wissen.</h4>
+      <p>Viele europäische Anleger halten 40–60% ihrer Aktienquote in europäischen Titeln — obwohl
+      Europa nur rund 15% der globalen Marktkapitalisierung ausmacht. Ein breiter World- oder
+      ACWI-ETF räumt diesen blinden Fleck in einem einzigen Trade auf.</p>
+    </div>
+
+    <div class="pullquote reveal" style="border-left-color:var(--mustard)">
+      „Beim Investieren bekommen Sie, wofür Sie <i>nicht</i> bezahlen."
+      <cite>— John C. Bogle, Gründer von Vanguard</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     KAPITEL 3 — WARUM KEIN STOCK PICKING
+     ====================================================== -->
+<section id="ch3" class="bg-ink">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">03</div>
+      <div class="chapter-meta">
+        <span class="tag">Die Helden-Falle</span>
+        <h2>Stock Picking fühlt sich <em>schlau</em> an. Die Daten sagen etwas anderes.</h2>
+      </div>
+    </div>
+
+    <div class="grid-2 reveal">
+      <div>
+        <p class="lead" style="color:#e8ddc9">
+          Jeder hat einen Bekannten, der 2009 Apple gekauft hat. Niemand kennt jemanden, der zugibt,
+          2019 Wirecard, 2007 Nokia oder 2000 GE gekauft zu haben. Survivorship-Bias ist
+          <span class="mark-plum">der teuerste Trick</span>, den unser Gehirn dem Depot spielt.
+        </p>
+        <p style="margin-top:18px;color:#d9cfbf">
+          Weltweit sind rund 50.000 Unternehmen gelistet. In jedem 10-Jahres-Fenster liefert eine winzige
+          Minderheit den Großteil der Rendite. Verpassen Sie diese wenigen, performen Sie schlechter
+          als ein langweiliger Indexfonds — der per Definition <i>alle</i> besitzt.
+        </p>
+        <p style="margin-top:18px;color:#d9cfbf">
+          Darum zeigen die SPIVA-Scorecards seit über 20 Jahren immer wieder denselben Befund:
+        </p>
+        <div class="spiva-bars" id="spivaBars">
+          <div class="spiva-row">
+            <span>1 Jahr</span><div class="spiva-bar"><div class="spiva-fill" data-pct="62"></div></div><span style="text-align:right;font-weight:600">62%</span>
+          </div>
+          <div class="spiva-row">
+            <span>5 Jahre</span><div class="spiva-bar"><div class="spiva-fill" data-pct="78"></div></div><span style="text-align:right;font-weight:600">78%</span>
+          </div>
+          <div class="spiva-row">
+            <span>10 Jahre</span><div class="spiva-bar"><div class="spiva-fill" data-pct="85"></div></div><span style="text-align:right;font-weight:600">85%</span>
+          </div>
+          <div class="spiva-row">
+            <span>20 Jahre</span><div class="spiva-bar"><div class="spiva-fill" data-pct="92"></div></div><span style="text-align:right;font-weight:600">92%</span>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:14px">
+          Anteil aktiv verwalteter Large-Cap-Fonds, die ihre Benchmark <b>unterperformen</b>.<br>
+          Quelle: S&amp;P Dow Jones SPIVA, langfristige Durchschnitte (illustrativ).
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--mustard);font-weight:700;margin-bottom:8px">Mini-Spiel</div>
+          <h3 style="font-size:26px">Wählen Sie den nächsten 10-Jahres-Gewinner.</h3>
+          <p style="color:#d9cfbf;font-size:15px;margin-top:6px">Einen Ticker auswählen. Wir zeigen, was passiert ist.</p>
+          <div class="picker" id="picker">
+            <div class="pick-tile" data-id="0"><span class="ticker">AAPL</span>Tech-Riese</div>
+            <div class="pick-tile" data-id="1"><span class="ticker">WDI</span>Payment-Star</div>
+            <div class="pick-tile" data-id="2"><span class="ticker">GME</span>Viraler Hype</div>
+            <div class="pick-tile" data-id="3"><span class="ticker">NFLX</span>Streamer</div>
+            <div class="pick-tile" data-id="4"><span class="ticker">NOK</span>Ex-Champion</div>
+            <div class="pick-tile" data-id="5"><span class="ticker">TSLA</span>Raketen &amp; Autos</div>
+            <div class="pick-tile" data-id="6"><span class="ticker">GE</span>Klassiker</div>
+            <div class="pick-tile" data-id="7"><span class="ticker">MSFT</span>Software</div>
+            <div class="pick-tile" data-id="8"><span class="ticker">ENR</span>Energie-Hype</div>
+            <div class="pick-tile" data-id="9"><span class="ticker">?</span>Der Nächste</div>
+          </div>
+          <div class="pick-result" id="pickResult">Einen auswählen. Kein Druck. Es ist nur Ihre Altersvorsorge.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pullquote reveal" style="border-left-color:var(--mustard);color:#e8ddc9">
+      „Suchen Sie nicht die Nadel im Heuhaufen. Kaufen Sie einfach den ganzen Heuhaufen."
+      <cite>— John C. Bogle</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     KAPITEL 4 — MARKET TIMING
+     ====================================================== -->
+<section id="ch4">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">04</div>
+      <div class="chapter-meta">
+        <span class="tag">Die Kristallkugel</span>
+        <h2>Niemand läutet die Glocke <em>am Tiefpunkt</em>. Oder am Hochpunkt.</h2>
+      </div>
+    </div>
+
+    <div class="narrow reveal">
+      <p class="lead">
+        „Ich warte einfach, bis sich die Lage beruhigt hat." Der teuerste Satz der privaten Geldanlage.
+        Märkte machen ihre beste Arbeit an wenigen, explosiven und unvorhersehbaren Tagen —
+        und die liegen meist <span class="mark-plum">direkt neben den beängstigenden</span>.
+      </p>
+    </div>
+
+    <h3 style="margin-top:60px" class="reveal">Was passiert, wenn Sie die besten Tage verpassen?</h3>
+    <div class="mbd-controls reveal">
+      <button class="active" data-miss="0">Voll investiert geblieben</button>
+      <button data-miss="10">10 beste Tage verpasst</button>
+      <button data-miss="20">20 beste Tage verpasst</button>
+      <button data-miss="30">30 beste Tage verpasst</button>
+    </div>
+    <div class="chart-wrap reveal" style="max-width:1000px">
+      <canvas id="timingChart" height="110"></canvas>
+      <div class="caption">€10.000 im globalen Aktienindex, 20 Jahre. „Verpasste Tage" = an den N besten Handelstagen in Cash. Illustrativ.</div>
+    </div>
+
+    <div class="grid-2 reveal" style="margin-top:80px">
+      <div class="card">
+        <div class="stat" style="color:var(--coral)">7 von 10</div>
+        <div class="stat-sub">der besten Handelstage liegen historisch innerhalb von <b>2 Wochen</b> neben den 10 schlechtesten.</div>
+      </div>
+      <div class="card">
+        <div class="stat" style="color:var(--plum)">–54%</div>
+        <div class="stat-sub">typischer Rückgang des Endvermögens, wenn nur die 10 besten Tage in 20 Jahren verpasst werden.</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:80px" class="reveal">Jedes Jahrzehnt hat seinen Bärenmarkt. Jeder Bärenmarkt endete.</h3>
+    <div class="dd-grid reveal">
+      <div class="dd">
+        <div class="when">2000–2002 · Dotcom</div>
+        <div class="fall">−49%</div>
+        <div class="back">Vollständig erholt bis 2006/07.</div>
+      </div>
+      <div class="dd">
+        <div class="when">2007–2009 · Finanzkrise</div>
+        <div class="fall">−54%</div>
+        <div class="back">Neues Allzeithoch 2013.</div>
+      </div>
+      <div class="dd">
+        <div class="when">2020 · COVID-Crash</div>
+        <div class="fall">−34%</div>
+        <div class="back">Neues Hoch nach nur 5 Monaten.</div>
+      </div>
+    </div>
+    <div class="callout reveal" style="background:#1f1b17;border-color:#3a332c;border-left-color:var(--coral);color:#d9cfbf">
+      <div class="clabel" style="color:var(--coral)">Das Lynch-Paradox</div>
+      <h4 style="color:var(--cream)">„Mehr Geld wurde verloren, indem Anleger versucht haben, Korrekturen zu antizipieren — als in den Korrekturen selbst."</h4>
+      <p style="color:#d9cfbf">— Peter Lynch, der in 13 Jahren als Magellan-Fondsmanager ~29% p.a. erzielte. Die typische Fonds-Rendite seiner Anleger war deutlich niedriger — weil sie rein und raus timten.</p>
+    </div>
+
+    <div class="pullquote reveal" style="border-left-color:var(--plum)">
+      „Zeit <i>im</i> Markt schlägt den Markt zu timen."
+      <cite>— Eine Anleger-Floskel, weil sie einfach immer wieder stimmt</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     KAPITEL 5 — ZINSESZINS
+     ====================================================== -->
+<section id="ch5" class="bg-cream">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">05</div>
+      <div class="chapter-meta">
+        <span class="tag">Wie Vermögen wirklich wächst</span>
+        <h2>Am Montag langweilig. Nach <em>dreißig Jahren Magie</em>.</h2>
+      </div>
+    </div>
+
+    <div class="narrow reveal">
+      <p class="lead">
+        Das Geheimnis ist nicht Aufregung. Es ist <span class="mark-coral">Zeit × Geduld × ein vernünftiges Portfolio</span>.
+        Regler bewegen, Schneeball beobachten.
+      </p>
+    </div>
+
+    <div class="calc" style="margin-top:60px">
+      <div class="calc-inputs reveal">
+        <div class="calc-field">
+          <label>Startkapital</label>
+          <div class="row">
+            <input type="range" id="cInit" min="0" max="500000" step="5000" value="50000">
+            <span class="value" id="vInit">€50.000</span>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label>Monatliche Sparrate</label>
+          <div class="row">
+            <input type="range" id="cMonth" min="0" max="5000" step="50" value="500">
+            <span class="value" id="vMonth">€500</span>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label>Anlagedauer</label>
+          <div class="row">
+            <input type="range" id="cYears" min="5" max="40" step="1" value="25">
+            <span class="value" id="vYears">25 J.</span>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label>Erwartete Rendite p.a.</label>
+          <div class="row">
+            <input type="range" id="cRet" min="2" max="10" step="0.5" value="6">
+            <span class="value" id="vRet">6,0%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <div class="chart-wrap">
+          <canvas id="compChart" height="120"></canvas>
+          <div class="caption">Grün = Ihre Einzahlungen. Koralle = Zinseszins erledigt die Arbeit für Sie.</div>
+        </div>
+        <div class="calc-summary">
+          <div class="box">
+            <div class="lbl">Ihre Einzahlungen</div>
+            <div class="big" id="sContrib">€—</div>
+          </div>
+          <div class="box">
+            <div class="lbl">Zinseszins-Gewinne</div>
+            <div class="big" id="sGains" style="color:var(--coral)">€—</div>
+          </div>
+          <div class="box hl">
+            <div class="lbl">Endvermögen</div>
+            <div class="big" id="sFinal">€—</div>
+          </div>
+        </div>
+        <div class="plan-actions">
+          <button class="btn ghost" id="savePlanImg" type="button">Plan als Bild speichern</button>
+          <button class="btn ghost" id="copyPlanText" type="button">Zusammenfassung kopieren</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pullquote reveal">
+      „Zinseszins ist das achte Weltwunder.
+      Wer ihn versteht, verdient ihn. Wer nicht, zahlt ihn."
+      <cite>— Angeblich (vielleicht) von Albert Einstein. Wahr ist es sicher.</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     KAPITEL 6 — IHR PROFIL
+     ====================================================== -->
+<section id="ch6">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">06</div>
+      <div class="chapter-meta">
+        <span class="tag">Ihr Profil in 30 Sekunden</span>
+        <h2>Drei Fragen. Ein <em>Ausgangspunkt</em> für den Prompt Builder.</h2>
+      </div>
+    </div>
+
+    <div class="narrow reveal">
+      <p class="lead">
+        Kein Verkaufsgespräch, keine E-Mail-Adresse. Nur ein schneller Abgleich, wohin Ihr Portfolio tendieren
+        könnte — und ein vorausgefüllter Link in den Prompt Builder, wenn Sie tiefer gehen möchten.
+      </p>
+    </div>
+
+    <div class="quiz reveal">
+      <div class="quiz-card" data-q="horizon">
+        <div class="qlabel">01 · Horizont</div>
+        <h4>Wann werden Sie dieses Geld voraussichtlich brauchen?</h4>
+        <div class="opts">
+          <button class="opt" data-v="1">In den nächsten 2–3 Jahren</button>
+          <button class="opt" data-v="2">In 4–7 Jahren</button>
+          <button class="opt" data-v="3">In 8–15 Jahren</button>
+          <button class="opt" data-v="4">15+ Jahre oder nie (Erbe)</button>
+        </div>
+      </div>
+      <div class="quiz-card" data-q="risk">
+        <h4>Ihr Depot fällt nächstes Jahr um 30%. Sie …</h4>
+        <div class="qlabel">02 · Risiko</div>
+        <div class="opts">
+          <button class="opt" data-v="1">Verkaufen sofort. Schlaf geht vor.</button>
+          <button class="opt" data-v="2">Nervös, aber warten ab.</button>
+          <button class="opt" data-v="3">Bleiben dabei — Plan ist Plan.</button>
+          <button class="opt" data-v="4">Kaufen nach. Sale!</button>
+        </div>
+      </div>
+      <div class="quiz-card" data-q="income">
+        <div class="qlabel">03 · Einkommen</div>
+        <h4>Brauchen Sie aus dem Portfolio laufende Erträge?</h4>
+        <div class="opts">
+          <button class="opt" data-v="1">Ja, es soll Einkommen liefern.</button>
+          <button class="opt" data-v="2">Teils — etwas Puffer wäre gut.</button>
+          <button class="opt" data-v="3">Nein, reines Wachstum.</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-summary reveal" id="quizSummary" style="display:none">
+      <div>
+        <div class="label">Ihr Profil (Entwurf)</div>
+        <h3 id="qProfile">—</h3>
+        <div class="pf" id="qDesc">Fragen oben beantworten, um einen Vorschlag zu sehen.</div>
+      </div>
+      <a id="qGo" class="go" href="https://bicon.li/prompt-builder/?src=why-journey&lang=de">Im Prompt Builder öffnen →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================
+     FINAL CTA
+     ====================================================== -->
+<section id="final" class="final">
+  <div class="blob b1" style="background:var(--coral);opacity:.25"></div>
+  <div class="blob b2" style="background:var(--plum);opacity:.25"></div>
+  <div class="wrap" style="position:relative;z-index:2">
+    <div class="eyebrow" style="color:var(--mustard)">Sie haben das Ende der Reise erreicht.</div>
+    <h2>
+      Der Portfolio Prompt Builder will den Markt nicht <em>schlagen</em>.<br>
+      Er hilft Ihnen, ihn zu <em>besitzen</em> — intelligent.
+    </h2>
+    <p style="color:#d9cfbf;max-width:680px;margin:24px auto 0;font-size:18px">
+      Sagen Sie ihm Ihre Ziele, Ihren Anlagehorizont und Ihre Toleranz für Turbulenzen —
+      und er baut eine ETF-basierte Strategische Asset Allocation, die im Hintergrund leise weiterwächst,
+      während Sie Ihr Leben leben.
+    </p>
+    <div class="btns">
+      <a class="btn primary" href="https://bicon.li/prompt-builder/">← Zurück zur App</a>
+    </div>
+  </div>
+</section>
+
+<section class="refs">
+  <div class="wrap">
+    <h3>Quellen &amp; weiterführende Literatur</h3>
+    <ol>
+      <li>Brinson, Hood, Beebower — „Determinants of Portfolio Performance" (<i>Financial Analysts Journal</i>, 1986/1991): rund 90% der zeitlichen Renditeschwankung eines Portfolios gehen auf die Asset Allocation zurück.</li>
+      <li>S&amp;P Dow Jones Indices — SPIVA® Scorecards (fortlaufend): Anteil aktiv verwalteter Fonds, die ihre Benchmark über 1, 5, 10 und 20 Jahre verfehlen.</li>
+      <li>Morningstar — „Mind the Gap" (jährlich): Differenz zwischen ausgewiesener Fonds-Rendite und tatsächlicher Anleger-Rendite durch Timing-Verhalten.</li>
+      <li>Bessembinder, H. — „Do Stocks Outperform Treasury Bills?" (2018): die Mehrheit der langfristigen Aktienüberrendite stammt von einer kleinen Minderheit der Einzelaktien.</li>
+      <li>Dimson, Marsh, Staunton — <i>Credit Suisse / UBS Global Investment Returns Yearbook</i>: lange Renditezeitreihen für Aktien, Anleihen und Cash über 120+ Jahre.</li>
+      <li>J.P. Morgan Asset Management — <i>Guide to the Markets / Retirement</i>: Auswirkung verpasster bester Handelstage auf die Endrendite.</li>
+    </ol>
+    <div class="disc">
+      <b>Wichtige Hinweise.</b> Diese Seite ist ein redaktioneller Konzept-Prototyp und dient ausschließlich Bildungszwecken.
+      Sie stellt keine Anlageberatung, keine Anlageempfehlung und kein Angebot zum Kauf oder Verkauf von Finanzinstrumenten
+      im Sinne der MiFID II (EU) bzw. des FIDLEG (CH) dar. Historische Renditen sind kein verlässlicher Indikator für zukünftige Entwicklungen.
+      Alle Zahlen sind illustrativ gerundet; genaue Werte können je nach Quelle, Stichtag und Währung abweichen. Vor einer
+      Investitionsentscheidung sollten Sie Ihre persönliche Situation prüfen und gegebenenfalls eine qualifizierte Beraterin
+      oder einen qualifizierten Berater konsultieren.
+    </div>
+  </div>
+</section>
+
+<footer>
+  Konzept-Prototyp · Bicon · Daten illustrativ, nur zu Bildungszwecken. Keine Anlageberatung.
+  &nbsp;·&nbsp;
+  <a href="https://bicon.li/">bicon.li</a>
+</footer>
+
+<script>
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+const progEl=document.getElementById('progress');
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const p=h.scrollTop/(h.scrollHeight-h.clientHeight);
+  progEl.style.width=(p*100)+'%';
+});
+
+/* =========================================================
+   REVEAL ON SCROLL
+   ========================================================= */
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+  });
+},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* =========================================================
+   NAV ACTIVE CHIP
+   ========================================================= */
+const chips=[...document.querySelectorAll('.nav .chip')];
+const sections=['ch1','ch2','ch3','ch4','ch5','ch6'].map(id=>document.getElementById(id));
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY+150;
+  let active=-1;
+  sections.forEach((s,i)=>{if(s && s.offsetTop<=y)active=i});
+  chips.forEach((c,i)=>c.classList.toggle('active',i===active));
+});
+
+/* Helpers: German number formatting */
+const nfDE=new Intl.NumberFormat('de-DE',{maximumFractionDigits:0});
+const fmt=n=>'€'+nfDE.format(Math.round(n));
+const pctDE=v=>v.toFixed(1).replace('.',',')+'%';
+
+/* =========================================================
+   KAP 1 — Allocation Donut + Expected Return
+   ========================================================= */
+const colors=['#FF6B5B','#2D5D3A','#E8B84A','#3E8EDE'];
+const donutCtx=document.getElementById('donut').getContext('2d');
+const donut=new Chart(donutCtx,{
+  type:'doughnut',
+  data:{labels:['Aktien','Anleihen','Alt./Immo.','Cash'],datasets:[{data:[60,30,7,3],backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
+  options:{cutout:'68%',plugins:{legend:{display:false},tooltip:{enabled:true}},animation:{animateRotate:true,duration:700}}
+});
+const ids=['sEq','sBo','sAl','sCa'];
+const vids=['vEq','vBo','vAl','vCa'];
+function updateAlloc(){
+  let vals=ids.map(id=>+document.getElementById(id).value);
+  const sum=vals.reduce((a,b)=>a+b,0)||1;
+  vals=vals.map(v=>+(v*100/sum).toFixed(1));
+  vids.forEach((id,i)=>document.getElementById(id).textContent=vals[i].toFixed(0)+'%');
+  document.getElementById('allocTotal').textContent='Summe: 100% · normiert';
+  donut.data.datasets[0].data=vals;donut.update();
+  const expR=(vals[0]*0.075 + vals[1]*0.025 + vals[2]*0.055 + vals[3]*0.015)/100;
+  const vol =Math.sqrt((vals[0]/100)**2*0.18**2 + (vals[1]/100)**2*0.05**2 + (vals[2]/100)**2*0.12**2);
+  document.getElementById('expRet').textContent=pctDE(expR*100);
+  let profile='Ausgewogen';
+  if(vals[0]>=80)profile='Aggressiv';
+  else if(vals[0]>=60)profile='Wachstum';
+  else if(vals[0]>=40)profile='Ausgewogen';
+  else if(vals[0]>=20)profile='Konservativ';
+  else profile='Kapitalerhalt';
+  document.getElementById('riskHint').textContent=`Risiko: ${profile} · Volatilität ~${(vol*100).toFixed(0)}%`;
+}
+ids.forEach(id=>document.getElementById(id).addEventListener('input',updateAlloc));
+updateAlloc();
+
+/* =========================================================
+   KAP 2 — Dot grid (500 dots appear progressively)
+   ========================================================= */
+const grid=document.getElementById('dotGrid');
+for(let i=0;i<500;i++){const d=document.createElement('div');d.className='d';grid.appendChild(d);}
+const dots=[...grid.children];
+const gridObs=new IntersectionObserver((ents)=>{
+  ents.forEach(e=>{
+    if(e.isIntersecting){
+      dots.forEach((d,i)=>setTimeout(()=>d.classList.add('on'),i*3));
+      gridObs.disconnect();
+    }
+  });
+},{threshold:.3});
+gridObs.observe(grid);
+
+/* =========================================================
+   KAP 2 — Cost erosion chart
+   ========================================================= */
+function computeCost(years){
+  const labels=[], low=[], high=[];
+  const start=100000, gross=0.06;
+  for(let y=0;y<=years;y++){
+    labels.push('J'+y);
+    low.push(Math.round(start*Math.pow(1+gross-0.0015,y)));
+    high.push(Math.round(start*Math.pow(1+gross-0.015,y)));
+  }
+  return {labels,low,high};
+}
+const costCtx=document.getElementById('costChart').getContext('2d');
+const costData=computeCost(30);
+const costChart=new Chart(costCtx,{
+  type:'line',
+  data:{labels:costData.labels,datasets:[
+    {label:'Günstiger ETF (0,15% TER)',data:costData.low,borderColor:'#FF6B5B',backgroundColor:'rgba(255,107,91,.1)',borderWidth:3,fill:true,tension:.25,pointRadius:0},
+    {label:'Teurer aktiver Fonds (1,5% TER)',data:costData.high,borderColor:'#6B3FA0',backgroundColor:'rgba(107,63,160,.08)',borderWidth:3,fill:true,tension:.25,pointRadius:0,borderDash:[6,6]}
+  ]},
+  options:{
+    plugins:{legend:{position:'top',labels:{font:{family:'Inter',weight:'600'}}}},
+    scales:{
+      y:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k',font:{family:'Inter'}},grid:{color:'rgba(0,0,0,.05)'}},
+      x:{ticks:{font:{family:'Inter'},maxTicksLimit:8},grid:{display:false}}
+    }
+  }
+});
+document.querySelectorAll('.cost-toggle button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.cost-toggle button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const yrs=+b.dataset.years;const d=computeCost(yrs);
+    costChart.data.labels=d.labels;
+    costChart.data.datasets[0].data=d.low;
+    costChart.data.datasets[1].data=d.high;
+    costChart.update();
+  });
+});
+
+/* =========================================================
+   KAP 3 — SPIVA bars animate on view
+   ========================================================= */
+const spivaObs=new IntersectionObserver((ents)=>{
+  ents.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.spiva-fill').forEach(f=>{f.style.width=f.dataset.pct+'%';});
+      spivaObs.disconnect();
+    }
+  });
+},{threshold:.3});
+spivaObs.observe(document.getElementById('spivaBars'));
+
+/* =========================================================
+   KAP 3 — Stock picker game
+   ========================================================= */
+const outcomes={
+  0:{w:true,  txt:"AAPL — voll ins Schwarze. Rund +900% in zehn Jahren. Und jetzt wiederholen Sie das … absichtlich."},
+  1:{w:false, txt:"WDI (Wirecard) — im Juni 2020 insolvent. €100k → €0. Survivorship-Bias, nur rückwärts."},
+  2:{w:false, txt:"GME — euphorischer Ausbruch, dann zurück. Schöne Story. Flache bis negative Gesamtrendite über 10 Jahre."},
+  3:{w:true,  txt:"NFLX — Gewinner. Unterwegs aber ein Drawdown von −76% in 2022. Hätten Sie durchgehalten?"},
+  4:{w:false, txt:"NOK — einst weltweit Nr. 1 der Handyhersteller. Ein Jahrzehnt später: Warnbeispiel auf PowerPoint."},
+  5:{w:true,  txt:"TSLA — spektakulär. Mehrfach 40%+ Drawdown. Rückblick ist ein schmeichelnder Spiegel."},
+  6:{w:false, txt:"GE — der Inbegriff des Blue Chip der 90er. Über 20 Jahre hinter dem Index."},
+  7:{w:true,  txt:"MSFT — stiller Dauergewinner. Hätten Sie einfach den Index gekauft, wäre MSFT ohnehin dabei gewesen."},
+  8:{w:false, txt:"ENR (Enron-artig) — Bilanzskandale passieren. Diversifikation ist kostenlose Versicherung."},
+  9:{w:null,  txt:"Der Nächste … weiß niemand. Und genau das ist das ganze Problem."},
+};
+const INDEX_REF="Zum Vergleich: Der MSCI-World-Index lieferte im selben Jahrzehnt rund +170% — ohne eine einzige Einzelaktie auswählen zu müssen.";
+document.getElementById('picker').addEventListener('click',(e)=>{
+  const tile=e.target.closest('.pick-tile');if(!tile)return;
+  document.querySelectorAll('.pick-tile').forEach(t=>{
+    t.classList.remove('picked');t.classList.add('revealed');
+    const id=+t.dataset.id;const o=outcomes[id];
+    if(o.w===true)t.classList.add('winner');
+    else if(o.w===false)t.classList.add('loser');
+  });
+  tile.classList.add('picked');
+  const o=outcomes[+tile.dataset.id];
+  const pickResult=document.getElementById('pickResult');
+  pickResult.innerHTML = o.txt + '<br><span style="font-size:14px;color:#b8ac98;font-style:normal;display:block;margin-top:10px">'+INDEX_REF+'</span>';
+  if(window.bicon&&window.bicon.track)window.bicon.track('stock_pick',{ticker:tile.querySelector('.ticker').textContent,outcome:o.w});
+});
+
+/* =========================================================
+   KAP 4 — Missing best days chart
+   ========================================================= */
+function timingData(missed){
+  const years=20, base=0.08;
+  const drag=missed*0.0035;
+  const arr=[10000];
+  for(let y=1;y<=years;y++){
+    arr.push(Math.round(arr[y-1]*(1+base-drag)));
+  }
+  return arr;
+}
+const timingCtx=document.getElementById('timingChart').getContext('2d');
+const timingChart=new Chart(timingCtx,{
+  type:'line',
+  data:{
+    labels:Array.from({length:21},(_,i)=>'J'+i),
+    datasets:[{
+      label:'Portfoliowert',
+      data:timingData(0),
+      borderColor:'#6B3FA0',
+      backgroundColor:(ctx)=>{
+        const g=ctx.chart.ctx.createLinearGradient(0,0,0,300);
+        g.addColorStop(0,'rgba(107,63,160,.35)');g.addColorStop(1,'rgba(107,63,160,0)');return g;
+      },
+      borderWidth:3,fill:true,tension:.3,pointRadius:0
+    }]
+  },
+  options:{
+    plugins:{legend:{display:false}},
+    scales:{
+      y:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k',font:{family:'Inter'}},grid:{color:'rgba(0,0,0,.05)'}},
+      x:{ticks:{font:{family:'Inter'}},grid:{display:false}}
+    }
+  }
+});
+document.querySelectorAll('.mbd-controls button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.mbd-controls button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    timingChart.data.datasets[0].data=timingData(+b.dataset.miss);
+    timingChart.update();
+  });
+});
+
+/* =========================================================
+   KAP 5 — Compounding calculator
+   ========================================================= */
+const compCtx=document.getElementById('compChart').getContext('2d');
+const compChart=new Chart(compCtx,{
+  type:'line',
+  data:{labels:[],datasets:[
+    {label:'Einzahlungen',data:[],borderColor:'#2D5D3A',backgroundColor:'rgba(45,93,58,.25)',borderWidth:2,fill:true,tension:.25,pointRadius:0,stack:'s'},
+    {label:'Zinseszins',data:[],borderColor:'#FF6B5B',backgroundColor:'rgba(255,107,91,.4)',borderWidth:2,fill:true,tension:.25,pointRadius:0,stack:'s'}
+  ]},
+  options:{
+    plugins:{legend:{position:'top',labels:{font:{family:'Inter',weight:'600'}}}},
+    scales:{
+      y:{stacked:true,ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k',font:{family:'Inter'}},grid:{color:'rgba(0,0,0,.05)'}},
+      x:{ticks:{font:{family:'Inter'}},grid:{display:false}}
+    }
+  }
+});
+function recomputeCalc(){
+  const init=+document.getElementById('cInit').value;
+  const mon =+document.getElementById('cMonth').value;
+  const yrs =+document.getElementById('cYears').value;
+  const ret =+document.getElementById('cRet').value/100;
+  document.getElementById('vInit').textContent=fmt(init);
+  document.getElementById('vMonth').textContent=fmt(mon);
+  document.getElementById('vYears').textContent=yrs+' J.';
+  document.getElementById('vRet').textContent=pctDE(ret*100);
+  const labels=[],contrib=[],gains=[];
+  let bal=init, contribSum=init;
+  for(let y=0;y<=yrs;y++){
+    if(y>0){
+      for(let m=0;m<12;m++){
+        bal = bal*(1+ret/12) + mon;
+        contribSum += mon;
+      }
+    }
+    labels.push('J'+y);
+    contrib.push(Math.round(contribSum));
+    gains.push(Math.round(bal-contribSum));
+  }
+  compChart.data.labels=labels;
+  compChart.data.datasets[0].data=contrib;
+  compChart.data.datasets[1].data=gains;
+  compChart.update();
+  document.getElementById('sContrib').textContent=fmt(contrib.at(-1));
+  document.getElementById('sGains').textContent=fmt(gains.at(-1));
+  document.getElementById('sFinal').textContent=fmt(contrib.at(-1)+gains.at(-1));
+}
+['cInit','cMonth','cYears','cRet'].forEach(id=>document.getElementById(id).addEventListener('input',recomputeCalc));
+recomputeCalc();
+
+/* =========================================================
+   ANALYTICS STUB
+   ========================================================= */
+window.bicon = window.bicon || {
+  track:function(event,props){
+    try{
+      const payload={event, props:props||{}, page:'why-journey-de', ts:Date.now()};
+      if(window.dataLayer&&window.dataLayer.push)window.dataLayer.push(payload);
+      else console.debug('[bicon.track]',payload);
+    }catch(e){}
+  }
+};
+window.bicon.track('page_view');
+/* Scroll depth milestones */
+const milestones=[25,50,75,100];let sent={};
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const p=Math.round((h.scrollTop/(h.scrollHeight-h.clientHeight))*100);
+  milestones.forEach(m=>{if(p>=m&&!sent[m]){sent[m]=1;window.bicon.track('scroll_depth',{pct:m});}});
+});
+/* Chapter in view */
+const chapterObs=new IntersectionObserver((ents)=>{
+  ents.forEach(e=>{if(e.isIntersecting){window.bicon.track('chapter_view',{id:e.target.id});chapterObs.unobserve(e.target);}});
+},{threshold:.4});
+document.querySelectorAll('section[id^=ch]').forEach(s=>chapterObs.observe(s));
+
+/* =========================================================
+   KAP 5 — Plan als Bild / Zusammenfassung kopieren
+   ========================================================= */
+document.getElementById('savePlanImg').addEventListener('click',()=>{
+  try{
+    const src=document.getElementById('compChart');
+    const w=800,h=520;
+    const out=document.createElement('canvas');out.width=w;out.height=h;
+    const ctx=out.getContext('2d');
+    ctx.fillStyle='#FBF7F0';ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='#141210';ctx.font='700 22px Inter, sans-serif';
+    ctx.fillText('Ihr Plan — Portfolio Prompt Builder', 32, 46);
+    ctx.font='400 14px Inter, sans-serif';ctx.fillStyle='#7A6F62';
+    ctx.fillText('Illustrativ, keine Anlageberatung · bicon.li', 32, 70);
+    ctx.drawImage(src, 32, 90, w-64, 300);
+    ctx.fillStyle='#141210';ctx.font='600 14px Inter, sans-serif';
+    ctx.fillText('Einzahlungen: '+document.getElementById('sContrib').textContent, 32, 430);
+    ctx.fillText('Zinseszins-Gewinne: '+document.getElementById('sGains').textContent, 32, 455);
+    ctx.fillText('Endvermögen: '+document.getElementById('sFinal').textContent, 32, 480);
+    const a=document.createElement('a');a.download='bicon-plan.png';a.href=out.toDataURL('image/png');a.click();
+    window.bicon.track('plan_image_saved');
+  }catch(e){console.warn(e);}
+});
+document.getElementById('copyPlanText').addEventListener('click',async()=>{
+  const txt=`Mein Plan (Portfolio Prompt Builder)
+Einzahlungen: ${document.getElementById('sContrib').textContent}
+Zinseszins-Gewinne: ${document.getElementById('sGains').textContent}
+Endvermögen: ${document.getElementById('sFinal').textContent}
+Startkapital: ${document.getElementById('vInit').textContent} · Sparrate: ${document.getElementById('vMonth').textContent}/Monat · ${document.getElementById('vYears').textContent} · Rendite: ${document.getElementById('vRet').textContent}
+— illustrativ, keine Anlageberatung · bicon.li`;
+  try{await navigator.clipboard.writeText(txt);const b=document.getElementById('copyPlanText');const old=b.textContent;b.textContent='✓ Kopiert';setTimeout(()=>b.textContent=old,1800);window.bicon.track('plan_text_copied');}catch(e){alert(txt);}
+});
+
+/* =========================================================
+   KAP 6 — Profil-Quiz
+   ========================================================= */
+const quizAns={horizon:null,risk:null,income:null};
+document.querySelectorAll('.quiz-card').forEach(card=>{
+  const q=card.dataset.q;
+  card.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      card.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+      btn.classList.add('sel');
+      quizAns[q]=+btn.dataset.v;
+      scoreProfile();
+    });
+  });
+});
+function scoreProfile(){
+  if(quizAns.horizon===null||quizAns.risk===null||quizAns.income===null)return;
+  const raw=(quizAns.horizon*1.2)+(quizAns.risk*1.4)-((quizAns.income===1?1.2:quizAns.income===2?0.3:-0.2));
+  let profile,equity,desc;
+  if(raw<3){profile='Kapitalerhalt';equity=15;desc='Priorität auf Kaufkrafterhalt. Überwiegend Anleihen und Cash, kleiner Aktienanteil für die Inflation.';}
+  else if(raw<5){profile='Konservativ';equity=30;desc='Mehr Ruhe als Rendite. Ein Aktienkern, der Inflation schlägt — ohne Sie nachts wachzuhalten.';}
+  else if(raw<7){profile='Ausgewogen';equity=55;desc='Klassisch 55/40/5. Der Sweet Spot für viele langfristige Privatanleger.';}
+  else if(raw<9){profile='Wachstum';equity=75;desc='Primär Aktien, aber mit Puffer. Zeithorizont und Nerven erlauben einen echten Wachstumsfokus.';}
+  else{profile='Aggressives Wachstum';equity=90;desc='Mehrheitlich globales Aktien-Exposure, kleine Allokation zu Anleihen/Alternativen zur Glättung.';}
+  document.getElementById('quizSummary').style.display='flex';
+  document.getElementById('qProfile').textContent=profile;
+  document.getElementById('qDesc').textContent=desc;
+  const params=new URLSearchParams({
+    profile:profile.toLowerCase().replace(/\s+/g,'-'),
+    equity:equity,
+    horizon:quizAns.horizon,
+    risk:quizAns.risk,
+    income:quizAns.income,
+    src:'why-journey',
+    lang:'de'
+  });
+  document.getElementById('qGo').href='https://bicon.li/prompt-builder/?'+params.toString();
+  window.bicon.track('profile_scored',{profile,equity});
+}
+</script>
+</body>
+</html>
