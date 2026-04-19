@@ -367,7 +367,7 @@ canvas{max-width:100%}
     <a class="chip" href="#ch6">6 · Ihr Profil</a>
   </div>
   <div class="right">
-    <a class="cta" href="https://bicon.li/prompt-builder/">← Zurück zur App</a>
+    <a class="cta" href="https://bicon.li/prompt-builder/">Zur App</a>
   </div>
 </nav>
 
@@ -447,7 +447,7 @@ canvas{max-width:100%}
             </div>
             <div class="alloc-row">
               <span class="dot" style="background:var(--mustard)"></span>
-              <label>Alt./Immo.</label>
+              <label>Satelliten</label>
               <input type="range" min="0" max="100" value="7" id="sAl">
               <span class="val" id="vAl">7%</span>
             </div>
@@ -474,9 +474,9 @@ canvas{max-width:100%}
     <div class="callout forest reveal">
       <div class="clabel">Disziplin, nicht Vorhersage</div>
       <h4>Die Arbeit einer SAA ist das Rebalancing — nicht das Prognostizieren.</h4>
-      <p>Einmal pro Jahr (oder bei größeren Abweichungen) wird das Portfolio auf die Zielquoten zurückgeführt:
+      <p>Märkte bewegen sich. Ein 60/30/10-Portfolio (60% Aktien · 30% Anleihen · 10% Satelliten), das fünf Jahre sich selbst überlassen wird, kann sich still auf 78/15/7 verschieben — mehr Risiko, als ursprünglich gewollt. Einmal pro Jahr (oder bei größeren Abweichungen) wird das Portfolio auf die Zielquoten zurückgeführt:
       Gewinner werden teilweise verkauft, Verlierer nachgekauft. Das wirkt gegen die Intuition — ist aber
-      automatisiertes „hoch verkaufen, tief kaufen". Der Prompt Builder sorgt dafür, dass dieser Takt nicht verloren geht.</p>
+      automatisiertes „hoch verkaufen, tief kaufen". Der Prompt Builder entwirft ein ausgereiftes Rebalancing-Konzept: Trigger, Frequenz und Bandbreiten.</p>
     </div>
 
     <div class="pullquote reveal">
@@ -805,7 +805,7 @@ canvas{max-width:100%}
       <div class="chapter-num">06</div>
       <div class="chapter-meta">
         <span class="tag">Ihr Profil in 30 Sekunden</span>
-        <h2>Drei Fragen. Ein <em>Ausgangspunkt</em> für den Prompt Builder.</h2>
+        <h2>Zwei Fragen. Ein <em>Ausgangspunkt</em> für den Prompt Builder.</h2>
       </div>
     </div>
 
@@ -819,31 +819,22 @@ canvas{max-width:100%}
     <div class="quiz reveal">
       <div class="quiz-card" data-q="horizon">
         <div class="qlabel">01 · Horizont</div>
-        <h4>Wann werden Sie dieses Geld voraussichtlich brauchen?</h4>
+        <h4>Ihr Anlagehorizont</h4>
         <div class="opts">
-          <button class="opt" data-v="1">In den nächsten 2–3 Jahren</button>
-          <button class="opt" data-v="2">In 4–7 Jahren</button>
-          <button class="opt" data-v="3">In 8–15 Jahren</button>
-          <button class="opt" data-v="4">15+ Jahre oder nie (Erbe)</button>
+          <button class="opt" data-v="1">Ab 3 Jahren</button>
+          <button class="opt" data-v="2">Ab 5 Jahren</button>
+          <button class="opt" data-v="3">Ab 10 Jahren</button>
+          <button class="opt" data-v="4">Nächste Generation</button>
         </div>
       </div>
       <div class="quiz-card" data-q="risk">
-        <h4>Ihr Depot fällt nächstes Jahr um 30%. Sie …</h4>
-        <div class="qlabel">02 · Risiko</div>
+        <div class="qlabel">02 · Risikoappetit</div>
+        <h4>Ihr Risikoappetit</h4>
         <div class="opts">
-          <button class="opt" data-v="1">Verkaufen sofort. Schlaf geht vor.</button>
-          <button class="opt" data-v="2">Nervös, aber warten ab.</button>
-          <button class="opt" data-v="3">Bleiben dabei — Plan ist Plan.</button>
-          <button class="opt" data-v="4">Kaufen nach. Sale!</button>
-        </div>
-      </div>
-      <div class="quiz-card" data-q="income">
-        <div class="qlabel">03 · Einkommen</div>
-        <h4>Brauchen Sie aus dem Portfolio laufende Erträge?</h4>
-        <div class="opts">
-          <button class="opt" data-v="1">Ja, es soll Einkommen liefern.</button>
-          <button class="opt" data-v="2">Teils — etwas Puffer wäre gut.</button>
-          <button class="opt" data-v="3">Nein, reines Wachstum.</button>
+          <button class="opt" data-v="1">Niedrig — Vermögenserhalt zuerst</button>
+          <button class="opt" data-v="2">Moderat — Wachstum mit Puffer</button>
+          <button class="opt" data-v="3">Hoch — Wachstumsfokus, Schwankungen akzeptiert</button>
+          <button class="opt" data-v="4">Sehr hoch — Rückschläge sind Chancen</button>
         </div>
       </div>
     </div>
@@ -852,9 +843,10 @@ canvas{max-width:100%}
       <div>
         <div class="label">Ihr Profil (Entwurf)</div>
         <h3 id="qProfile">—</h3>
-        <div class="pf" id="qDesc">Fragen oben beantworten, um einen Vorschlag zu sehen.</div>
+        <div class="pf" id="qDesc">—</div>
+        <div style="margin-top:8px;font-size:13px;color:var(--muted)">Aktienquote: <b id="qEquityRange">—</b> · Ausschlüsse: <span id="qExclusions">—</span></div>
       </div>
-      <a id="qGo" class="go" href="https://bicon.li/prompt-builder/?src=why-journey&lang=de">Im Prompt Builder öffnen →</a>
+      <a id="qGo" class="go" href="https://bicon.li/prompt-builder/?src=why-journey&lang=de">Zur App →</a>
     </div>
   </div>
 </section>
@@ -877,7 +869,7 @@ canvas{max-width:100%}
       während Sie Ihr Leben leben.
     </p>
     <div class="btns">
-      <a class="btn primary" href="https://bicon.li/prompt-builder/">← Zurück zur App</a>
+      <a class="btn primary" href="https://bicon.li/prompt-builder/">Zur App</a>
     </div>
   </div>
 </section>
@@ -955,7 +947,7 @@ const colors=['#FF6B5B','#2D5D3A','#E8B84A','#3E8EDE'];
 const donutCtx=document.getElementById('donut').getContext('2d');
 const donut=new Chart(donutCtx,{
   type:'doughnut',
-  data:{labels:['Aktien','Anleihen','Alt./Immo.','Cash'],datasets:[{data:[60,30,7,3],backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
+  data:{labels:['Aktien','Anleihen','Satelliten','Cash'],datasets:[{data:[60,30,7,3],backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
   options:{cutout:'68%',plugins:{legend:{display:false},tooltip:{enabled:true}},animation:{animateRotate:true,duration:700}}
 });
 const ids=['sEq','sBo','sAl','sCa'];
@@ -1240,7 +1232,13 @@ Startkapital: ${document.getElementById('vInit').textContent} · Sparrate: ${doc
 /* =========================================================
    KAP 6 — Profil-Quiz
    ========================================================= */
-const quizAns={horizon:null,risk:null,income:null};
+const quizAns={horizon:null,risk:null};
+const DE_PROFILES=[null,
+  {profile:'Konservativ',profileId:'conservative',equity:30,equityRange:'20–40%',exclusions:'Immobilien, Krypto',desc:'Moderates Wachstum, begrenzte Schwankungen. Aktien 20–40%, Anleihen, Cash und Rohstoffe. Kein Immobilien- oder Krypto-Anteil.'},
+  {profile:'Ausgewogen',profileId:'balanced',equity:50,equityRange:'40–60%',exclusions:'Immobilien, Krypto',desc:'Zeit genug, um Stürme auszusitzen. Aktien 40–60%, Anleihen, Cash und Rohstoffe. Kein Immobilien- oder Krypto-Anteil.'},
+  {profile:'Wachstum',profileId:'growth',equity:70,equityRange:'60–80%',exclusions:'Immobilien',desc:'Langer Horizont, Bereitschaft zu Schwankungen. Aktien 60–80%, Anleihen, Cash, Rohstoffe und Krypto.'},
+  {profile:'Aggressiv',profileId:'aggressive',equity:90,equityRange:'80–100%',exclusions:'Anleihen',desc:'Jahrzehnte voraus, Rückschläge als Chance. Aktien 80–100%, Cash, Rohstoffe, Immobilien und Krypto.'}
+];
 document.querySelectorAll('.quiz-card').forEach(card=>{
   const q=card.dataset.q;
   card.querySelectorAll('.opt').forEach(btn=>{
@@ -1253,28 +1251,16 @@ document.querySelectorAll('.quiz-card').forEach(card=>{
   });
 });
 function scoreProfile(){
-  if(quizAns.horizon===null||quizAns.risk===null||quizAns.income===null)return;
-  const raw=(quizAns.horizon*1.2)+(quizAns.risk*1.4)-((quizAns.income===1?1.2:quizAns.income===2?0.3:-0.2));
-  let profile,equity,desc;
-  if(raw<3){profile='Kapitalerhalt';equity=15;desc='Priorität auf Kaufkrafterhalt. Überwiegend Anleihen und Cash, kleiner Aktienanteil für die Inflation.';}
-  else if(raw<5){profile='Konservativ';equity=30;desc='Mehr Ruhe als Rendite. Ein Aktienkern, der Inflation schlägt — ohne Sie nachts wachzuhalten.';}
-  else if(raw<7){profile='Ausgewogen';equity=55;desc='Klassisch 55/40/5. Der Sweet Spot für viele langfristige Privatanleger.';}
-  else if(raw<9){profile='Wachstum';equity=75;desc='Primär Aktien, aber mit Puffer. Zeithorizont und Nerven erlauben einen echten Wachstumsfokus.';}
-  else{profile='Aggressives Wachstum';equity=90;desc='Mehrheitlich globales Aktien-Exposure, kleine Allokation zu Anleihen/Alternativen zur Glättung.';}
+  if(quizAns.horizon===null||quizAns.risk===null)return;
+  const s=DE_PROFILES[Math.min(quizAns.horizon,quizAns.risk)];
   document.getElementById('quizSummary').style.display='flex';
-  document.getElementById('qProfile').textContent=profile;
-  document.getElementById('qDesc').textContent=desc;
-  const params=new URLSearchParams({
-    profile:profile.toLowerCase().replace(/\s+/g,'-'),
-    equity:equity,
-    horizon:quizAns.horizon,
-    risk:quizAns.risk,
-    income:quizAns.income,
-    src:'why-journey',
-    lang:'de'
-  });
+  document.getElementById('qProfile').textContent=s.profile;
+  document.getElementById('qDesc').textContent=s.desc;
+  document.getElementById('qEquityRange').textContent=s.equityRange;
+  document.getElementById('qExclusions').textContent=s.exclusions;
+  const params=new URLSearchParams({profile:s.profileId,equity:s.equity,horizon:quizAns.horizon,risk:quizAns.risk,src:'why-journey',lang:'de'});
   document.getElementById('qGo').href='https://bicon.li/prompt-builder/?'+params.toString();
-  window.bicon.track('profile_scored',{profile,equity});
+  window.bicon.track('profile_scored',{profile:s.profile,equity:s.equity});
 }
 </script>
 </body>
