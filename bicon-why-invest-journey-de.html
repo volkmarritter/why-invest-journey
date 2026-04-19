@@ -505,6 +505,13 @@ canvas{max-width:100%}
       <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Illustrativ. Referenzallokationen und Rendite-/Volatilitätsschätzungen dienen ausschließlich der Veranschaulichung — keine Empfehlung.</div>
     </div>
 
+    <div class="narrow reveal" style="margin-top:60px">
+      <h3 style="font-size:22px;margin-bottom:6px">10 Jahre zurück. 10 Jahre voraus.</h3>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Durchgezogene Linien: historische Wertentwicklung. Schattierte Korridore: ein plausibler Bullen-/Bären-Bereich für das nächste Jahrzehnt.</p>
+      <canvas id="horizonChart" height="220" style="max-width:680px;display:block;margin:0 auto"></canvas>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Basis 100 = Jan 2015. Historisch: ungefähre Jahresend-Gesamtrenditen (USD). Prognosen: optimistisches Szenario +10 % / +7 % p.a. · konservatives Szenario +4 % / +3 % p.a. (MSCI World / 60–40). Illustrativ — vergangene Wertentwicklungen sind kein verlässlicher Indikator für künftige Ergebnisse.</div>
+    </div>
+
     <div class="callout forest reveal">
       <div class="clabel">Disziplin, nicht Vorhersage</div>
       <h4>Die Arbeit einer SAA ist das Rebalancing — nicht das Prognostizieren.</h4>
@@ -1079,6 +1086,67 @@ var rrChart=new Chart(rrCtx,{
   }
 });
 updateAlloc();
+
+/* =========================================================
+   KAP 1 — Horizon chart (10y history + 10y projection corridors)
+   ========================================================= */
+(function(){
+  const labels=['2015','2016','2017','2018','2019','2020','2021','2022','2023','2024',
+                '2025','2026','2027','2028','2029','2030','2031','2032','2033','2034'];
+  const N=10;
+  const worldHist=[100,107,131,121,154,179,218,179,222,262,...Array(N).fill(null)];
+  const bal6040Hist=[100,105,123,116,139,158,175,145,170,191,...Array(N).fill(null)];
+  const worldBull=[...Array(9).fill(null),262,288,317,349,384,422,464,511,562,618,680];
+  const worldBear=[...Array(9).fill(null),262,272,283,295,306,319,332,345,359,373,388];
+  const balBull  =[...Array(9).fill(null),191,204,218,234,250,267,286,306,327,350,375];
+  const balBear  =[...Array(9).fill(null),191,197,203,209,215,221,228,235,242,249,256];
+
+  const divPlugin={
+    id:'hdivider',
+    afterDraw(chart){
+      const {ctx,scales:{x,y}}=chart;
+      const px=x.getPixelForValue(9);
+      ctx.save();
+      ctx.setLineDash([4,4]);
+      ctx.strokeStyle='rgba(122,111,98,.5)';
+      ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(px,y.top);ctx.lineTo(px,y.bottom);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#7A6F62';
+      ctx.font='10px Inter,sans-serif';
+      ctx.textAlign='right';
+      ctx.fillText('◀ Vergangenheit',px-6,y.top+12);
+      ctx.textAlign='left';
+      ctx.fillText('Prognose ▶',px+6,y.top+12);
+      ctx.restore();
+    }
+  };
+
+  const hCtx=document.getElementById('horizonChart').getContext('2d');
+  new Chart(hCtx,{
+    type:'line',
+    plugins:[divPlugin],
+    data:{labels,datasets:[
+      {label:'MSCI World',data:worldHist,borderColor:'#2D5D3A',borderWidth:2.5,pointRadius:0,tension:.25,fill:false},
+      {label:'60–40 Ausgewogen',data:bal6040Hist,borderColor:'#3E8EDE',borderWidth:2.5,pointRadius:0,tension:.25,fill:false},
+      {label:'_wBull',data:worldBull,borderColor:'rgba(45,93,58,.45)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.25,fill:'+1',backgroundColor:'rgba(45,93,58,.08)'},
+      {label:'_wBear',data:worldBear,borderColor:'rgba(45,93,58,.45)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.25,fill:false},
+      {label:'_bBull',data:balBull,borderColor:'rgba(62,142,222,.4)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.25,fill:'+1',backgroundColor:'rgba(62,142,222,.08)'},
+      {label:'_bBear',data:balBear,borderColor:'rgba(62,142,222,.4)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.25,fill:false}
+    ]},
+    options:{
+      animation:false,
+      plugins:{
+        legend:{position:'top',labels:{filter:item=>!item.text.startsWith('_'),font:{family:'Inter',size:12},usePointStyle:true,pointStyleWidth:16}},
+        tooltip:{callbacks:{label:ctx=>{if(ctx.dataset.label.startsWith('_'))return null;return `${ctx.dataset.label}: ${ctx.raw ?? '—'}`;},filter:item=>!item.dataset.label.startsWith('_')}}
+      },
+      scales:{
+        x:{ticks:{font:{family:'Inter',size:10},maxTicksLimit:10,maxRotation:0},grid:{color:'rgba(0,0,0,.05)'}},
+        y:{ticks:{callback:v=>v,font:{family:'Inter',size:10}},grid:{color:'rgba(0,0,0,.05)'},title:{display:true,text:'Indexiert (Jan 2015 = 100)',font:{size:10},color:'#7A6F62'}}
+      }
+    }
+  });
+})();
 
 /* =========================================================
    KAP 2 — Dot grid (500 dots appear progressively)
