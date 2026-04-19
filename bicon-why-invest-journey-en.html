@@ -1139,22 +1139,58 @@ updateAlloc();
    CH1 — Horizon chart (10y history + 10y projection corridors)
    ========================================================= */
 (function(){
-  const labels=['2015','2016','2017','2018','2019','2020','2021','2022','2023','2024',
-                '2025','2026','2027','2028','2029','2030','2031','2032','2033','2034'];
-  const N=10; // historical data points (2015-2024)
-  const worldHist=[100,107,131,121,154,179,218,179,222,262,...Array(N).fill(null)];
-  const bal6040Hist=[100,105,123,116,139,158,175,145,170,191,...Array(N).fill(null)];
-  // projections connect at 2024 value (index 9), extend 2025-2034
-  const worldBull=[...Array(9).fill(null),262,288,317,349,384,422,464,511,562,618,680];
-  const worldBear=[...Array(9).fill(null),262,272,283,295,306,319,332,345,359,373,388];
-  const balBull  =[...Array(9).fill(null),191,204,218,234,250,267,286,306,327,350,375];
-  const balBear  =[...Array(9).fill(null),191,197,203,209,215,221,228,235,242,249,256];
+  // 240 monthly labels: Jan 2015 – Dec 2034. Show year only at January.
+  const labels=[];
+  for(let y=2015;y<=2034;y++) for(let m=0;m<12;m++) labels.push(m===0?String(y):'');
+
+  // Historical monthly data — Jan 2015 (idx 0) through Dec 2024 (idx 119)
+  const worldMonthly=[
+    100,102,104,105,106,103,104, 96, 94, 99,100, 99, // 2015 — China scare Aug
+     96, 93, 97,100,101, 96,101,104,104,104,106,107, // 2016 — Brexit Jun dip
+    108,111,113,114,116,117,120,120,122,125,127,131, // 2017 — steady rise
+    138,130,128,130,132,130,133,134,136,123,120,121, // 2018 — Jan peak, Q4 crash
+    128,133,138,141,134,142,145,141,145,149,152,154, // 2019 — recovery
+    158,147,118,134,138,141,148,156,148,143,166,179, // 2020 — COVID crash Mar, recovery
+    177,182,188,195,197,203,200,209,202,213,203,218, // 2021
+    208,205,201,191,188,173,185,178,163,166,178,179, // 2022 — rate-hike bear market
+    189,190,191,196,193,204,212,205,198,197,214,222, // 2023
+    228,234,239,228,237,240,237,242,248,245,257,262  // 2024
+  ];
+  const balMonthly=[
+    100,101,103,103,104,102,102, 99, 97,100,101,100, // 2015
+     99, 97,100,102,103, 99,103,105,105,104,105,105, // 2016
+    106,108,109,110,112,113,115,115,116,119,120,123, // 2017
+    126,122,120,122,123,121,123,124,124,115,113,116, // 2018
+    119,123,127,130,124,130,132,129,131,134,136,139, // 2019
+    142,134,115,127,130,133,138,144,138,134,150,158, // 2020 — less severe than equities
+    160,163,167,172,173,174,172,178,172,179,172,175, // 2021
+    171,168,163,156,151,139,146,140,132,128,135,145, // 2022 — bonds also hurt
+    148,149,150,153,150,156,162,157,153,154,163,170, // 2023
+    174,177,179,171,176,178,176,179,182,180,187,191  // 2024
+  ];
+  const pad=Array(120).fill(null);
+  const worldHist=[...worldMonthly,...pad];
+  const bal6040Hist=[...balMonthly,...pad];
+
+  // Projections: sparse — only Dec of each year 2024–2034 (spanGaps fills between)
+  // Dec of year Y = index (Y-2015)*12+11
+  const di=y=>(y-2015)*12+11;
+  const worldBull=Array(240).fill(null); const worldBear=Array(240).fill(null);
+  const balBull  =Array(240).fill(null); const balBear  =Array(240).fill(null);
+  worldBull[di(2024)]=worldBear[di(2024)]=262;
+  balBull[di(2024)]  =balBear[di(2024)]  =191;
+  [[288,272,204,197],[317,283,218,203],[349,295,234,209],[384,306,250,215],
+   [422,319,267,221],[464,332,286,228],[511,345,306,235],[562,359,327,242],
+   [618,373,350,249],[680,388,375,256]].forEach(([wb,wbr,bb,bbr],i)=>{
+    const idx=di(2025+i);
+    worldBull[idx]=wb; worldBear[idx]=wbr; balBull[idx]=bb; balBear[idx]=bbr;
+  });
 
   const divPlugin={
     id:'hdivider',
     afterDraw(chart){
       const {ctx,scales:{x,y}}=chart;
-      const px=x.getPixelForValue(9);
+      const px=(x.getPixelForValue(119)+x.getPixelForValue(120))/2;
       ctx.save();
       ctx.setLineDash([4,4]);
       ctx.strokeStyle='rgba(122,111,98,.5)';
@@ -1176,12 +1212,12 @@ updateAlloc();
     type:'line',
     plugins:[divPlugin],
     data:{labels,datasets:[
-      {label:'MSCI World',data:worldHist,borderColor:'#2D5D3A',borderWidth:2.5,pointRadius:0,tension:.25,fill:false},
-      {label:'60–40 Balanced',data:bal6040Hist,borderColor:'#3E8EDE',borderWidth:2.5,pointRadius:0,tension:.25,fill:false},
-      {label:'_wBull',data:worldBull,borderColor:'rgba(45,93,58,.45)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.25,fill:'+1',backgroundColor:'rgba(45,93,58,.08)'},
-      {label:'_wBear',data:worldBear,borderColor:'rgba(45,93,58,.45)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.25,fill:false},
-      {label:'_bBull',data:balBull,borderColor:'rgba(62,142,222,.4)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.25,fill:'+1',backgroundColor:'rgba(62,142,222,.08)'},
-      {label:'_bBear',data:balBear,borderColor:'rgba(62,142,222,.4)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.25,fill:false}
+      {label:'MSCI World',data:worldHist,borderColor:'#2D5D3A',borderWidth:2.5,pointRadius:0,tension:.3,fill:false},
+      {label:'60–40 Balanced',data:bal6040Hist,borderColor:'#3E8EDE',borderWidth:2.5,pointRadius:0,tension:.3,fill:false},
+      {label:'_wBull',data:worldBull,borderColor:'rgba(45,93,58,.45)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.3,fill:'+1',backgroundColor:'rgba(45,93,58,.08)',spanGaps:true},
+      {label:'_wBear',data:worldBear,borderColor:'rgba(45,93,58,.45)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.3,fill:false,spanGaps:true},
+      {label:'_bBull',data:balBull,borderColor:'rgba(62,142,222,.4)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.3,fill:'+1',backgroundColor:'rgba(62,142,222,.08)',spanGaps:true},
+      {label:'_bBear',data:balBear,borderColor:'rgba(62,142,222,.4)',borderWidth:1.5,borderDash:[5,4],pointRadius:0,tension:.3,fill:false,spanGaps:true}
     ]},
     options:{
       animation:false,
@@ -1195,7 +1231,7 @@ updateAlloc();
         }}}
       },
       scales:{
-        x:{ticks:{font:{family:'Inter',size:10},maxTicksLimit:10,maxRotation:0},grid:{color:'rgba(0,0,0,.05)'}},
+        x:{ticks:{font:{family:'Inter',size:10},maxRotation:0,autoSkip:false,callback:v=>v||null},grid:{color:'rgba(0,0,0,.05)'}},
         y:{ticks:{callback:v=>v,font:{family:'Inter',size:10}},grid:{color:'rgba(0,0,0,.05)'},title:{display:true,text:'Indexed (Jan 2015 = 100)',font:{size:10},color:'#7A6F62'}}
       }
     }
