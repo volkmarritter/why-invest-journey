@@ -496,7 +496,7 @@ canvas{max-width:100%}
             <div class="stat-card">
               <div class="slbl">Volatility
                 <button class="info-btn" aria-label="Assumptions">i</button>
-                <div class="tip-box">Annualised std. dev. per class:<br>· Equities &nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satellites &nbsp;12 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px">Simplified — correlations not modelled.</span></div>
+                <div class="tip-box">Annualised std. dev. per class:<br>· Equities &nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satellites &nbsp;12 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(w²_eq·18%² + w²_bo·5%² + w²_sat·12%²)</span><span style="opacity:.6;font-size:10px">Simplified — correlations not modelled.</span></div>
               </div>
               <div class="sval coral" id="volNum">~9%</div>
             </div>
@@ -511,7 +511,7 @@ canvas{max-width:100%}
       <canvas id="rrChart" height="200" style="max-width:560px;display:block;margin:0 auto"></canvas>
       <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;position:relative;display:inline-block;width:100%">Illustrative. Reference allocations and return/volatility estimates are for illustration purposes only — not a recommendation.
         <button class="info-btn" aria-label="Assumptions" style="margin-left:5px;vertical-align:middle">i</button>
-        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Return p.a. assumptions:<br>· Equities &nbsp;&nbsp;&nbsp;7.5 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.5 %<br>· Satellites &nbsp;5.5 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 %<br><br>Volatility (annualised std. dev.):<br>· Equities &nbsp;&nbsp;&nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satellites &nbsp;12 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px">Simplified — correlations not modelled.</span></div>
+        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Return p.a. assumptions:<br>· Equities &nbsp;&nbsp;&nbsp;7.5 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.5 %<br>· Satellites &nbsp;5.5 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 %<br><br>Volatility (annualised std. dev.):<br>· Equities &nbsp;&nbsp;&nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satellites &nbsp;12 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(w²_eq·18%² + w²_bo·5%² + w²_sat·12%²)</span><span style="opacity:.6;font-size:10px">Simplified — correlations not modelled.</span></div>
       </div>
     </div>
 
