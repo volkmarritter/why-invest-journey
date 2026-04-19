@@ -502,7 +502,10 @@ canvas{max-width:100%}
       <h4 style="font-size:17px;margin-bottom:8px">Risiko und Rendite reisen immer gemeinsam.</h4>
       <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Jedes Portfolio liegt irgendwo in diesem Chart. Der <span class="mark-coral">rote Punkt</span> folgt den Reglern in Echtzeit. Die grünen Punkte sind die vier Referenzprofile. Wachstumsrenditen ohne Wachstumsrisiko — das gibt es nicht.</p>
       <canvas id="rrChart" height="200" style="max-width:560px;display:block;margin:0 auto"></canvas>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Illustrativ. Referenzallokationen und Rendite-/Volatilitätsschätzungen dienen ausschließlich der Veranschaulichung — keine Empfehlung.</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;position:relative;display:inline-block;width:100%">Illustrativ. Referenzallokationen und Rendite-/Volatilitätsschätzungen dienen ausschließlich der Veranschaulichung — keine Empfehlung.
+        <button class="info-btn" aria-label="Annahmen" style="margin-left:5px;vertical-align:middle">i</button>
+        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Rendite p.a. Annahmen:<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7,5 %<br>· Anleihen &nbsp;&nbsp;&nbsp;&nbsp;2,5 %<br>· Satelliten &nbsp;&nbsp;5,5 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,5 %<br><br>Volatilität (annualisierte Std.-Abw.):<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18 %<br>· Anleihen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satelliten &nbsp;&nbsp;12 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px">Vereinfacht — Korrelationen nicht modelliert.</span></div>
+      </div>
     </div>
 
     <div class="narrow reveal" style="margin-top:60px">

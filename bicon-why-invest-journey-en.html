@@ -509,7 +509,10 @@ canvas{max-width:100%}
       <h4 style="font-size:17px;margin-bottom:8px">Risk and return always travel together.</h4>
       <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Every allocation lives somewhere on this chart. The <span class="mark-coral">red dot</span> follows your sliders in real time. The green dots are the four reference profiles. You can't reach Growth-level returns without Growth-level risk — that's the deal.</p>
       <canvas id="rrChart" height="200" style="max-width:560px;display:block;margin:0 auto"></canvas>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Illustrative. Reference allocations and return/volatility estimates are for illustration purposes only — not a recommendation.</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;position:relative;display:inline-block;width:100%">Illustrative. Reference allocations and return/volatility estimates are for illustration purposes only — not a recommendation.
+        <button class="info-btn" aria-label="Assumptions" style="margin-left:5px;vertical-align:middle">i</button>
+        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Return p.a. assumptions:<br>· Equities &nbsp;&nbsp;&nbsp;7.5 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.5 %<br>· Satellites &nbsp;5.5 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 %<br><br>Volatility (annualised std. dev.):<br>· Equities &nbsp;&nbsp;&nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satellites &nbsp;12 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px">Simplified — correlations not modelled.</span></div>
+      </div>
     </div>
 
     <div class="narrow reveal" style="margin-top:60px">
