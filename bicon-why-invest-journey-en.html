@@ -795,16 +795,16 @@ canvas{max-width:100%}
       <div class="chapter-num">06</div>
       <div class="chapter-meta">
         <span class="tag">Your turn</span>
-        <h2>Two quick questions. <em>We'll warm up the Prompt Builder for you.</em></h2>
+        <h2>Three quick questions. <em>We'll warm up the Prompt Builder for you.</em></h2>
       </div>
     </div>
 
-    <p class="lead reveal">Pick your horizon and risk appetite. We'll pass them straight into the Prompt Builder so step 1 is already half-done.</p>
+    <p class="lead reveal">Answer the three questions below. When you continue, we'll pass your answers straight into the Prompt Builder so step 1 is already half-done.</p>
 
     <div class="quiz reveal">
       <div class="quiz-card" data-q="horizon">
-        <div class="qlabel">Question 1 of 2</div>
-        <h4>Your investment horizon</h4>
+        <div class="qlabel">Question 1 of 3</div>
+        <h4>When will you most likely need this money?</h4>
         <div class="opts">
           <button class="opt" data-v="1">3 years or more</button>
           <button class="opt" data-v="2">5 years or more</button>
@@ -813,13 +813,21 @@ canvas{max-width:100%}
         </div>
       </div>
       <div class="quiz-card" data-q="risk">
-        <div class="qlabel">Question 2 of 2</div>
-        <h4>Your risk appetite</h4>
+        <div class="qlabel">Question 2 of 3</div>
+        <h4>A crash takes your portfolio down 30% in 6 weeks. You…</h4>
         <div class="opts">
-          <button class="opt" data-v="1">Low — wealth stability first</button>
-          <button class="opt" data-v="2">Moderate — some growth, some cushion</button>
-          <button class="opt" data-v="3">High — growth-focused, comfortable with dips</button>
-          <button class="opt" data-v="4">Very high — dips are opportunities</button>
+          <button class="opt" data-v="panic">…sell. I can't stomach it.</button>
+          <button class="opt" data-v="hold">…hold. It hurts, but I wait.</button>
+          <button class="opt" data-v="buy">…buy more. Sales are for shopping.</button>
+        </div>
+      </div>
+      <div class="quiz-card" data-q="income">
+        <div class="qlabel">Question 3 of 3</div>
+        <h4>Your income stability over the next decade is…</h4>
+        <div class="opts">
+          <button class="opt" data-v="stable">Rock solid. Salary or pension.</button>
+          <button class="opt" data-v="mixed">Mostly stable, some variability.</button>
+          <button class="opt" data-v="volatile">Lumpy. Business-owner or commission-based.</button>
         </div>
       </div>
     </div>
@@ -1175,7 +1183,7 @@ recomputeCalc();
 /* =========================================================
    CH6 — Profile quiz with deep-link
    ========================================================= */
-const quizState={horizon:null,risk:null};
+const quizState={horizon:null,risk:null,income:null};
 const EN_PROFILES=[null,
   {name:'Conservative',profile:'conservative',equity:30,equityRange:'20–40%',exclusions:'Listed Real Estate, Crypto Assets',desc:'Gentle growth, limited volatility. Equities 20–40%, bonds, cash and commodities. No real estate or crypto.'},
   {name:'Balanced',profile:'balanced',equity:50,equityRange:'40–60%',exclusions:'Listed Real Estate, Crypto Assets',desc:'Time enough to weather storms. Equities 40–60%, bonds, cash and commodities. No real estate or crypto.'},
@@ -1188,20 +1196,30 @@ document.querySelectorAll('.quiz-card').forEach(card=>{
     b.addEventListener('click',()=>{
       card.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
       b.classList.add('sel');
-      quizState[q]=+b.dataset.v;
+      quizState[q]=b.dataset.v;
       maybeShowProfile();
       if(window.bicon)bicon.track('quiz_answer',{q,v:b.dataset.v});
     });
   });
 });
 function maybeShowProfile(){
-  if(!quizState.horizon||!quizState.risk)return;
-  const s=EN_PROFILES[Math.min(quizState.horizon,quizState.risk)];
+  if(!quizState.horizon||!quizState.risk||!quizState.income)return;
+  let e=50;
+  const hd={1:-25,2:0,3:20,4:35};
+  e+=hd[+quizState.horizon]??0;
+  if(quizState.risk==='panic')e-=25;
+  else if(quizState.risk==='hold')e+=5;
+  else if(quizState.risk==='buy')e+=20;
+  if(quizState.income==='stable')e+=10;
+  else if(quizState.income==='volatile')e-=10;
+  e=Math.max(10,Math.min(95,e));
+  const rank=e<40?1:e<60?2:e<80?3:4;
+  const s=EN_PROFILES[rank];
   document.getElementById('qfName').textContent=s.name;
   document.getElementById('qfDesc').textContent=s.desc;
   document.getElementById('qfEquityRange').textContent=s.equityRange;
   document.getElementById('qfExclusions').textContent=s.exclusions;
-  const params=new URLSearchParams({profile:s.profile,equity:s.equity,horizon:quizState.horizon,risk:quizState.risk,src:'why-journey',lang:'en'});
+  const params=new URLSearchParams({profile:s.profile,equity:s.equity,horizon:quizState.horizon,risk:quizState.risk,income:quizState.income,src:'why-journey',lang:'en'});
   document.getElementById('qfGo').href='https://bicon.li/prompt-builder/?'+params.toString();
   document.getElementById('quizSummary').style.display='';
   document.getElementById('quizSummary').scrollIntoView({behavior:'smooth',block:'center'});

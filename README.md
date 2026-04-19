@@ -35,9 +35,10 @@ The user scrolls through six chapters, each with at least one interactive elemen
 5. **Compounding** — live compound calculator with four sliders (start, monthly,
    years, rate), stacked area chart separating contributions from gains, and two
    plan-export buttons (**Save plan as image** → PNG, **Copy summary** → clipboard).
-6. **Your profile** — a 30-second three-question quiz that produces one of five
-   profiles (Capital Preservation → Aggressive Growth) and a **deep-linked
-   button to the Prompt Builder** pre-loaded with the user's answers.
+6. **Your profile** — a 30-second three-question quiz (investment horizon,
+   crash reaction, income need) that produces one of four profiles
+   (Conservative → Aggressive) with equity range and default exclusions, and
+   a **deep-linked button to the Prompt Builder** pre-loaded with the answers.
 
 Finally, a **sources list** and a proper MiFID II / FIDLEG-style disclaimer.
 
@@ -59,10 +60,9 @@ Call the file that matches the user's locale:
 <a href="/why-invest-journey/bicon-why-invest-journey-de.html">Warum so investieren?</a>
 ```
 
-Each file ships with a single **"← Back to app"** / **"← Zurück zur App"**
-button in both the header and footer, pointing at
-`https://bicon.li/prompt-builder/`. No in-page language switcher — routing is
-the app's responsibility.
+Each file ships with a single **"To the app"** / **"Zur App"** button in both
+the header and footer, pointing at `https://bicon.li/prompt-builder/`. No
+in-page language switcher — routing is the app's responsibility.
 
 ### Deep-link handoff from Chapter 6
 
@@ -77,11 +77,11 @@ Query params the builder should be prepared to read:
 
 | Param | Values | Meaning |
 |---|---|---|
-| `profile` | `capital-preservation` \| `conservative` \| `balanced` \| `growth` \| `aggressive-growth` | Suggested risk profile |
-| `equity` | `15`…`90` | Suggested equity share in percent |
-| `horizon` | `1`…`4` | Quiz answer: 2–3y / 4–7y / 8–15y / 15+y |
-| `risk` | `1`…`4` | Quiz answer on a −30% drawdown reaction |
-| `income` | `1`…`3` | Need for current income (1 = yes, 3 = pure growth) |
+| `profile` | `conservative` \| `balanced` \| `growth` \| `aggressive` | Risk profile (matches builder config) |
+| `equity` | `30` \| `50` \| `70` \| `90` | Midpoint of profile equity range |
+| `horizon` | `1`…`4` | ≥3y / ≥5y / ≥10y / next generation |
+| `risk` | `1`…`4` | Crash reaction: sell / nervous / hold / buy more |
+| `income` | `1`…`3` | Income need: yes / some / pure growth |
 | `src` | `why-journey` | Attribution |
 | `lang` | `en` \| `de` | Locale |
 
@@ -104,14 +104,6 @@ auto-deploys `main` to Pages on every push. One-time setup:
 SEO polish is already wired up: `robots.txt`, `sitemap.xml` with `hreflang`
 alternates, per-locale canonical links, OG + Twitter meta tags, and an
 editorial social-preview card ([`og-image.png`](./og-image.png)).
-
-## License
-
-Code in this repository is released under the [MIT License](./LICENSE). Editorial
-copy and the Bicon brand are not covered by the code license. See the LICENSE
-file for the full note on third-party sources.
-
----
 
 ## Local preview
 

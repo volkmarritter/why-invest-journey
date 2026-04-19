@@ -21,10 +21,8 @@ index.html                         GitHub Pages landing: redirects by navigator.
 og-image.png                       1200x630 editorial social card
 robots.txt, sitemap.xml            SEO wiring with hreflang alternates
 README.md                          Public-facing overview
-LICENSE                            MIT (code only; editorial copy excluded)
 bicon-concept-brief.md             Original concept doc
 .github/workflows/pages.yml        Auto-deploys main -> GitHub Pages on push
-.github/workflows/blank.yml        Stray template workflow (safe to remove)
 ```
 
 ## Golden rule
@@ -43,9 +41,9 @@ Ch 2: ETFs            500-dot ownership grid + 10/20/30y cost chart + inflation 
 Ch 3: Stock picking   SPIVA bars + 10-ticker mini-game with INDEX_REF vs MSCI World
 Ch 4: Market timing   Missing-best-days chart + drawdown grid + Peter Lynch callout
 Ch 5: Compounding     4-slider calculator + stacked area chart + PNG/text export
-Ch 6: Your profile    3-question quiz -> deep-link to Prompt Builder
+Ch 6: Your profile    3-question quiz (horizon ≥3/5/10y/next-gen · crash reaction · income need) → 4-profile result with equity range + exclusions → deep-link to Prompt Builder
 Sources               Numbered references list + MiFID II / FIDLEG disclaimer
-Final CTA             "Back to app" button
+Final CTA             "To the app" / "Zur App" button
 ```
 
 ## Design tokens (keep these consistent)
@@ -77,16 +75,19 @@ https://bicon.li/prompt-builder/?profile=<slug>&equity=<int>&horizon=<1..4>&risk
 
 | Param    | Values                                                                              |
 |----------|-------------------------------------------------------------------------------------|
-| profile  | capital-preservation / conservative / balanced / growth / aggressive-growth         |
-| equity   | 15 / 30 / 55 / 75 / 90                                                              |
-| horizon  | 1 (2–3y) / 2 (4–7y) / 3 (8–15y) / 4 (15+y)                                          |
-| risk     | 1 (sell now) / 2 (nervous) / 3 (stay) / 4 (buy more)                                |
-| income   | 1 (need income) / 2 (some) / 3 (pure growth)                                        |
+| profile  | conservative / balanced / growth / aggressive                                       |
+| equity   | 30 / 50 / 70 / 90                                                                   |
+| horizon  | 1 (≥3y) / 2 (≥5y) / 3 (≥10y) / 4 (next generation)                                 |
+| risk     | 1 (sell now) / 2 (nervous) / 3 (stay) / 4 (buy more)                               |
+| income   | 1 (need income) / 2 (some) / 3 (pure growth)                                       |
 | src      | always `why-journey`                                                                |
 | lang     | `en` or `de`                                                                        |
 
+Profiles match the builder config (config.js). Each profile exposes an equity
+range and default exclusions in the result card.
+
 If you change quiz logic in one file, change it in the other, and keep the
-scoring thresholds in `scoreProfile()` identical.
+scoring thresholds in `scoreProfile()` / `maybeShowProfile()` identical.
 
 ## Analytics stub
 
@@ -127,7 +128,7 @@ Open `http://localhost:8000/`.
 
 - Push to `main` triggers `.github/workflows/pages.yml`.
 - Pages site: <https://volkmarritter.github.io/why-invest-journey/>.
-- The stray `.github/workflows/blank.yml` can be deleted in a one-line cleanup commit.
+- Stray `.github/workflows/blank.yml` has been removed.
 
 ## Known sharp edges
 
@@ -150,4 +151,4 @@ Call the file that matches the user's locale:
 <a href="https://volkmarritter.github.io/why-invest-journey/bicon-why-invest-journey-de.html">Warum so investieren?</a>
 ```
 
-The "Back to app" buttons in each file point at `https://bicon.li/prompt-builder/`.
+The "To the app" / "Zur App" buttons in each file point at `https://bicon.li/prompt-builder/`.
