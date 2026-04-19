@@ -92,11 +92,24 @@ fired: `page_view`, `scroll_depth` (25/50/75/100), `chapter_view`, `stock_pick`,
 
 ---
 
-## Publishing as a GitHub Pages site (optional)
+## Publishing as a GitHub Pages site
 
-1. Push this repo to GitHub.
-2. In **Settings → Pages**, select **Deploy from a branch** → `main` / `/ (root)`.
+A GitHub Actions workflow at [`.github/workflows/pages.yml`](./.github/workflows/pages.yml)
+auto-deploys `main` to Pages on every push. One-time setup:
+
+1. **Settings → Pages → Source: GitHub Actions** (switch away from the default "Deploy from a branch").
+2. Push — the workflow runs, and the site appears at `https://volkmarritter.github.io/why-invest-journey/`.
 3. The landing page at `/` detects browser language and redirects to the matching file.
+
+SEO polish is already wired up: `robots.txt`, `sitemap.xml` with `hreflang`
+alternates, per-locale canonical links, OG + Twitter meta tags, and an
+editorial social-preview card ([`og-image.png`](./og-image.png)).
+
+## License
+
+Code in this repository is released under the [MIT License](./LICENSE). Editorial
+copy and the Bicon brand are not covered by the code license. See the LICENSE
+file for the full note on third-party sources.
 
 ---
 
