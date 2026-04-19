@@ -1044,20 +1044,26 @@ document.querySelectorAll('.info-btn').forEach(btn=>{
 document.addEventListener('click',()=>document.querySelectorAll('.tip-box.show').forEach(t=>t.classList.remove('show')));
 
 /* Risk-Return scatter */
+const rrRefAllocs=[[30,55,10,5],[55,30,10,5],[70,20,7,3],[90,5,5,0]];
+function rrPoint(a){
+  const r=(a[0]*.075+a[1]*.025+a[2]*.055+a[3]*.015)/100;
+  const v=Math.sqrt((a[0]/100)**2*.18**2+(a[1]/100)**2*.05**2+(a[2]/100)**2*.12**2);
+  return{x:+(v*100).toFixed(1),y:+(r*100).toFixed(1)};
+}
+const rrRefDots=rrRefAllocs.map(rrPoint);
 const rrLabelPlugin={id:'rrLabels',afterDraw(chart){const ctx=chart.ctx;const meta=chart.getDatasetMeta(0);const lbl=['Conservative','Balanced','Growth','Aggressive'];ctx.save();ctx.font='11px Inter,sans-serif';ctx.fillStyle='#7A6F62';meta.data.forEach((pt,i)=>{const w=ctx.measureText(lbl[i]).width;const nearRight=pt.x+w+14>chart.chartArea.right;ctx.fillText(lbl[i],nearRight?pt.x-w-6:pt.x+9,pt.y+4);});ctx.restore();}};
 const rrCtx=document.getElementById('rrChart').getContext('2d');
 var rrChart=new Chart(rrCtx,{
   type:'scatter',plugins:[rrLabelPlugin],
   data:{datasets:[
-    {data:[{x:5,y:3},{x:9,y:5},{x:14,y:7},{x:18,y:9}],pointBackgroundColor:'#2D5D3A',pointRadius:7,pointHoverRadius:9},
+    {data:rrRefDots,pointBackgroundColor:'#2D5D3A',pointRadius:7,pointHoverRadius:9},
     {data:[{x:9,y:6.1}],pointBackgroundColor:'#FF6B5B',pointBorderColor:'#fff',pointBorderWidth:2,pointRadius:11,pointHoverRadius:13}
   ]},
   options:{
     animation:false,
     onClick(evt,els){
       if(!els.length||els[0].datasetIndex!==0)return;
-      const allocs=[[30,55,10,5],[55,30,10,5],[70,20,7,3],[90,5,5,0]];
-      const a=allocs[els[0].index];
+      const a=rrRefAllocs[els[0].index];
       ['sEq','sBo','sAl','sCa'].forEach((id,j)=>{document.getElementById(id).value=a[j];});
       updateAlloc();
     },
