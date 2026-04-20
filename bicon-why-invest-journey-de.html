@@ -490,7 +490,7 @@ canvas{max-width:100%}
             <div class="stat-card">
               <div class="slbl">Volatilität
                 <button class="info-btn" aria-label="Annahmen">i</button>
-                <div class="tip-box">Annualisierte Standardabw. je Klasse:<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18 %<br>· Anleihen &nbsp;&nbsp;&nbsp;5 %<br>· Satelliten &nbsp;12 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(w²_Ak·18%² + w²_An·5%² + w²_Sa·12%²)</span><span style="opacity:.6;font-size:10px">Vereinfacht — Korrelationen nicht modelliert.</span></div>
+                <div class="tip-box">Annualisierte Standardabw. je Klasse:<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18 %<br>· Anleihen &nbsp;&nbsp;&nbsp;5 %<br>· Satelliten &nbsp;12 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Angenommene Korrelationen:<br>· ρ(Ak, An) = −0,15 &nbsp;· ρ(Ak, Sa) = +0,50<br>· ρ(An, Sa) = +0,10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
               </div>
               <div class="sval coral" id="volNum">~9%</div>
             </div>
@@ -506,7 +506,7 @@ canvas{max-width:100%}
       <canvas id="rrChart" height="200" style="max-width:560px;display:block;margin:0 auto"></canvas>
       <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;position:relative;display:inline-block;width:100%">Illustrativ. Referenzallokationen und Rendite-/Volatilitätsschätzungen dienen ausschließlich der Veranschaulichung — keine Empfehlung.
         <button class="info-btn" aria-label="Annahmen" style="margin-left:5px;vertical-align:middle">i</button>
-        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Rendite p.a. Annahmen:<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7,5 %<br>· Anleihen &nbsp;&nbsp;&nbsp;&nbsp;2,5 %<br>· Satelliten &nbsp;&nbsp;5,5 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,5 %<br><br>Volatilität (annualisierte Std.-Abw.):<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18 %<br>· Anleihen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satelliten &nbsp;&nbsp;12 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(w²_Ak·18%² + w²_An·5%² + w²_Sa·12%²)</span><span style="opacity:.6;font-size:10px">Vereinfacht — Korrelationen nicht modelliert.</span></div>
+        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Rendite p.a. Annahmen:<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7,5 %<br>· Anleihen &nbsp;&nbsp;&nbsp;&nbsp;2,5 %<br>· Satelliten &nbsp;&nbsp;5,5 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,5 %<br><br>Volatilität (annualisierte Std.-Abw.):<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18 %<br>· Anleihen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satelliten &nbsp;&nbsp;12 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Angenommene Korrelationen:<br>· ρ(Ak, An) = −0,15 &nbsp;· ρ(Ak, Sa) = +0,50<br>· ρ(An, Sa) = +0,10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
       </div>
     </div>
 
@@ -1091,7 +1091,11 @@ function updateAlloc(){
   document.getElementById('allocTotal').textContent='Summe: 100%';
   donut.data.datasets[0].data=vals;donut.update();
   const expR=(vals[2]*0.075 + vals[1]*0.025 + vals[3]*0.055 + vals[0]*0.015)/100;
-  const vol =Math.sqrt((vals[2]/100)**2*0.18**2 + (vals[1]/100)**2*0.05**2 + (vals[3]/100)**2*0.12**2);
+  const wEq=vals[2]/100,wBo=vals[1]/100,wSat=vals[3]/100;
+  const vol =Math.sqrt(wEq**2*0.18**2+wBo**2*0.05**2+wSat**2*0.12**2
+    +2*wEq*wBo*0.18*0.05*(-0.15)
+    +2*wEq*wSat*0.18*0.12*0.50
+    +2*wBo*wSat*0.05*0.12*0.10);
   document.getElementById('expRet').textContent=pctDE(expR*100);
   document.getElementById('volNum').textContent='~'+(vol*100).toFixed(0)+'%';
   const loPct=Math.round((expR-vol)*100),hiPct=Math.round((expR+vol)*100);
@@ -1127,7 +1131,11 @@ document.addEventListener('click',()=>document.querySelectorAll('.tip-box.show')
 const rrRefAllocs=[[30,55,10,5],[55,30,10,5],[70,20,7,3],[90,5,5,0]];
 function rrPoint(a){
   const r=(a[0]*.075+a[1]*.025+a[2]*.055+a[3]*.015)/100;
-  const v=Math.sqrt((a[0]/100)**2*.18**2+(a[1]/100)**2*.05**2+(a[2]/100)**2*.12**2);
+  const wEq=a[0]/100,wBo=a[1]/100,wSat=a[2]/100;
+  const v=Math.sqrt(wEq**2*.18**2+wBo**2*.05**2+wSat**2*.12**2
+    +2*wEq*wBo*.18*.05*(-.15)
+    +2*wEq*wSat*.18*.12*.50
+    +2*wBo*wSat*.05*.12*.10);
   return{x:+(v*100).toFixed(1),y:+(r*100).toFixed(1)};
 }
 const rrRefDots=rrRefAllocs.map(rrPoint);
