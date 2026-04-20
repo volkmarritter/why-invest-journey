@@ -509,6 +509,7 @@ canvas{max-width:100%}
     <div class="narrow reveal" style="margin-top:40px">
       <h4 style="font-size:17px;margin-bottom:8px">Risk and return always travel together.</h4>
       <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Every allocation lives somewhere on this chart. The <span class="mark-coral">red dot</span> follows your sliders in real time. The green dots are the four reference profiles — <em>click a dot</em> to snap the sliders to that profile. You can't reach Growth-level returns without Growth-level risk — that's the deal.</p>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">The <span class="mark-coral">volatility figure</span> shows how wide the swings can get — in a typical year, that means roughly <span class="mark-coral" id="volRange">−7% to +19%</span>. More equities, wider band. Drag the sliders and watch both numbers move.</p>
       <canvas id="rrChart" height="200" style="max-width:560px;display:block;margin:0 auto"></canvas>
       <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;position:relative;display:inline-block;width:100%">Illustrative. Reference allocations and return/volatility estimates are for illustration purposes only — not a recommendation.
         <button class="info-btn" aria-label="Assumptions" style="margin-left:5px;vertical-align:middle">i</button>
@@ -1098,6 +1099,8 @@ function updateAlloc(){
   const vol =Math.sqrt((vals[2]/100)**2*0.18**2 + (vals[1]/100)**2*0.05**2 + (vals[3]/100)**2*0.12**2);
   document.getElementById('expRet').textContent=(expR*100).toFixed(1)+'%';
   document.getElementById('volNum').textContent='~'+(vol*100).toFixed(0)+'%';
+  const loPct=Math.round((expR-vol)*100),hiPct=Math.round((expR+vol)*100);
+  document.getElementById('volRange').textContent=(loPct>=0?'+':'')+loPct+'% to +'+hiPct+'%';
   let profile='Balanced';
   if(vals[2]>=80)profile='Aggressive';
   else if(vals[2]>=60)profile='Growth';
