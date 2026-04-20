@@ -599,15 +599,31 @@ canvas{max-width:100%}
     </div>
 
     <h3 style="margin-top:80px" class="reveal">Die stille Gebührensteuer — über 30 Jahre.</h3>
-    <div class="cost-toggle reveal">
+    <p class="reveal" style="margin-top:12px;max-width:640px">1,35 Prozentpunkte. Klingt harmlos. Über drei Jahrzehnte auf €100.000 verschwinden dadurch still und leise €175.000 aus Ihrer Zukunft.</p>
+    <div style="display:flex;gap:24px;align-items:center;margin:20px 0 0;flex-wrap:wrap" class="reveal">
+      <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600"><span style="display:inline-block;width:28px;height:3px;background:#FF6B5B;border-radius:2px"></span>Günstiger ETF (0,15%)</span>
+      <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600"><span style="display:inline-block;width:28px;border-top:3px dashed #6B3FA0"></span>Aktiver Fonds (1,5%)</span>
+    </div>
+    <div class="cost-toggle reveal" style="margin-top:16px">
       <button class="active" data-years="30">30 Jahre</button>
       <button data-years="20">20 Jahre</button>
       <button data-years="10">10 Jahre</button>
     </div>
     <div class="chart-wrap reveal" style="max-width:1000px">
       <canvas id="costChart" height="110"></canvas>
-      <div class="caption">€100.000 investiert, 6% Bruttorendite p.a. Hohe Kosten: 1,5% TER · Günstiger ETF: 0,15% TER. Illustrativ.</div>
+      <div class="caption">€100.000 investiert, 6% Bruttorendite p.a. Illustrativ.</div>
     </div>
+    <div class="grid-2 reveal" style="margin-top:32px">
+      <div class="card">
+        <div class="stat" style="color:var(--plum)">€375k</div>
+        <div class="stat-sub">nach 30 Jahren — <b>aktiver Fonds mit 1,5% TER</b></div>
+      </div>
+      <div class="card">
+        <div class="stat" style="color:var(--coral)">€550k</div>
+        <div class="stat-sub">nach 30 Jahren — <b>Index-ETF mit 0,15% TER</b></div>
+      </div>
+    </div>
+    <p class="reveal" style="text-align:center;margin-top:20px;font-size:15px;color:var(--muted)">Gleiches Startkapital. Gleiche Bruttorendite. <strong style="color:var(--ink)">€175.000 Unterschied — nur Gebühren.</strong></p>
 
     <div class="callout mustard reveal">
       <div class="clabel">Der unsichtbare Gegner</div>
@@ -624,6 +640,8 @@ canvas{max-width:100%}
       Wer Einzeltitel statt eines globalen ETF hält, trägt Klumpenrisiko: Branchen- und
       Unternehmensrisiko auf einmal. Die Schweiz macht ~3% der Weltmarktkapitalisierung aus.
       Die anderen 97% kauft man mit einem einzigen ETF.</p>
+      <p style="margin-top:12px"><i>Ein gewisser</i> Home Bias ist dabei durchaus rational — gerade in der Schweiz. Der starke Franken wirkt als natürliche Absicherung: Globale Aktien in CHF tragen bereits ein Währungsrisiko, sodass eine moderate Übergewichtung Schweizer Anlagen dieses glätten kann. Entscheidend ist das Ausmaß. Eine Konzentration auf drei Blue Chips ist kein Tilt — es ist ein Sektorwette im Kleid der Diversifikation.</p>
+      <p style="margin-top:12px">Der Prompt Builder berücksichtigt Ihre Basiswährung und passt die Home-Bias-Empfehlung in Ihrem Anlageprompt entsprechend an — kein generisches globales Template, sondern auf Ihre tatsächliche Währungsexposition zugeschnitten.</p>
     </div>
 
     <div class="pullquote reveal" style="border-left-color:var(--mustard)">
@@ -1277,7 +1295,7 @@ const costChart=new Chart(costCtx,{
     {label:'Teurer aktiver Fonds (1,5% TER)',data:costData.high,borderColor:'#6B3FA0',backgroundColor:'rgba(107,63,160,.08)',borderWidth:3,fill:true,tension:.25,pointRadius:0,borderDash:[6,6]}
   ]},
   options:{
-    plugins:{legend:{position:'top',labels:{font:{family:'Inter',weight:'600'}}}},
+    plugins:{legend:{display:false}},
     scales:{
       y:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k',font:{family:'Inter'}},grid:{color:'rgba(0,0,0,.05)'}},
       x:{ticks:{font:{family:'Inter'},maxTicksLimit:8},grid:{display:false}}

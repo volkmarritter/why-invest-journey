@@ -603,15 +603,31 @@ canvas{max-width:100%}
     </div>
 
     <h3 style="margin-top:80px" class="reveal">The silent tax of fees — over 30 years.</h3>
-    <div class="cost-toggle reveal">
+    <p class="reveal" style="margin-top:12px;max-width:640px">1.35 percentage points. Sounds trivial. Compounded over three decades on €100,000, it quietly removes €175,000 from your future.</p>
+    <div style="display:flex;gap:24px;align-items:center;margin:20px 0 0;flex-wrap:wrap" class="reveal">
+      <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600"><span style="display:inline-block;width:28px;height:3px;background:#FF6B5B;border-radius:2px"></span>Low-fee ETF (0.15%)</span>
+      <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600"><span style="display:inline-block;width:28px;border-top:3px dashed #6B3FA0"></span>Active fund (1.5%)</span>
+    </div>
+    <div class="cost-toggle reveal" style="margin-top:16px">
       <button class="active" data-years="30">30 years</button>
       <button data-years="20">20 years</button>
       <button data-years="10">10 years</button>
     </div>
     <div class="chart-wrap reveal" style="max-width:1000px">
       <canvas id="costChart" height="110"></canvas>
-      <div class="caption">€100,000 invested, 6% gross return p.a. High-fee: 1.5% TER · Low-fee ETF: 0.15% TER. Illustrative.</div>
+      <div class="caption">€100,000 invested, 6% gross return p.a. Illustrative.</div>
     </div>
+    <div class="grid-2 reveal" style="margin-top:32px">
+      <div class="card">
+        <div class="stat" style="color:var(--plum)">€375k</div>
+        <div class="stat-sub">after 30 years — <b>active fund at 1.5% TER</b></div>
+      </div>
+      <div class="card">
+        <div class="stat" style="color:var(--coral)">€550k</div>
+        <div class="stat-sub">after 30 years — <b>index ETF at 0.15% TER</b></div>
+      </div>
+    </div>
+    <p class="reveal" style="text-align:center;margin-top:20px;font-size:15px;color:var(--muted)">Same starting capital. Same gross return. <strong style="color:var(--ink)">€175,000 difference — all fees.</strong></p>
 
     <div class="callout mustard reveal" style="margin-top:60px">
       <div class="clabel">The invisible opponent</div>
@@ -625,6 +641,8 @@ canvas{max-width:100%}
       <p>Nestlé, Novartis and Roche make up over 50% of the SMI — all defensive, all CHF-denominated.
       Holding individual stocks instead of a global ETF means carrying sector risk and company-specific
       risk at once. Switzerland is ~3% of global market cap. One ETF buys the other 97%.</p>
+      <p style="margin-top:12px">That said, <i>some</i> home bias is rational — especially in Switzerland. The strong franc acts as a natural hedge: global equities held in CHF terms already carry currency exposure, so a modest tilt toward Swiss assets can smooth that out. The question is degree. A concentrated bet on three blue chips is not a tilt — it is a sector position dressed up as diversification.</p>
+      <p style="margin-top:12px">The Prompt Builder adjusts the home-bias guidance in your investment prompt based on your base currency, so the recommendation fits your actual currency exposure — not a generic global template.</p>
     </div>
 
     <div class="pullquote reveal" style="border-left-color:var(--mustard)">
@@ -1286,7 +1304,7 @@ const costChart=new Chart(costCtx,{
     {label:'High-fee active fund (1.5% TER)',data:costData.high,borderColor:'#6B3FA0',backgroundColor:'rgba(107,63,160,.08)',borderWidth:3,fill:true,tension:.25,pointRadius:0,borderDash:[6,6]}
   ]},
   options:{
-    plugins:{legend:{position:'top',labels:{font:{family:'Inter',weight:'600'}}}},
+    plugins:{legend:{display:false}},
     scales:{
       y:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k',font:{family:'Inter'}},grid:{color:'rgba(0,0,0,.05)'}},
       x:{ticks:{font:{family:'Inter'},maxTicksLimit:8},grid:{display:false}}
