@@ -1133,7 +1133,7 @@ document.querySelectorAll('.info-btn').forEach(btn=>{
 document.addEventListener('click',()=>document.querySelectorAll('.tip-box.show').forEach(t=>t.classList.remove('show')));
 
 /* Risk-Return scatter */
-const rrRefAllocs=[[30,65,0,5],[55,40,0,5],[70,20,7,3],[90,5,5,0]];
+const rrRefAllocs=[[30,65,0,5],[55,40,0,5],[70,20,7,3],[90,0,10,0]];
 function rrPoint(a){
   const r=(a[0]*.075+a[1]*.025+a[2]*.055+a[3]*.015)/100;
   const wEq=a[0]/100,wBo=a[1]/100,wSat=a[2]/100;
