@@ -14,10 +14,10 @@ This document captures the return, volatility, and correlation assumptions used 
 | Crypto | 14.0% p.a. | 65% | ~40–60% CAGR (BTC, 2015–2024) | 60–80% |
 | Cash | 1.5% p.a. | ~0% | 1–4% (money market, varies by era) | ~0% |
 
-¹ Nominal, approximate long-run averages; equity figures in USD, bond figures in EUR-hedged equivalent.
+¹ Nominal, approximate long-run averages. All model figures assume a **EUR-based investor**. Historical equity figures are in USD (MSCI World); EUR investors face currency variability — sometimes a tailwind, sometimes a headwind — which is why the model applies a conservative discount rather than using raw USD history.
 
 ### Equities
-- **7.5% nominal** is below the MSCI World historical ~10% (USD). The discount accounts for EUR base currency, forward valuation drag, and estimation conservatism.
+- **7.5% nominal** is below the MSCI World historical ~10% (USD). The discount reflects currency variability for non-USD investors and forward valuation conservatism (elevated starting valuations as of 2025/26). JPM LTCMA and Vanguard project 7–9% for global equities in USD; EUR-hedged returns are ~1–2% lower due to current USD-EUR rate differentials.
 - **18% vol** is a slight buffer above observed MSCI World annualised std. dev. of 15–17%.
 
 ### Bonds
