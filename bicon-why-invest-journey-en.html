@@ -1116,7 +1116,7 @@ function updateAlloc(){
   document.getElementById('volRange').textContent=(loPct>=0?'+':'')+loPct+'% to +'+hiPct+'%';
   const risky=vals[2]+vals[3]+vals[4];
   let profile='Balanced';
-  if(vals[4]>=15){profile='Crypto-heavy — high concentration risk';}
+  if(vals[4]>=15){profile='Crypto-heavy';}
   else if(risky>=80)profile='Aggressive';
   else if(risky>=60)profile='Growth';
   else if(risky>=40)profile='Balanced';
@@ -1124,7 +1124,7 @@ function updateAlloc(){
   else profile='Capital preservation';
   const riskEl=document.getElementById('riskHint');
   riskEl.textContent=profile;
-  riskEl.style.color=vals[4]>=15?'var(--coral)':'';
+  riskEl.style.color=vals[4]>=15?'var(--plum)':'';
   if(typeof rrChart!=='undefined'){
     rrChart.data.datasets[1].data[0]={x:+(vol*100).toFixed(1),y:+(expR*100).toFixed(1)};
     rrChart.update('none');
