@@ -123,7 +123,7 @@ The horizon cap mirrors the Prompt Builder's hard constraint: Growth and Aggress
 | Crypto | 14.0% | 1.5% | 65% | **0.19** |
 | Cash | 1.5% | — | ~0% | — |
 
-Equities and REITs share the best Sharpe (0.33). Bonds at 0.30 are competitive on a risk-adjusted basis. Crypto at 0.19 is the weakest — its high absolute return is swamped by its extreme volatility. This is the key modelling argument for keeping crypto allocations small.
+Equities lead at 0.33. Bonds and REITs both sit at 0.30 — REITs earn slightly more than bonds but with proportionally higher vol, landing at the same risk-adjusted level. Crypto at 0.19 is the weakest of the five: its high absolute return is swamped by extreme volatility. This is the core modelling argument for keeping crypto allocations small — beyond ~15% it dominates portfolio vol without a commensurate Sharpe benefit.
 
 ---
 
