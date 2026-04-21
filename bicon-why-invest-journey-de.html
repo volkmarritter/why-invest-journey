@@ -444,6 +444,7 @@ canvas{max-width:100%}
         <div>
           <div class="alloc-sliders">
             <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:600">Regler bewegen, Allokation ausprobieren</div>
+            <p style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5">Rendite- und Volatilitätswerte gehen von einem <em>EUR-basierten Anleger</em> aus. Die Aktienannahme von 7,5 % p.a. ist ein konservativer Abschlag gegenüber dem historischen USD-Wert von ~10 % — für Währungsrisiko und Bewertungskonservatismus bei Nicht-USD-Portfolios.</p>
             <div class="alloc-row">
               <span class="dot" style="background:var(--sky)"></span>
               <label>Cash</label>
@@ -518,7 +519,7 @@ canvas{max-width:100%}
 
     <div class="narrow reveal" style="margin-top:60px">
       <h3 style="font-size:22px;margin-bottom:6px">10 Jahre zurück. 10 Jahre voraus.</h3>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Das Modell oben ist illustrativ. Jetzt ein Blick auf echte Marktdaten.</p>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Das Modell oben ist illustrativ. Jetzt ein Blick auf echte Marktdaten — Renditen in USD. EUR-, GBP- und CHF-Anleger sehen je nach Wechselkursentwicklung etwas andere Werte.</p>
       <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Durchgezogene Linien: historische Wertentwicklung. Schattierte Korridore: ein plausibler Bullen-/Bären-Bereich für das nächste Jahrzehnt. <em>Auf einen Punkt klicken</em> zeigt die Renditekarte.</p>
       <canvas id="horizonChart" height="220" style="max-width:680px;display:block;margin:0 auto"></canvas>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px auto 0;max-width:500px;font-size:12px">
@@ -547,7 +548,7 @@ canvas{max-width:100%}
           <div style="margin-top:6px;font-size:10px;color:var(--muted);border-top:1px solid var(--line);padding-top:5px">Quelle: Illustrative Mischung — MSCI World (60%) + Bloomberg Global Agg. (40%)</div>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Basis 100 = Jan 2015. Renditen in USD — EUR-, GBP- und CHF-Anleger sehen andere Werte je nach Währungsentwicklung. Die Modell-Annahme von 7,5 % p.a. enthält bereits einen konservativen Lokalwährungs-Abschlag. Prognosen: optimistisch +10 % / +7 % p.a. · konservativ +4 % / +3 % p.a. (MSCI World / 60–40). Illustrativ — vergangene Wertentwicklungen sind kein verlässlicher Indikator für künftige Ergebnisse.</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Basis 100 = Jan 2015. Renditen in USD. Prognosen: optimistisch +10 % / +7 % p.a. · konservativ +4 % / +3 % p.a. (MSCI World / 60–40). Illustrativ — vergangene Wertentwicklungen sind kein verlässlicher Indikator für künftige Ergebnisse.</div>
     </div>
 
     <div class="callout forest reveal">

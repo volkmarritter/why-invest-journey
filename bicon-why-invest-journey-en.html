@@ -451,6 +451,7 @@ canvas{max-width:100%}
         <div>
           <div class="alloc-sliders">
             <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:600">Drag to try an allocation</div>
+            <p style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5">Return and volatility figures assume a <em>EUR-based investor</em>. The equity assumption of 7.5 % p.a. is a conservative discount to the ~10 % USD historical figure — reflecting currency drag and valuation conservatism for non-USD portfolios.</p>
             <div class="alloc-row">
               <span class="dot" style="background:var(--sky)"></span>
               <label>Cash</label>
@@ -525,7 +526,7 @@ canvas{max-width:100%}
 
     <div class="narrow reveal" style="margin-top:60px">
       <h3 style="font-size:22px;margin-bottom:6px">10 years back. 10 years forward.</h3>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">The model above is illustrative. Now let's check it against real-world data.</p>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">The model above is illustrative. Now let's check it against real-world data — returns shown in USD. EUR, GBP and CHF investors will see somewhat different figures depending on currency movements against the dollar.</p>
       <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Solid lines: historical performance. Shaded corridors: a plausible bull/bear range for the next decade. <em>Click a dot</em> to see the return card.</p>
       <canvas id="horizonChart" height="220" style="max-width:680px;display:block;margin:0 auto"></canvas>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px auto 0;max-width:500px;font-size:12px">
@@ -554,7 +555,7 @@ canvas{max-width:100%}
           <div style="margin-top:6px;font-size:10px;color:var(--muted);border-top:1px solid var(--line);padding-top:5px">Source: Illustrative blend — MSCI World (60%) + Bloomberg Global Agg. (40%)</div>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Base 100 = Jan 2015. Returns in USD — EUR, GBP and CHF investors will see different figures due to currency movements. The model's 7.5 % p.a. equity assumption applies a conservative local-currency discount. Projections: optimistic +10 % / +7 % p.a. · conservative +4 % / +3 % p.a. (MSCI World / 60–40). Illustrative — past performance is not a reliable indicator of future results.</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Base 100 = Jan 2015. Returns in USD. Projections: optimistic +10 % / +7 % p.a. · conservative +4 % / +3 % p.a. (MSCI World / 60–40). Illustrative — past performance is not a reliable indicator of future results.</div>
     </div>
 
     <div class="callout forest reveal">
