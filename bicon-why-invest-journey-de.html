@@ -204,7 +204,7 @@ p.lead{font-size:21px;line-height:1.55;color:#3a332c;max-width:60ch}
 .reveal.in{opacity:1;transform:none}
 
 /* ============ KAP 1: Allocation slider ============ */
-.alloc{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;align-items:center;margin-top:30px}
+.alloc{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;align-items:start;margin-top:30px}
 @media(max-width:860px){.alloc{grid-template-columns:1fr}}
 .alloc-sliders{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:28px}
 .alloc-row{display:flex;align-items:center;gap:14px;margin:12px 0}
@@ -468,9 +468,8 @@ canvas{max-width:100%}
       </div>
     </div>
 
-    <div class="grid-2 reveal">
-      <div>
-        <p class="lead">
+    <div class="narrow reveal">
+      <p class="lead">
           Bevor Sie einen einzigen Fonds oder eine einzige Aktie kaufen, müssen Sie eines entscheiden:
           <span class="mark-coral">wie viel Risiko Sie nachts ruhig schlafen lässt</span>.
           Diese Entscheidung — die Aufteilung zwischen Aktien, Anleihen, Satelliten (wie Immobilien und Krypto) und Cash — heißt
@@ -486,11 +485,11 @@ canvas{max-width:100%}
           Stellen Sie sich den Hausbau vor. Den Bauplan wählen Sie, bevor Sie sich für Türklinken entscheiden.
           Die erste Frage des Portfolio Prompt Builder — Ihr Risikoprofil — ist genau dieser Bauplan-Schritt.
         </p>
-      </div>
+    </div>
 
-      <div class="alloc">
-        <div>
-          <div class="alloc-sliders">
+    <div class="alloc reveal" style="margin-top:32px">
+      <div>
+        <div class="alloc-sliders">
             <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:600">Regler bewegen, Allokation ausprobieren</div>
             <p style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5">Rendite- und Volatilitätswerte gehen von einem <em>EUR-basierten Anleger</em> aus. Die Aktienannahme von 7,5 % p.a. ist ein konservativer Abschlag gegenüber dem historischen USD-Wert von ~10 % — für Währungsschwankungen und Bewertungskonservatismus bei Nicht-USD-Portfolios.</p>
             <div class="alloc-row">
@@ -555,20 +554,16 @@ canvas{max-width:100%}
               <div class="sval coral" id="volNum">~9%</div>
             </div>
           </div>
+          <div style="width:100%;margin-top:14px">
+            <p style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.5">Risiko und Rendite reisen immer gemeinsam. Der <span class="mark-coral">rote Punkt</span> folgt den Reglern — <em>grünen Punkt klicken</em> setzt auf dieses Profil. Typische Jahresbandbreite: <span class="mark-coral" id="volRange">−7% bis +19%</span>.</p>
+            <canvas id="rrChart" height="180" style="width:100%;display:block"></canvas>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;text-align:center;position:relative;display:inline-block;width:100%">Illustrativ. Referenzallokationen und Rendite-/Volatilitätsschätzungen dienen ausschließlich der Veranschaulichung — keine Empfehlung.
+              <button class="info-btn" aria-label="Annahmen" style="margin-left:5px;vertical-align:middle">i</button>
+              <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Rendite p.a. Annahmen:<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;7,5 %<br>· Anleihen &nbsp;&nbsp;3,0 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8,0 %<br>· Krypto &nbsp;&nbsp;&nbsp;14,0 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,5 %<br><br>Volatilität (annualisierte Std.-Abw.):<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;18 %<br>· Anleihen &nbsp;&nbsp;&nbsp;5 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;22 %<br>· Krypto &nbsp;&nbsp;&nbsp;65 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Korrelationen: ρ(Ak,An)=0,0 · ρ(Ak,Re)=+0,65 · ρ(Ak,Kr)=+0,40<br>ρ(An,Re)=+0,10 · ρ(An,Kr)=+0,05 · ρ(Re,Kr)=+0,10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="narrow reveal" style="margin-top:40px">
-      <h4 style="font-size:17px;margin-bottom:8px">Risiko und Rendite reisen immer gemeinsam.</h4>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Jedes Portfolio liegt irgendwo in diesem Chart. Der <span class="mark-coral">rote Punkt</span> folgt den Reglern in Echtzeit. Die grünen Punkte sind die vier Referenzprofile — <em>auf einen Punkt klicken</em> setzt die Regler auf dieses Profil. Wachstumsrenditen ohne Wachstumsrisiko — das gibt es nicht.</p>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Der <span class="mark-coral">Volatilitätswert</span> zeigt, wie breit die Schwankungen werden können — in einem typischen Jahr bedeutet das etwa <span class="mark-coral" id="volRange">−7% bis +19%</span>. Mehr Aktien, breiteres Band. Die Regler verschieben, und beide Werte ändern sich mit.</p>
-      <canvas id="rrChart" height="200" style="max-width:560px;display:block;margin:0 auto"></canvas>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;position:relative;display:inline-block;width:100%">Illustrativ. Referenzallokationen und Rendite-/Volatilitätsschätzungen dienen ausschließlich der Veranschaulichung — keine Empfehlung.
-        <button class="info-btn" aria-label="Annahmen" style="margin-left:5px;vertical-align:middle">i</button>
-        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Rendite p.a. Annahmen:<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;7,5 %<br>· Anleihen &nbsp;&nbsp;3,0 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8,0 %<br>· Krypto &nbsp;&nbsp;&nbsp;14,0 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,5 %<br><br>Volatilität (annualisierte Std.-Abw.):<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;18 %<br>· Anleihen &nbsp;&nbsp;&nbsp;5 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;22 %<br>· Krypto &nbsp;&nbsp;&nbsp;65 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Korrelationen: ρ(Ak,An)=0,0 · ρ(Ak,Re)=+0,65 · ρ(Ak,Kr)=+0,40<br>ρ(An,Re)=+0,10 · ρ(An,Kr)=+0,05 · ρ(Re,Kr)=+0,10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
-      </div>
-    </div>
 
     <div class="narrow reveal" style="margin-top:60px">
       <h3 style="font-size:22px;margin-bottom:6px">10 Jahre zurück. 10 Jahre voraus.</h3>

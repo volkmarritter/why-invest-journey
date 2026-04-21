@@ -204,7 +204,7 @@ p.lead{font-size:21px;line-height:1.55;color:#3a332c;max-width:60ch}
 .reveal.in{opacity:1;transform:none}
 
 /* ============ CH1: Allocation slider ============ */
-.alloc{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;align-items:center;margin-top:30px}
+.alloc{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;align-items:start;margin-top:30px}
 @media(max-width:860px){.alloc{grid-template-columns:1fr}}
 .alloc-sliders{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:28px}
 .alloc-row{display:flex;align-items:center;gap:14px;margin:12px 0}
@@ -475,9 +475,8 @@ canvas{max-width:100%}
       </div>
     </div>
 
-    <div class="grid-2 reveal">
-      <div>
-        <p class="lead">
+    <div class="narrow reveal">
+      <p class="lead">
           Before you pick a single fund, a single stock, or a single line of code — you have to decide
           <span class="mark-coral">how much risk you're willing to sleep with</span>.
           That choice — the split between stocks, bonds, satellites (like real estate and crypto), cash — is called the
@@ -493,11 +492,11 @@ canvas{max-width:100%}
           Think of it like designing a house. You pick the blueprint before you pick the doorknobs.
           The Portfolio Prompt Builder's first question — your risk profile — is exactly this blueprint step.
         </p>
-      </div>
+    </div>
 
-      <div class="alloc">
-        <div>
-          <div class="alloc-sliders">
+    <div class="alloc reveal" style="margin-top:32px">
+      <div>
+        <div class="alloc-sliders">
             <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:600">Drag to try an allocation</div>
             <p style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5">Return and volatility figures assume a <em>EUR-based investor</em>. The equity assumption of 7.5 % p.a. is a conservative discount to the ~10 % USD historical figure — reflecting currency variability and valuation conservatism for non-USD portfolios.</p>
             <div class="alloc-row">
@@ -562,20 +561,16 @@ canvas{max-width:100%}
               <div class="sval coral" id="volNum">~9%</div>
             </div>
           </div>
+          <div style="width:100%;margin-top:14px">
+            <p style="font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.5">Risk and return always travel together. The <span class="mark-coral">red dot</span> follows your sliders — <em>click a green dot</em> to snap to that profile. Typical annual swing: <span class="mark-coral" id="volRange">−7% to +19%</span>.</p>
+            <canvas id="rrChart" height="180" style="width:100%;display:block"></canvas>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px;text-align:center;position:relative;display:inline-block;width:100%">Illustrative. Reference allocations and return/volatility estimates are for illustration purposes only — not a recommendation.
+              <button class="info-btn" aria-label="Assumptions" style="margin-left:5px;vertical-align:middle">i</button>
+              <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Return p.a. assumptions:<br>· Equities &nbsp;&nbsp;&nbsp;7.5 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.0 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.0 %<br>· Crypto &nbsp;&nbsp;&nbsp;&nbsp;14.0 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 %<br><br>Volatility (annualised std. dev.):<br>· Equities &nbsp;&nbsp;&nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22 %<br>· Crypto &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;65 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Correlations: ρ(eq,bo)=0.0 · ρ(eq,re)=+0.65 · ρ(eq,cr)=+0.40<br>ρ(bo,re)=+0.10 · ρ(bo,cr)=+0.05 · ρ(re,cr)=+0.10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div class="narrow reveal" style="margin-top:40px">
-      <h4 style="font-size:17px;margin-bottom:8px">Risk and return always travel together.</h4>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Every allocation lives somewhere on this chart. The <span class="mark-coral">red dot</span> follows your sliders in real time. The green dots are the four reference profiles — <em>click a dot</em> to snap the sliders to that profile. You can't reach Growth-level returns without Growth-level risk — that's the deal.</p>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">The <span class="mark-coral">volatility figure</span> shows how wide the swings can get — in a typical year, that means roughly <span class="mark-coral" id="volRange">−7% to +19%</span>. More equities, wider band. Drag the sliders and watch both numbers move.</p>
-      <canvas id="rrChart" height="200" style="max-width:560px;display:block;margin:0 auto"></canvas>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;position:relative;display:inline-block;width:100%">Illustrative. Reference allocations and return/volatility estimates are for illustration purposes only — not a recommendation.
-        <button class="info-btn" aria-label="Assumptions" style="margin-left:5px;vertical-align:middle">i</button>
-        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Return p.a. assumptions:<br>· Equities &nbsp;&nbsp;&nbsp;7.5 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.0 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.0 %<br>· Crypto &nbsp;&nbsp;&nbsp;&nbsp;14.0 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 %<br><br>Volatility (annualised std. dev.):<br>· Equities &nbsp;&nbsp;&nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22 %<br>· Crypto &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;65 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Correlations: ρ(eq,bo)=0.0 · ρ(eq,re)=+0.65 · ρ(eq,cr)=+0.40<br>ρ(bo,re)=+0.10 · ρ(bo,cr)=+0.05 · ρ(re,cr)=+0.10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
-      </div>
-    </div>
 
     <details class="metric-box reveal" style="max-width:720px;margin:28px auto 0">
       <summary>
