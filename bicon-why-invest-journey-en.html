@@ -503,7 +503,7 @@ canvas{max-width:100%}
             <div class="stat-card">
               <div class="slbl">Volatility
                 <button class="info-btn" aria-label="Assumptions">i</button>
-                <div class="tip-box">Annualised std. dev. per class:<br>· Equities &nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;20 %<br>· Crypto &nbsp;&nbsp;&nbsp;65 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Correlations: ρ(eq,bo)=0.0 · ρ(eq,re)=+0.65 · ρ(eq,cr)=+0.40<br>ρ(bo,re)=+0.10 · ρ(bo,cr)=+0.05 · ρ(re,cr)=+0.10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
+                <div class="tip-box">Annualised std. dev. per class:<br>· Equities &nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;22 %<br>· Crypto &nbsp;&nbsp;&nbsp;65 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Correlations: ρ(eq,bo)=0.0 · ρ(eq,re)=+0.65 · ρ(eq,cr)=+0.40<br>ρ(bo,re)=+0.10 · ρ(bo,cr)=+0.05 · ρ(re,cr)=+0.10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
               </div>
               <div class="sval coral" id="volNum">~9%</div>
             </div>
@@ -519,7 +519,7 @@ canvas{max-width:100%}
       <canvas id="rrChart" height="200" style="max-width:560px;display:block;margin:0 auto"></canvas>
       <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;position:relative;display:inline-block;width:100%">Illustrative. Reference allocations and return/volatility estimates are for illustration purposes only — not a recommendation.
         <button class="info-btn" aria-label="Assumptions" style="margin-left:5px;vertical-align:middle">i</button>
-        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Return p.a. assumptions:<br>· Equities &nbsp;&nbsp;&nbsp;7.5 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.0 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.0 %<br>· Crypto &nbsp;&nbsp;&nbsp;&nbsp;14.0 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 %<br><br>Volatility (annualised std. dev.):<br>· Equities &nbsp;&nbsp;&nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;20 %<br>· Crypto &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;65 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Correlations: ρ(eq,bo)=0.0 · ρ(eq,re)=+0.65 · ρ(eq,cr)=+0.40<br>ρ(bo,re)=+0.10 · ρ(bo,cr)=+0.05 · ρ(re,cr)=+0.10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
+        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Return p.a. assumptions:<br>· Equities &nbsp;&nbsp;&nbsp;7.5 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.0 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.0 %<br>· Crypto &nbsp;&nbsp;&nbsp;&nbsp;14.0 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 %<br><br>Volatility (annualised std. dev.):<br>· Equities &nbsp;&nbsp;&nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;22 %<br>· Crypto &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;65 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Correlations: ρ(eq,bo)=0.0 · ρ(eq,re)=+0.65 · ρ(eq,cr)=+0.40<br>ρ(bo,re)=+0.10 · ρ(bo,cr)=+0.05 · ρ(re,cr)=+0.10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
       </div>
     </div>
 
@@ -1151,7 +1151,7 @@ function rrPoint(a){
   // a = [eq, bo, re, cr, ca]
   const r=(a[0]*.075+a[1]*.030+a[2]*.080+a[3]*.140+a[4]*.015)/100;
   const wEq=a[0]/100,wBo=a[1]/100,wRe=a[2]/100,wCr=a[3]/100;
-  const v=Math.sqrt(wEq**2*.18**2+wBo**2*.05**2+wRe**2*.20**2+wCr**2*.65**2
+  const v=Math.sqrt(wEq**2*.18**2+wBo**2*.05**2+wRe**2*.22**2+wCr**2*.65**2
     +2*wEq*wBo*.18*.05*0
     +2*wEq*wRe*.18*.20*.65
     +2*wEq*wCr*.18*.65*.40

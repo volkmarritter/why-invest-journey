@@ -10,7 +10,7 @@ This document captures the return, volatility, and correlation assumptions used 
 |---|---|---|---|---|
 | Equities | 7.5% p.a. | 18% | ~10% (MSCI World USD, 1970–2024) | 15–17% |
 | Bonds | 3.0% p.a. | 5% | ~4–5% (Bloomberg Global Agg, 1990–2024) | 4–6% |
-| REITs | 8.0% p.a. | 20% | 8.4% (FTSE NAREIT, 1972–2024) | 18–22% |
+| REITs | 8.0% p.a. | 22% | 8.4% (FTSE NAREIT, 1972–2024) | 18–22% |
 | Crypto | 14.0% p.a. | 65% | ~40–60% CAGR (BTC, 2015–2024) | 60–80% |
 | Cash | 1.5% p.a. | ~0% | 1–4% (money market, varies by era) | ~0% |
 
@@ -26,7 +26,7 @@ This document captures the return, volatility, and correlation assumptions used 
 
 ### REITs (Listed Real Estate)
 - **8.0% nominal** is broadly in line with FTSE NAREIT long-run returns (~8.4%). Slightly conservative vs. history.
-- **20% vol** reflects REIT equity-like behaviour with leverage; consistent with NAREIT historical std. dev. of 18–22%.
+- **22% vol** reflects REIT equity-like behaviour with leverage; at the upper end of NAREIT historical std. dev. (18–22%), giving REITs a slightly lower Sharpe (0.30) than equities (0.33).
 
 ### Crypto
 - **14.0% nominal** is a conservative forward estimate relative to BTC's realised ~40–60% CAGR (2015–2024). Forward return is highly uncertain.
@@ -119,7 +119,7 @@ The horizon cap mirrors the Prompt Builder's hard constraint: Growth and Aggress
 |---|---|---|---|---|
 | Equities | 7.5% | 1.5% | 18% | **0.33** |
 | Bonds | 3.0% | 1.5% | 5% | **0.30** |
-| REITs | 8.0% | 1.5% | 20% | **0.33** |
+| REITs | 8.0% | 1.5% | 22% | **0.30** |
 | Crypto | 14.0% | 1.5% | 65% | **0.19** |
 | Cash | 1.5% | — | ~0% | — |
 
