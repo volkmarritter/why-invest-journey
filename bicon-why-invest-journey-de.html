@@ -204,8 +204,8 @@ p.lead{font-size:21px;line-height:1.55;color:#3a332c;max-width:60ch}
 .reveal.in{opacity:1;transform:none}
 
 /* ============ KAP 1: Allocation slider ============ */
-.alloc{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;align-items:start;margin-top:30px}
-@media(max-width:860px){.alloc{grid-template-columns:1fr}.alloc-donut{max-width:220px}}
+.alloc{display:grid;grid-template-columns:1.1fr 1fr;gap:50px;align-items:start;margin-top:30px}.alloc>div{min-width:0}
+@media(max-width:860px){.alloc{grid-template-columns:1fr}.alloc-donut{max-width:220px}.alloc-row input[type=range]{min-width:0}.alloc-row label:not(.freeze-lbl){min-width:72px}.alloc-row .val{font-size:18px;min-width:44px}}
 .alloc-sliders{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:28px}
 .alloc-row{display:flex;align-items:center;gap:14px;margin:12px 0}
 .alloc-row .dot{width:14px;height:14px;border-radius:4px;flex:none}
