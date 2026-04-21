@@ -1099,13 +1099,13 @@ function updateAlloc(){
   donut.data.datasets[0].data=vals;donut.update();
   const expR=(vals[2]*0.075+vals[1]*0.030+vals[3]*0.080+vals[4]*0.140+vals[0]*0.015)/100;
   const wEq=vals[2]/100,wBo=vals[1]/100,wRe=vals[3]/100,wCr=vals[4]/100;
-  const vol=Math.sqrt(wEq**2*0.18**2+wBo**2*0.05**2+wRe**2*0.20**2+wCr**2*0.65**2
+  const vol=Math.sqrt(wEq**2*0.18**2+wBo**2*0.05**2+wRe**2*0.22**2+wCr**2*0.65**2
     +2*wEq*wBo*0.18*0.05*0
-    +2*wEq*wRe*0.18*0.20*0.65
+    +2*wEq*wRe*0.18*0.22*0.65
     +2*wEq*wCr*0.18*0.65*0.40
-    +2*wBo*wRe*0.05*0.20*0.10
+    +2*wBo*wRe*0.05*0.22*0.10
     +2*wBo*wCr*0.05*0.65*0.05
-    +2*wRe*wCr*0.20*0.65*0.10);
+    +2*wRe*wCr*0.22*0.65*0.10);
   document.getElementById('expRet').textContent=pctDE(expR*100);
   document.getElementById('volNum').textContent='~'+(vol*100).toFixed(0)+'%';
   const loPct=Math.round((expR-vol)*100),hiPct=Math.round((expR+vol)*100);
@@ -1149,11 +1149,11 @@ function rrPoint(a){
   const wEq=a[0]/100,wBo=a[1]/100,wRe=a[2]/100,wCr=a[3]/100;
   const v=Math.sqrt(wEq**2*.18**2+wBo**2*.05**2+wRe**2*.22**2+wCr**2*.65**2
     +2*wEq*wBo*.18*.05*0
-    +2*wEq*wRe*.18*.20*.65
+    +2*wEq*wRe*.18*.22*.65
     +2*wEq*wCr*.18*.65*.40
-    +2*wBo*wRe*.05*.20*.10
+    +2*wBo*wRe*.05*.22*.10
     +2*wBo*wCr*.05*.65*.05
-    +2*wRe*wCr*.20*.65*.10);
+    +2*wRe*wCr*.22*.65*.10);
   return{x:+(v*100).toFixed(1),y:+(r*100).toFixed(1)};
 }
 const rrRefDots=rrRefAllocs.map(rrPoint);
