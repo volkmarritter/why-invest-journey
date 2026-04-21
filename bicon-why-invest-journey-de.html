@@ -469,7 +469,7 @@ canvas{max-width:100%}
               <span class="val" id="vAl">7%</span>
             </div>
             <div style="font-size:12px;color:var(--muted);margin-top:10px" id="allocTotal">Summe: 100%</div>
-            <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5"><strong style="color:var(--mustard)">Satelliten</strong> sind Rendite-Diversifikatoren, die sich anders entwickeln als Aktien und Anleihen — etwa <em>Börsennotierte Immobilien (REITs)</em> und <em>Krypto-Assets</em>. Der Prompt Builder nutzt genau diese zwei Satelliten-Klassen.</p>
+            <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5"><strong style="color:var(--mustard)">Satelliten</strong> sind Rendite-Diversifikatoren, die sich anders entwickeln als Aktien und Anleihen — etwa <em>Börsennotierte Immobilien (REITs)</em> und <em>Krypto-Assets</em>. Der Prompt Builder nutzt genau diese zwei Satelliten-Klassen. Rendite- und Volatilitätswerte beruhen auf einer gemischten REIT-/Krypto-Annahme.</p>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center">
@@ -483,7 +483,7 @@ canvas{max-width:100%}
             <div class="stat-card">
               <div class="slbl">Rendite p.a.
                 <button class="info-btn" aria-label="Annahmen">i</button>
-                <div class="tip-box">Langfristige Schätzungen je Anlageklasse:<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7,5 % p.a.<br>· Anleihen &nbsp;&nbsp;2,5 % p.a.<br>· Satelliten &nbsp;8,5 % p.a.<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,5 % p.a.<br><span style="opacity:.6;font-size:10px">Gewichteter Durchschnitt Ihrer Allokation.</span></div>
+                <div class="tip-box">Langfristige Schätzungen je Anlageklasse:<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7,5 % p.a.<br>· Anleihen &nbsp;&nbsp;2,5 % p.a.<br>· Satelliten &nbsp;11 % p.a.<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,5 % p.a.<br><span style="opacity:.6;font-size:10px">Gewichteter Durchschnitt Ihrer Allokation.</span></div>
               </div>
               <div class="sval" id="expRet">6,1%</div>
             </div>
@@ -506,7 +506,7 @@ canvas{max-width:100%}
       <canvas id="rrChart" height="200" style="max-width:560px;display:block;margin:0 auto"></canvas>
       <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;position:relative;display:inline-block;width:100%">Illustrativ. Referenzallokationen und Rendite-/Volatilitätsschätzungen dienen ausschließlich der Veranschaulichung — keine Empfehlung.
         <button class="info-btn" aria-label="Annahmen" style="margin-left:5px;vertical-align:middle">i</button>
-        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Rendite p.a. Annahmen:<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7,5 %<br>· Anleihen &nbsp;&nbsp;&nbsp;&nbsp;2,5 %<br>· Satelliten &nbsp;&nbsp;8,5 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,5 %<br><br>Volatilität (annualisierte Std.-Abw.):<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18 %<br>· Anleihen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satelliten &nbsp;&nbsp;20 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Angenommene Korrelationen:<br>· ρ(Ak, An) = 0,0 &nbsp;· ρ(Ak, Sa) = +0,50<br>· ρ(An, Sa) = +0,10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
+        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Rendite p.a. Annahmen:<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7,5 %<br>· Anleihen &nbsp;&nbsp;&nbsp;&nbsp;2,5 %<br>· Satelliten &nbsp;&nbsp;11 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,5 %<br><br>Volatilität (annualisierte Std.-Abw.):<br>· Aktien &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;18 %<br>· Anleihen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satelliten &nbsp;&nbsp;35 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Angenommene Korrelationen:<br>· ρ(Ak, An) = 0,0 &nbsp;· ρ(Ak, Sa) = +0,50<br>· ρ(An, Sa) = +0,10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Gemischte REIT-/Krypto-Schätzung — die standalone Volatilität von Krypto ist deutlich höher.</span></div>
       </div>
     </div>
 
@@ -1090,23 +1090,27 @@ function updateAlloc(){
   vids.forEach((id,i)=>document.getElementById(id).textContent=vals[i]+'%');
   document.getElementById('allocTotal').textContent='Summe: 100%';
   donut.data.datasets[0].data=vals;donut.update();
-  const expR=(vals[2]*0.075 + vals[1]*0.025 + vals[3]*0.085 + vals[0]*0.015)/100;
+  const expR=(vals[2]*0.075 + vals[1]*0.025 + vals[3]*0.11 + vals[0]*0.015)/100;
   const wEq=vals[2]/100,wBo=vals[1]/100,wSat=vals[3]/100;
-  const vol =Math.sqrt(wEq**2*0.18**2+wBo**2*0.05**2+wSat**2*0.20**2
+  const vol =Math.sqrt(wEq**2*0.18**2+wBo**2*0.05**2+wSat**2*0.35**2
     +2*wEq*wBo*0.18*0.05*(0)
-    +2*wEq*wSat*0.18*0.20*0.50
-    +2*wBo*wSat*0.05*0.20*0.10);
+    +2*wEq*wSat*0.18*0.35*0.50
+    +2*wBo*wSat*0.05*0.35*0.10);
   document.getElementById('expRet').textContent=pctDE(expR*100);
   document.getElementById('volNum').textContent='~'+(vol*100).toFixed(0)+'%';
   const loPct=Math.round((expR-vol)*100),hiPct=Math.round((expR+vol)*100);
   document.getElementById('volRange').textContent=(loPct>=0?'+':'')+loPct+'% bis +'+hiPct+'%';
+  const risky=vals[2]+vals[3];
   let profile='Ausgewogen';
-  if(vals[2]>=80)profile='Aggressiv';
-  else if(vals[2]>=60)profile='Wachstum';
-  else if(vals[2]>=40)profile='Ausgewogen';
-  else if(vals[2]>=20)profile='Konservativ';
+  if(vals[3]>=25){profile='Krypto-lastig — hohes Konzentrationsrisiko';}
+  else if(risky>=80)profile='Aggressiv';
+  else if(risky>=60)profile='Wachstum';
+  else if(risky>=40)profile='Ausgewogen';
+  else if(risky>=20)profile='Konservativ';
   else profile='Kapitalerhalt';
-  document.getElementById('riskHint').textContent=profile;
+  const riskEl=document.getElementById('riskHint');
+  riskEl.textContent=profile;
+  riskEl.style.color=vals[3]>=25?'var(--coral)':'';
   if(typeof rrChart!=='undefined'){
     rrChart.data.datasets[1].data[0]={x:+(vol*100).toFixed(1),y:+(expR*100).toFixed(1)};
     rrChart.update('none');
@@ -1130,12 +1134,12 @@ document.addEventListener('click',()=>document.querySelectorAll('.tip-box.show')
 /* Risiko-Rendite-Streudiagramm */
 const rrRefAllocs=[[30,65,0,5],[55,40,0,5],[70,20,7,3],[90,0,10,0]];
 function rrPoint(a){
-  const r=(a[0]*.075+a[1]*.025+a[2]*.085+a[3]*.015)/100;
+  const r=(a[0]*.075+a[1]*.025+a[2]*.11+a[3]*.015)/100;
   const wEq=a[0]/100,wBo=a[1]/100,wSat=a[2]/100;
-  const v=Math.sqrt(wEq**2*.18**2+wBo**2*.05**2+wSat**2*.20**2
+  const v=Math.sqrt(wEq**2*.18**2+wBo**2*.05**2+wSat**2*.35**2
     +2*wEq*wBo*.18*.05*(0)
-    +2*wEq*wSat*.18*.20*.50
-    +2*wBo*wSat*.05*.20*.10);
+    +2*wEq*wSat*.18*.35*.50
+    +2*wBo*wSat*.05*.35*.10);
   return{x:+(v*100).toFixed(1),y:+(r*100).toFixed(1)};
 }
 const rrRefDots=rrRefAllocs.map(rrPoint);
