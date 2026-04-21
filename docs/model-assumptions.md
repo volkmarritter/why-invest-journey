@@ -75,7 +75,7 @@ These are the four dots on the Ch1 risk-return scatter chart. Format: Eq / Bo / 
 | Conservative | 30% | 65% | 0% | 0% | 5% | 4.3% | 6.3% | 0.44 |
 | Balanced | 55% | 40% | 0% | 0% | 5% | 5.4% | 10.1% | 0.39 |
 | Growth | 70% | 20% | 5% | 2% | 3% | 6.6% | 13.9% | 0.37 |
-| Aggressive | 90% | 0% | 6% | 4% | 0% | 7.8% | 18.2% | 0.35 |
+| Aggressive | 90% | 0% | 6% | 4% | 0% | 7.8% | 18.3% | 0.34 |
 
 † Sharpe = (return − 1.5% cash) / vol. Declining Sharpe across risk levels is expected and realistic.
 
@@ -105,7 +105,7 @@ Labels are based on **total risky assets = equities + REITs + crypto** (not equi
 | Balanced | 40–59% | ≥ 5 years |
 | Growth | 60–79% | ≥ 10 years |
 | Aggressive | ≥ 80% | ≥ 10 years |
-| Crypto-heavy ⚠️ | Crypto ≥ 15% | Overrides label (shown in coral) |
+| Crypto-heavy ⚠️ | Crypto ≥ 15% | Overrides label (shown in plum) |
 
 The crypto concentration warning triggers on standalone crypto allocation (not total satellites), reflecting that even a 15% crypto position dominates portfolio vol given its 65% standalone volatility.
 
