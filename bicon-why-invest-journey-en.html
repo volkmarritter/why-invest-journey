@@ -1116,7 +1116,7 @@ function updateAlloc(){
   document.getElementById('volRange').textContent=(loPct>=0?'+':'')+loPct+'% to +'+hiPct+'%';
   const risky=vals[2]+vals[3]+vals[4];
   let profile='Balanced';
-  if(vals[4]>=15){profile='Crypto-heavy';}
+  if(vals[4]>=15){profile='! Crypto-heavy';}
   else if(risky>=80)profile='Aggressive';
   else if(risky>=60)profile='Growth';
   else if(risky>=40)profile='Balanced';

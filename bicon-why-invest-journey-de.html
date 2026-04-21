@@ -1111,7 +1111,7 @@ function updateAlloc(){
   document.getElementById('volRange').textContent=(loPct>=0?'+':'')+loPct+'% bis +'+hiPct+'%';
   const risky=vals[2]+vals[3]+vals[4];
   let profile='Ausgewogen';
-  if(vals[4]>=15){profile='Krypto-lastig';}
+  if(vals[4]>=15){profile='! Krypto-lastig';}
   else if(risky>=80)profile='Aggressiv';
   else if(risky>=60)profile='Wachstum';
   else if(risky>=40)profile='Ausgewogen';
