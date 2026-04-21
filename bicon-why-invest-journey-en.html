@@ -471,12 +471,18 @@ canvas{max-width:100%}
             </div>
             <div class="alloc-row">
               <span class="dot" style="background:var(--mustard)"></span>
-              <label>Satellites</label>
-              <input type="range" min="0" max="100" value="7" id="sAl">
-              <span class="val" id="vAl">7%</span>
+              <label>REITs</label>
+              <input type="range" min="0" max="100" value="5" id="sRe">
+              <span class="val" id="vRe">5%</span>
+            </div>
+            <div class="alloc-row">
+              <span class="dot" style="background:var(--plum)"></span>
+              <label>Crypto</label>
+              <input type="range" min="0" max="100" value="2" id="sCr">
+              <span class="val" id="vCr">2%</span>
             </div>
             <div style="font-size:12px;color:var(--muted);margin-top:10px" id="allocTotal">Total: 100%</div>
-            <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5"><strong style="color:var(--mustard)">Satellites</strong> are alternative assets added for return enhancement and partial diversification — think <em>Listed Real Estate (REITs)</em> and <em>Crypto Assets</em>. They can amplify gains, but also drawdowns; in market stress, correlations tend to rise. The return and volatility figures assume a blended REIT/crypto exposure.</p>
+            <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5"><strong style="color:var(--mustard)">REITs</strong> and <strong style="color:var(--plum)">Crypto</strong> are the two satellite classes in the Prompt Builder — alternative assets that can boost returns and add partial diversification, but amplify drawdowns too. In a crisis, their correlations to equities tend to rise.</p>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center">
@@ -490,14 +496,14 @@ canvas{max-width:100%}
             <div class="stat-card">
               <div class="slbl">Return p.a.
                 <button class="info-btn" aria-label="Assumptions">i</button>
-                <div class="tip-box">Long-run estimates per asset class:<br>· Equities &nbsp;7.5 % p.a.<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;3.0 % p.a.<br>· Satellites &nbsp;11 % p.a.<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 % p.a.<br><span style="opacity:.6;font-size:10px">Weighted avg. of your allocation.</span></div>
+                <div class="tip-box">Long-run estimates per asset class:<br>· Equities &nbsp;7.5 % p.a.<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;3.0 % p.a.<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;8.0 % p.a.<br>· Crypto &nbsp;&nbsp;14.0 % p.a.<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 % p.a.<br><span style="opacity:.6;font-size:10px">Weighted avg. of your allocation.</span></div>
               </div>
               <div class="sval" id="expRet">6.1%</div>
             </div>
             <div class="stat-card">
               <div class="slbl">Volatility
                 <button class="info-btn" aria-label="Assumptions">i</button>
-                <div class="tip-box">Annualised std. dev. per class:<br>· Equities &nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satellites &nbsp;35 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Assumed correlations:<br>· ρ(eq, bo) = 0.0 &nbsp;· ρ(eq, sat) = +0.50<br>· ρ(bo, sat) = +0.10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Blended REIT/crypto estimate — standalone crypto vol is significantly higher.</span></div>
+                <div class="tip-box">Annualised std. dev. per class:<br>· Equities &nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;20 %<br>· Crypto &nbsp;&nbsp;&nbsp;65 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Correlations: ρ(eq,bo)=0.0 · ρ(eq,re)=+0.65 · ρ(eq,cr)=+0.40<br>ρ(bo,re)=+0.10 · ρ(bo,cr)=+0.05 · ρ(re,cr)=+0.10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
               </div>
               <div class="sval coral" id="volNum">~9%</div>
             </div>
@@ -513,7 +519,7 @@ canvas{max-width:100%}
       <canvas id="rrChart" height="200" style="max-width:560px;display:block;margin:0 auto"></canvas>
       <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;position:relative;display:inline-block;width:100%">Illustrative. Reference allocations and return/volatility estimates are for illustration purposes only — not a recommendation.
         <button class="info-btn" aria-label="Assumptions" style="margin-left:5px;vertical-align:middle">i</button>
-        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Return p.a. assumptions:<br>· Equities &nbsp;&nbsp;&nbsp;7.5 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.5 %<br>· Satellites &nbsp;11 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 %<br><br>Volatility (annualised std. dev.):<br>· Equities &nbsp;&nbsp;&nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· Satellites &nbsp;35 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Assumed correlations:<br>· ρ(eq, bo) = 0.0 &nbsp;· ρ(eq, sat) = +0.50<br>· ρ(bo, sat) = +0.10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
+        <div class="tip-box" style="left:50%;transform:translateX(-50%);min-width:260px;text-align:left">Return p.a. assumptions:<br>· Equities &nbsp;&nbsp;&nbsp;7.5 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.0 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8.0 %<br>· Crypto &nbsp;&nbsp;&nbsp;&nbsp;14.0 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.5 %<br><br>Volatility (annualised std. dev.):<br>· Equities &nbsp;&nbsp;&nbsp;18 %<br>· Bonds &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5 %<br>· REITs &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;20 %<br>· Crypto &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;65 %<br>· Cash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~0 %<br><span style="opacity:.6;font-size:10px;display:block;margin-top:4px">Correlations: ρ(eq,bo)=0.0 · ρ(eq,re)=+0.65 · ρ(eq,cr)=+0.40<br>ρ(bo,re)=+0.10 · ρ(bo,cr)=+0.05 · ρ(re,cr)=+0.10</span><span style="font-family:monospace;font-size:10px;display:block;margin-top:6px">σ = √(Σ w²·σ² + 2·Σ wᵢwⱼσᵢσⱼρᵢⱼ)</span></div>
       </div>
     </div>
 
@@ -1060,18 +1066,18 @@ window.addEventListener('scroll',()=>{
 /* =========================================================
    CH1 — Allocation Donut + Expected Return
    ========================================================= */
-const colors=['#3E8EDE','#2D5D3A','#FF6B5B','#E8B84A'];
+const colors=['#3E8EDE','#2D5D3A','#FF6B5B','#E8B84A','#6B3FA0'];
 const donutCtx=document.getElementById('donut').getContext('2d');
 const donut=new Chart(donutCtx,{
   type:'doughnut',
-  data:{labels:['Cash','Bonds','Equities','Satellites'],datasets:[{data:[3,20,70,7],backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
+  data:{labels:['Cash','Bonds','Equities','REITs','Crypto'],datasets:[{data:[3,20,70,5,2],backgroundColor:colors,borderWidth:0,hoverOffset:6}]},
   options:{cutout:'68%',plugins:{legend:{display:false},tooltip:{enabled:true}},animation:{animateRotate:true,duration:700}}
 });
-const ids=['sCa','sBo','sEq','sAl'];
-const vids=['vCa','vBo','vEq','vAl'];
+const ids=['sCa','sBo','sEq','sRe','sCr'];
+const vids=['vCa','vBo','vEq','vRe','vCr'];
 let lastVals=ids.map(id=>+document.getElementById(id).value);
 function redistribute(idx,rawNew){
-  const others=[0,1,2,3].filter(i=>i!==idx);
+  const others=[0,1,2,3,4].filter(i=>i!==idx);
   const othersSum=others.reduce((s,i)=>s+lastVals[i],0);
   const newVal=Math.min(rawNew,lastVals[idx]+othersSum);
   const delta=newVal-lastVals[idx];
@@ -1095,19 +1101,22 @@ function updateAlloc(){
   document.getElementById('allocTotal').textContent='Total: 100%';
   donut.data.datasets[0].data=vals;donut.update();
   // simple expected return model (illustrative)
-  const expR=(vals[2]*0.075 + vals[1]*0.030 + vals[3]*0.11 + vals[0]*0.015)/100;
-  const wEq=vals[2]/100,wBo=vals[1]/100,wSat=vals[3]/100;
-  const vol =Math.sqrt(wEq**2*0.18**2+wBo**2*0.05**2+wSat**2*0.35**2
-    +2*wEq*wBo*0.18*0.05*(0)
-    +2*wEq*wSat*0.18*0.35*0.50
-    +2*wBo*wSat*0.05*0.35*0.10);
+  const expR=(vals[2]*0.075+vals[1]*0.030+vals[3]*0.080+vals[4]*0.140+vals[0]*0.015)/100;
+  const wEq=vals[2]/100,wBo=vals[1]/100,wRe=vals[3]/100,wCr=vals[4]/100;
+  const vol=Math.sqrt(wEq**2*0.18**2+wBo**2*0.05**2+wRe**2*0.20**2+wCr**2*0.65**2
+    +2*wEq*wBo*0.18*0.05*0
+    +2*wEq*wRe*0.18*0.20*0.65
+    +2*wEq*wCr*0.18*0.65*0.40
+    +2*wBo*wRe*0.05*0.20*0.10
+    +2*wBo*wCr*0.05*0.65*0.05
+    +2*wRe*wCr*0.20*0.65*0.10);
   document.getElementById('expRet').textContent=(expR*100).toFixed(1)+'%';
   document.getElementById('volNum').textContent='~'+(vol*100).toFixed(0)+'%';
   const loPct=Math.round((expR-vol)*100),hiPct=Math.round((expR+vol)*100);
   document.getElementById('volRange').textContent=(loPct>=0?'+':'')+loPct+'% to +'+hiPct+'%';
-  const risky=vals[2]+vals[3];
+  const risky=vals[2]+vals[3]+vals[4];
   let profile='Balanced';
-  if(vals[3]>=25){profile='Crypto-heavy — high concentration risk';}
+  if(vals[4]>=15){profile='Crypto-heavy — high concentration risk';}
   else if(risky>=80)profile='Aggressive';
   else if(risky>=60)profile='Growth';
   else if(risky>=40)profile='Balanced';
@@ -1115,7 +1124,7 @@ function updateAlloc(){
   else profile='Capital preservation';
   const riskEl=document.getElementById('riskHint');
   riskEl.textContent=profile;
-  riskEl.style.color=vals[3]>=25?'var(--coral)':'';
+  riskEl.style.color=vals[4]>=15?'var(--coral)':'';
   if(typeof rrChart!=='undefined'){
     rrChart.data.datasets[1].data[0]={x:+(vol*100).toFixed(1),y:+(expR*100).toFixed(1)};
     rrChart.update('none');
@@ -1137,14 +1146,18 @@ document.querySelectorAll('.info-btn').forEach(btn=>{
 document.addEventListener('click',()=>document.querySelectorAll('.tip-box.show').forEach(t=>t.classList.remove('show')));
 
 /* Risk-Return scatter */
-const rrRefAllocs=[[30,65,0,5],[55,40,0,5],[70,20,7,3],[90,0,10,0]];
+const rrRefAllocs=[[30,65,0,0,5],[55,40,0,0,5],[70,20,5,2,3],[90,0,6,4,0]];
 function rrPoint(a){
-  const r=(a[0]*.075+a[1]*.030+a[2]*.11+a[3]*.015)/100;
-  const wEq=a[0]/100,wBo=a[1]/100,wSat=a[2]/100;
-  const v=Math.sqrt(wEq**2*.18**2+wBo**2*.05**2+wSat**2*.35**2
-    +2*wEq*wBo*.18*.05*(0)
-    +2*wEq*wSat*.18*.35*.50
-    +2*wBo*wSat*.05*.35*.10);
+  // a = [eq, bo, re, cr, ca]
+  const r=(a[0]*.075+a[1]*.030+a[2]*.080+a[3]*.140+a[4]*.015)/100;
+  const wEq=a[0]/100,wBo=a[1]/100,wRe=a[2]/100,wCr=a[3]/100;
+  const v=Math.sqrt(wEq**2*.18**2+wBo**2*.05**2+wRe**2*.20**2+wCr**2*.65**2
+    +2*wEq*wBo*.18*.05*0
+    +2*wEq*wRe*.18*.20*.65
+    +2*wEq*wCr*.18*.65*.40
+    +2*wBo*wRe*.05*.20*.10
+    +2*wBo*wCr*.05*.65*.05
+    +2*wRe*wCr*.20*.65*.10);
   return{x:+(v*100).toFixed(1),y:+(r*100).toFixed(1)};
 }
 const rrRefDots=rrRefAllocs.map(rrPoint);
@@ -1161,8 +1174,13 @@ var rrChart=new Chart(rrCtx,{
     onClick(evt,els){
       if(!els.length||els[0].datasetIndex!==0)return;
       const a=rrRefAllocs[els[0].index];
-      ['sEq','sBo','sAl','sCa'].forEach((id,j)=>{document.getElementById(id).value=a[j];});
-      lastVals=[...a];
+      // a=[eq,bo,re,cr,ca]; ids order=[ca,bo,eq,re,cr]
+      document.getElementById('sEq').value=a[0];
+      document.getElementById('sBo').value=a[1];
+      document.getElementById('sRe').value=a[2];
+      document.getElementById('sCr').value=a[3];
+      document.getElementById('sCa').value=a[4];
+      lastVals=[a[4],a[1],a[0],a[2],a[3]];
       updateAlloc();
     },
     onHover(evt,els){evt.native.target.style.cursor=els.length&&els[0].datasetIndex===0?'pointer':'default';},
