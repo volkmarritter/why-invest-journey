@@ -1090,7 +1090,7 @@ function updateAlloc(){
   vids.forEach((id,i)=>document.getElementById(id).textContent=vals[i]+'%');
   document.getElementById('allocTotal').textContent='Summe: 100%';
   donut.data.datasets[0].data=vals;donut.update();
-  const expR=(vals[2]*0.075 + vals[1]*0.025 + vals[3]*0.11 + vals[0]*0.015)/100;
+  const expR=(vals[2]*0.075 + vals[1]*0.030 + vals[3]*0.11 + vals[0]*0.015)/100;
   const wEq=vals[2]/100,wBo=vals[1]/100,wSat=vals[3]/100;
   const vol =Math.sqrt(wEq**2*0.18**2+wBo**2*0.05**2+wSat**2*0.35**2
     +2*wEq*wBo*0.18*0.05*(0)
@@ -1134,7 +1134,7 @@ document.addEventListener('click',()=>document.querySelectorAll('.tip-box.show')
 /* Risiko-Rendite-Streudiagramm */
 const rrRefAllocs=[[30,65,0,5],[55,40,0,5],[70,20,7,3],[90,0,10,0]];
 function rrPoint(a){
-  const r=(a[0]*.075+a[1]*.025+a[2]*.11+a[3]*.015)/100;
+  const r=(a[0]*.075+a[1]*.030+a[2]*.11+a[3]*.015)/100;
   const wEq=a[0]/100,wBo=a[1]/100,wSat=a[2]/100;
   const v=Math.sqrt(wEq**2*.18**2+wBo**2*.05**2+wSat**2*.35**2
     +2*wEq*wBo*.18*.05*(0)
