@@ -209,7 +209,7 @@ p.lead{font-size:21px;line-height:1.55;color:#3a332c;max-width:60ch}
 .alloc-sliders{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:28px}
 .alloc-row{display:flex;align-items:center;gap:14px;margin:12px 0}
 .alloc-row .dot{width:14px;height:14px;border-radius:4px;flex:none}
-.alloc-row label{font-weight:600;min-width:90px;font-size:14px}
+.alloc-row label:not(.freeze-lbl){font-weight:600;min-width:90px;font-size:14px}
 .alloc-row input[type=range]{flex:1;accent-color:var(--coral)}
 .alloc-row .val{font-family:var(--serif);font-size:22px;min-width:56px;text-align:right}
 .alloc-donut{position:relative;aspect-ratio:1;max-width:360px;margin:0 auto}
@@ -313,6 +313,14 @@ footer a{color:var(--mustard);text-decoration:none}
 .mark-plum{background:linear-gradient(transparent 62%, rgba(107,63,160,.25) 62%);padding:0 4px}
 
 canvas{max-width:100%}
+/* ============ FREEZE TOGGLE ============ */
+.freeze-lbl{cursor:pointer;flex-shrink:0;width:18px;height:18px;min-width:18px;display:flex;align-items:center;justify-content:center;border-radius:5px;border:1.5px solid var(--line);color:var(--line);background:transparent;transition:.15s;user-select:none;position:relative}
+.freeze-lbl:hover{border-color:var(--muted);color:var(--muted)}
+.freeze-lbl input[type=checkbox]{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+.freeze-lbl.locked{background:var(--ink);border-color:var(--ink);color:var(--cream)}
+.alloc-row.frozen>input[type=range]{opacity:.3;pointer-events:none}
+.alloc-row.frozen>label:not(.freeze-lbl),.alloc-row.frozen>.val{opacity:.5}
+.alloc-warn{color:var(--coral);font-weight:600}
 .chart-wrap{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:24px;position:relative}
 .bg-ink .chart-wrap{background:#1f1b17;border-color:#3a332c}
 .chart-wrap .caption{font-size:12px;color:var(--muted);margin-top:12px;letter-spacing:.04em}
@@ -490,30 +498,35 @@ canvas{max-width:100%}
               <label>Cash</label>
               <input type="range" min="0" max="100" value="3" id="sCa">
               <span class="val" id="vCa">3%</span>
+              <label class="freeze-lbl" id="lCa" title="Einfrieren"><input type="checkbox" id="fCa"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="currentColor"><rect x="2" y="5.5" width="8" height="6.5" rx="1.5"/><path d="M4 5.5V3.5a2 2 0 0 1 4 0V5.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></label>
             </div>
             <div class="alloc-row">
               <span class="dot" style="background:var(--forest)"></span>
               <label>Anleihen</label>
               <input type="range" min="0" max="100" value="20" id="sBo">
               <span class="val" id="vBo">20%</span>
+              <label class="freeze-lbl" id="lBo" title="Einfrieren"><input type="checkbox" id="fBo"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="currentColor"><rect x="2" y="5.5" width="8" height="6.5" rx="1.5"/><path d="M4 5.5V3.5a2 2 0 0 1 4 0V5.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></label>
             </div>
             <div class="alloc-row">
               <span class="dot" style="background:var(--coral)"></span>
               <label>Aktien</label>
               <input type="range" min="0" max="100" value="70" id="sEq">
               <span class="val" id="vEq">70%</span>
+              <label class="freeze-lbl" id="lEq" title="Einfrieren"><input type="checkbox" id="fEq"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="currentColor"><rect x="2" y="5.5" width="8" height="6.5" rx="1.5"/><path d="M4 5.5V3.5a2 2 0 0 1 4 0V5.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></label>
             </div>
             <div class="alloc-row">
               <span class="dot" style="background:var(--mustard)"></span>
               <label>REITs</label>
               <input type="range" min="0" max="100" value="5" id="sRe">
               <span class="val" id="vRe">5%</span>
+              <label class="freeze-lbl" id="lRe" title="Einfrieren"><input type="checkbox" id="fRe"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="currentColor"><rect x="2" y="5.5" width="8" height="6.5" rx="1.5"/><path d="M4 5.5V3.5a2 2 0 0 1 4 0V5.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></label>
             </div>
             <div class="alloc-row">
               <span class="dot" style="background:var(--plum)"></span>
               <label>Krypto</label>
               <input type="range" min="0" max="100" value="2" id="sCr">
               <span class="val" id="vCr">2%</span>
+              <label class="freeze-lbl" id="lCr" title="Einfrieren"><input type="checkbox" id="fCr"><svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" fill="currentColor"><rect x="2" y="5.5" width="8" height="6.5" rx="1.5"/><path d="M4 5.5V3.5a2 2 0 0 1 4 0V5.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></label>
             </div>
             <div style="font-size:12px;color:var(--muted);margin-top:10px" id="allocTotal">Summe: 100%</div>
             <p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5"><strong style="color:var(--mustard)">REITs</strong> und <strong style="color:var(--plum)">Krypto</strong> sind die zwei Satelliten-Klassen im Prompt Builder — Alternativen, die Rendite steigern und teilweise diversifizieren, aber auch Verluste verstärken. In Krisenzeiten steigen ihre Korrelationen zu Aktien typischerweise an.</p>
@@ -1269,25 +1282,58 @@ const donut=new Chart(donutCtx,{
 });
 const ids=['sCa','sBo','sEq','sRe','sCr'];
 const vids=['vCa','vBo','vEq','vRe','vCr'];
+const fids=['fCa','fBo','fEq','fRe','fCr'];
+const lids=['lCa','lBo','lEq','lRe','lCr'];
 let lastVals=ids.map(id=>+document.getElementById(id).value);
+function getFrozen(){return fids.map(id=>document.getElementById(id).checked);}
 function redistribute(idx,rawNew){
-  const others=[0,1,2,3,4].filter(i=>i!==idx);
-  const othersSum=others.reduce((s,i)=>s+lastVals[i],0);
-  const newVal=Math.min(rawNew,lastVals[idx]+othersSum);
-  const delta=newVal-lastVals[idx];
-  if(delta===0)return;
+  const frozen=getFrozen();
+  const frozenTotal=frozen.reduce((s,f,i)=>s+(f&&i!==idx?lastVals[i]:0),0);
+  const freeOthers=[0,1,2,3,4].filter(i=>i!==idx&&!frozen[i]);
+  const maxNew=Math.max(0,100-frozenTotal);
+  const newVal=Math.min(rawNew,maxNew);
+  const freeSum=freeOthers.reduce((s,i)=>s+lastVals[i],0);
+  const remainder=maxNew-newVal;
   const nv=[...lastVals];
   nv[idx]=newVal;
-  if(othersSum===0){
-    const share=Math.round(-delta/others.length);
-    others.forEach(i=>{nv[i]=share;});
+  if(freeOthers.length===0){
+    nv[idx]=maxNew;
+    document.getElementById(ids[idx]).value=maxNew;
+  } else if(freeSum===0){
+    const share=Math.floor(remainder/freeOthers.length);
+    freeOthers.forEach(i=>{nv[i]=share;});
+    const rounding=remainder-share*freeOthers.length;
+    nv[freeOthers[freeOthers.length-1]]+=rounding;
   } else {
-    others.forEach(i=>{nv[i]=Math.max(0,Math.round(lastVals[i]-delta*(lastVals[i]/othersSum)));});
+    freeOthers.forEach(i=>{nv[i]=Math.max(0,Math.round(remainder*(lastVals[i]/freeSum)));});
   }
   const s=nv.reduce((a,b)=>a+b,0);
-  if(s!==100){const lg=others.reduce((b,i)=>nv[i]>nv[b]?i:b,others[0]);nv[lg]=Math.max(0,nv[lg]+(100-s));}
+  if(s!==100&&freeOthers.length>0){
+    const lg=freeOthers.reduce((b,i)=>nv[i]>nv[b]?i:b,freeOthers[0]);
+    nv[lg]=Math.max(0,nv[lg]+(100-s));
+  }
   ids.forEach((id,i)=>{document.getElementById(id).value=nv[i];});
   lastVals=[...nv];
+}
+function updateFreezeState(){
+  const frozen=getFrozen();
+  const frozenTotal=frozen.reduce((s,f,i)=>s+(f?lastVals[i]:0),0);
+  const freeCount=frozen.filter(f=>!f).length;
+  ids.forEach((_,i)=>{
+    const row=document.getElementById(ids[i]).closest('.alloc-row');
+    const lbl=document.getElementById(lids[i]);
+    row.classList.toggle('frozen',frozen[i]);
+    lbl.classList.toggle('locked',frozen[i]);
+  });
+  const el=document.getElementById('allocTotal');
+  if(frozenTotal>=100&&freeCount>0){
+    el.innerHTML='<span class="alloc-warn">⚠ Eingefrorene Werte belegen 100% — bitte Einfrierung aufheben</span>';
+  } else if(freeCount===1&&frozen.some(f=>f)){
+    const freeIdx=frozen.indexOf(false);
+    el.textContent='Summe: 100% · Letzter freier Slider fixiert auf '+(100-frozenTotal)+'%';
+  } else {
+    el.textContent='Summe: 100%';
+  }
 }
 function updateAlloc(){
   const vals=ids.map(id=>+document.getElementById(id).value);
@@ -1307,6 +1353,7 @@ function updateAlloc(){
   document.getElementById('volNum').textContent='~'+(vol*100).toFixed(0)+'%';
   const loPct=Math.round((expR-vol)*100),hiPct=Math.round((expR+vol)*100);
   document.getElementById('volRange').textContent=(loPct>=0?'+':'')+loPct+'% bis +'+hiPct+'%';
+  updateFreezeState();
   const risky=vals[2]+vals[3]+vals[4];
   let profile='Ausgewogen';
   if(vals[4]>=15){profile='! Krypto-lastig';}
@@ -1323,7 +1370,12 @@ function updateAlloc(){
     rrChart.update('none');
   }
 }
-ids.forEach((id,i)=>document.getElementById(id).addEventListener('input',()=>{redistribute(i,+document.getElementById(id).value);updateAlloc();}));
+ids.forEach((id,i)=>document.getElementById(id).addEventListener('input',()=>{
+  if(getFrozen()[i])return;
+  redistribute(i,+document.getElementById(id).value);
+  updateAlloc();
+}));
+fids.forEach(fid=>document.getElementById(fid).addEventListener('change',()=>updateAlloc()));
 updateAlloc();
 
 /* (i) Tooltips */
@@ -1368,6 +1420,7 @@ var rrChart=new Chart(rrCtx,{
       if(!els.length||els[0].datasetIndex!==0)return;
       const a=rrRefAllocs[els[0].index];
       // a=[eq,bo,re,cr,ca]; ids order=[ca,bo,eq,re,cr]
+      fids.forEach(fid=>{document.getElementById(fid).checked=false;});
       document.getElementById('sEq').value=a[0];
       document.getElementById('sBo').value=a[1];
       document.getElementById('sRe').value=a[2];
